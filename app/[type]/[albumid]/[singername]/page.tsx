@@ -10,7 +10,7 @@ import { IconArrowLeft, IconChevronLeft, IconDots, IconDotsVertical, IconDownloa
 import { useRouter } from 'next/navigation';
 import { SkeletonSongBar, SongBar } from '@/components/SongBar/SongBar';
 
-export default function AlbumDetailsPage({ params }: { params: { albumid: string, type: string } }) {
+export default function ArtistDetailsPage({ params }: { params: { albumid: string, type: string , singername:string} }) {
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
   const [albumData, setAlbumData] = useState<any>(null);
@@ -25,33 +25,23 @@ export default function AlbumDetailsPage({ params }: { params: { albumid: string
   }, [params]);
 
 
-console.log(albumData)
+  console.log(decodeURIComponent(params.singername))
   
 
   function fetchCall() {
     nprogress.reset();
     nprogress.start();
     
-    if (params.type === 'playlist') {
-      dispatch(fetchPlaylistSongs({ albumId: params.albumid }))
+    if (params.type === 'artist') {
+      dispatch(fetchFeaturedRadio({ names:[decodeURIComponent(params.singername)], 
+                                    stationType:params.type , 
+                                    language:'hindi' }))
         .then((res: any) => {
+          console.log(res)
           nprogress.complete();
           setAlbumData(res.payload);
         });
 
-    }if (params.type === 'artist') {
-      dispatch(fetchFeaturedRadio({ names:['Hansraj Raghuwanshi'], stationType:params.type , language:'hindi' }))
-        .then((res: any) => {
-          nprogress.complete();
-          setAlbumData(res.payload);
-        });
-
-    }  else {
-      dispatch(fetchAlbumSongs({ albumId: params.albumid }))
-        .then((res: any) => {
-          nprogress.complete();
-          setAlbumData(res.payload);
-        });
     }
 
   }

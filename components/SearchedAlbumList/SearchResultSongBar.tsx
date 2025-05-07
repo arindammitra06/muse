@@ -27,7 +27,14 @@ export const SearchResultSongBar = ({ idx, song, type }: SearchResultSongBarProp
         if(type==='song'){
             playSongAndAddToPlaylist(song);
           }else{
-            router.push(`/${type}/${idx}/`);
+            console.log(song);
+            
+            if(type==='artist'){
+                router.push(`/${type}/${idx}/${song.title}`);
+            }else{
+                router.push(`/${type}/${idx}/`);
+            }
+            
           }
     };
 
