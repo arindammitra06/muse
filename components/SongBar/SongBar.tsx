@@ -1,10 +1,9 @@
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { useAppDispatch } from '@/store/hooks';
 import { getSongFromToken } from '@/store/slices/jio.slice';
-import { playTrack, Track } from '@/store/slices/player.slice';
+import { playTrack } from '@/store/slices/player.slice';
 import { getLastSectionOfUrl, formatSongsResponse } from '@/utils/generic.utils';
-import { useAudioPlayer } from '@/utils/useAudioPlayer';
-import { Flex, Group, Box, ActionIcon, Image, Text, Skeleton, useMantineTheme, Select, Stack, Textarea, TextInput } from "@mantine/core"
-import { IconDownload, IconHeart, IconDotsVertical, IconPlaceholder, IconGripVertical } from "@tabler/icons-react"
+import { Flex, Group, Box, ActionIcon, Image, Text, Skeleton, useMantineTheme } from "@mantine/core"
+import { IconDownload, IconDotsVertical, IconGripVertical } from "@tabler/icons-react"
 import classes from './songbar.module.css';
 import { useRef, useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';

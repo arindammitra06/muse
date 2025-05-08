@@ -15,7 +15,7 @@ export default function SearchedAlbumList({ title, list }: SearchedAlbumListProp
 
     return (
         <SimpleGrid cols={1} spacing="xs" verticalSpacing="0">
-            <Title order={4} c={theme.primaryColor} ml={'xs'} mt={'xs'} mb={'xs'}>
+            <Title order={4} c={title==='Top Result' || title==='Artists' ? 'gray': theme.primaryColor} ml={'xs'} mt={'xs'} mb={'xs'}>
                 {title}
             </Title>
             
@@ -27,7 +27,7 @@ export default function SearchedAlbumList({ title, list }: SearchedAlbumListProp
                     minWidth: 250,
                 }}>{
                         list !== null && list !== undefined && list.length > 0 && list.map((item, index) => (
-                            <SearchResultSongBar key={index} idx={item.id} song={item} type={item.type}  />
+                            <SearchResultSongBar key={index} idx={item.id} song={item} type={item.type} title={title}  />
                         ))
                     }
             </div>

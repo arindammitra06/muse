@@ -91,7 +91,8 @@ export const fetchSearchResults = createAsyncThunk(
 
       const encodedUrl = encodeURIComponent(`${baseUrl}${homeEndpoint}&${params}`);
       const response = await axios.get(`/api/proxy?url=${encodedUrl}`);
-
+      console.log(response)
+  
       if(response.status===200){
         const result: Record<string, SearchItem[]> = {};
         const position: Record<number, string> = {};

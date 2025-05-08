@@ -1,5 +1,5 @@
 import { AppUser } from "@/model/user.model";
-import { albumDetails, artistRadio, baseUrl, entityRadio, featuredRadio, fromToken, homeEndpoint, playlistDetails } from "@/utils/generic.utils";
+import { albumDetails, artistRadio, baseUrl, entityRadio, featuredRadio, formatArtistTopAlbumsResponse, formatSimilarArtistsResponse, formatSongsResponse, fromToken, homeEndpoint, playlistDetails } from "@/utils/generic.utils";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import axios from "axios";
@@ -8,6 +8,7 @@ import axios from "axios";
 
 export type ApiState = {
   readonly homedata: any | undefined;
+  readonly artistData: any | undefined;
   readonly isLoading: boolean;
   readonly error: string | null;
 };
@@ -16,6 +17,7 @@ export const API_INITIAL_STATE: ApiState = {
   homedata: undefined,
   isLoading: false,
   error: null,
+  artistData: undefined
 };
 
 
@@ -81,7 +83,68 @@ export const fetchFeaturedRadio = createAsyncThunk(
     }
   });
 
+export const fetchArtistSongs = createAsyncThunk(
+  "api/fetchArtistSongs",
+  async ({ artistToken, category = 'latest', sortOrder = 'desc' }: { artistToken: any, category: string, sortOrder?: string }) => {
+    try {
 
+      const finalData: any = {};
+      let params = `${fromToken}&type=artist&p=&n_song=50&n_album=50&sub_type=&category=${category}&sort_order=${sortOrder}&includeMetaTags=0&token=${artistToken}`;
+
+      const encodedUrl = encodeURIComponent(`${baseUrl}${homeEndpoint}&${params}`);
+      const response = await axios.get(`/api/proxy?url=${encodedUrl}`);
+      console.log(response)
+      if (response.status === 200) {
+        const getMain = response.data;
+        const topSongsResponseList = getMain['topSongs'] ?? [];
+        const latestReleaseResponseList = getMain['latest_release'] ?? [];
+        const topAlbumsResponseList = getMain['topAlbums'] ?? [];
+        const singlesResponseList = getMain['singles'] ?? [];
+        const dedicatedResponseList = getMain['dedicated_artist_playlist'] ?? [];
+        const featuredResponseList = getMain['featured_artist_playlist'] ?? [];
+        const similarArtistsResponseList = getMain['similarArtists'] ?? [];
+
+        const topSongsSearchedList = await formatSongsResponse(topSongsResponseList, 'song');
+        if (topSongsSearchedList.length > 0) {
+          finalData[getMain.modules?.topSongs?.title?.toString() ?? 'Top Songs'] = topSongsSearchedList;
+        }
+
+        const latestReleaseSearchedList = await formatArtistTopAlbumsResponse(latestReleaseResponseList);
+        if (latestReleaseSearchedList.length > 0) {
+          finalData[getMain.modules?.latest_release?.title?.toString() ?? 'Latest Releases'] = latestReleaseSearchedList;
+        }
+
+        const topAlbumsSearchedList = await formatArtistTopAlbumsResponse(topAlbumsResponseList);
+        if (topAlbumsSearchedList.length > 0) {
+          finalData[getMain.modules?.topAlbums?.title?.toString() ?? 'Top Albums'] = topAlbumsSearchedList;
+        }
+
+        const singlesSearchedList = await formatArtistTopAlbumsResponse(singlesResponseList);
+        if (singlesSearchedList.length > 0) {
+          finalData[getMain.modules?.singles?.title?.toString() ?? 'Singles'] = singlesSearchedList;
+        }
+
+        const dedicatedSearchedList = await formatArtistTopAlbumsResponse(dedicatedResponseList);
+        if (dedicatedSearchedList.length > 0) {
+          finalData[getMain.modules?.dedicated_artist_playlist?.title?.toString() ?? 'Dedicated Playlists'] = dedicatedSearchedList;
+        }
+
+        const featuredSearchedList = await formatArtistTopAlbumsResponse(featuredResponseList);
+        if (featuredSearchedList.length > 0) {
+          finalData[getMain.modules?.featured_artist_playlist?.title?.toString() ?? 'Featured Playlists'] = featuredSearchedList;
+        }
+
+        const similarArtistsSearchedList = await formatSimilarArtistsResponse(similarArtistsResponseList);
+        if (similarArtistsSearchedList.length > 0) {
+          finalData[getMain.modules?.similarArtists?.title?.toString() ?? 'Similar Artists'] = similarArtistsSearchedList;
+        }
+      }
+      return finalData;
+
+    } catch (error) {
+      console.error(error);
+    }
+  });
 
 
 export const getSongFromToken = createAsyncThunk(
@@ -135,7 +198,16 @@ const apiSlice = createSlice({
         state.isLoading = false;
         state.error = action.error.message != null ? action.error.message : "";
       })
-      
+      .addCase(fetchArtistSongs.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(fetchArtistSongs.fulfilled, (state, action) => {
+        state.artistData = action.payload;
+      })
+      .addCase(fetchArtistSongs.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message != null ? action.error.message : "";
+      })
 
   },
 });

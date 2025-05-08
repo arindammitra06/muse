@@ -1,12 +1,11 @@
 'use client'
 
-import AlbumList from '@/components/AlbumList/albumlist';
 import { nprogress } from '@mantine/nprogress';
 import { useEffect, useState } from 'react';
-import { ActionIcon, Avatar, Badge, Box, Group, ScrollArea, Text, Stack, Title, useMantineTheme, Flex, Image, rem, Button, Divider, Skeleton } from '@mantine/core';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchAlbumSongs, fetchFeaturedRadio, fetchHomePageData, fetchPlaylistSongs, getSongFromToken } from '@/store/slices/jio.slice';
-import { IconArrowLeft, IconChevronLeft, IconDots, IconDotsVertical, IconDownload, IconHeart, IconPlayerPlay, IconShare } from '@tabler/icons-react';
+import { Box, Group, Text, Stack, useMantineTheme, Flex, Image, Button, Skeleton } from '@mantine/core';
+import { useAppDispatch } from '@/store/hooks';
+import { fetchAlbumSongs, fetchFeaturedRadio, fetchPlaylistSongs } from '@/store/slices/jio.slice';
+import { IconDownload, IconPlayerPlay } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { SkeletonSongBar, SongBar } from '@/components/SongBar/SongBar';
 
@@ -15,7 +14,7 @@ export default function AlbumDetailsPage({ params }: { params: { albumid: string
   const theme = useMantineTheme();
   const [albumData, setAlbumData] = useState<any>(null);
   const router = useRouter();
-  const { automaticPlaylist } = useAppSelector((state) => state.playlist);
+
   const handleBack = () => {
     router.back();
   };
@@ -25,7 +24,6 @@ export default function AlbumDetailsPage({ params }: { params: { albumid: string
   }, [params]);
 
 
-console.log(albumData)
   
 
   function fetchCall() {

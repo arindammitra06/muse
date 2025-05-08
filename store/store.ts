@@ -6,7 +6,7 @@ import { persistReducer, persistStore } from 'redux-persist';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['user', 'search']
+  whitelist: ['user', 'search',  'settings', 'theme', 'player', 'playlist']
 }
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 

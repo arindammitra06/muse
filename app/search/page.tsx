@@ -19,7 +19,6 @@ export default function SearchPage() {
   const [query, setQuery] = useState('');
 
 
-
   
     useEffect(() => {
       nprogress.reset();
@@ -60,7 +59,7 @@ export default function SearchPage() {
            }}>
           <TextInput ref={focusTrapRef}
             placeholder="Type songs, albums or artists and press Enter"
-            leftSection={<IconSearch size={20} color={theme.primaryColor} />}
+            leftSection={<IconSearch size={20} color={theme.colors[theme.primaryColor][5]} />}
             size="md"
             variant="filled"
             radius="sm"

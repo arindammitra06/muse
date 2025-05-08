@@ -7,15 +7,16 @@ import { IconDownload, IconDotsVertical } from "@tabler/icons-react"
 import { PlayingIndicator } from '../SongBar/SongBar';
 import { useRouter } from 'next/navigation';
 import { downloadFile } from '@/utils/fileutil';
-
+import toast from 'react-hot-toast';
 
 export interface SearchResultSongBarProps {
     idx: string;
     song: any;
     type: string;
+    title: string
 }
 
-export const SearchResultSongBar = ({ idx, song, type }: SearchResultSongBarProps) => {
+export const SearchResultSongBar = ({ idx, song, type, title }: SearchResultSongBarProps) => {
     const dispatch = useAppDispatch();
     const theme = useMantineTheme();
     const { playlist, currentTrackIndex, isPlaying } = useAppSelector(s => s.player);
@@ -24,18 +25,23 @@ export const SearchResultSongBar = ({ idx, song, type }: SearchResultSongBarProp
 
 
     const handleClick = () => {
-        if(type==='song'){
-            playSongAndAddToPlaylist(song);
-          }else{
-            console.log(song);
+        if (title === 'Top Result' || title === 'Artists') {
+            toast.error('Top Results & Artist coming soon')
             
-            if(type==='artist'){
-                router.push(`/${type}/${idx}/${song.title}`);
-            }else{
-                router.push(`/${type}/${idx}/`);
+        } else {
+            if (type === 'song') {
+                playSongAndAddToPlaylist(song);
+            } else {
+                console.log(song);
+
+                if (type === 'artist') {
+                    router.push(`/${type}/${idx}/${song.title}`);
+                } else {
+                    router.push(`/${type}/${idx}/`);
+                }
             }
-            
-          }
+        }
+
     };
 
     function playSongAndAddToPlaylist(song: any): void {
@@ -52,7 +58,7 @@ export const SearchResultSongBar = ({ idx, song, type }: SearchResultSongBarProp
 
                             if (currentPlayingTrack !== null && currentPlayingTrack !== undefined
                                 && songs[0] !== null && songs[0] !== undefined && isPlaying && currentPlayingTrack.id === songs[0].id) {
-                                   // seekTo(0);
+                                // seekTo(0);
                             } else {
                                 dispatch(playTrack(songs[0]));
                             }
@@ -67,13 +73,15 @@ export const SearchResultSongBar = ({ idx, song, type }: SearchResultSongBarProp
 
 
     return (
-        <Flex ml={'xs'}  onClick={handleClick} mb={10} style={{cursor: 'pointer'}}>
-            
+        <Flex ml={'xs'} onClick={handleClick} mb={10} style={{ cursor: 'pointer' }}>
+
             <Group gap="xs" wrap="nowrap" style={{ flex: 1, minWidth: 0 }}>
-                
+
                 <Box pos="relative" >
                     <Paper shadow='sm'>
-                        <Image src={song.image} radius="md" w={50} h={50} />
+                        <Image src={song.image} 
+                        style={{filter: title === 'Top Result' || title === 'Artists' ? 'grayscale(100%)' : 'none'}}
+                        radius="md" w={50} h={50} />
                     </Paper>
                 </Box>
 
@@ -87,14 +95,14 @@ export const SearchResultSongBar = ({ idx, song, type }: SearchResultSongBarProp
                     </Text>
                     <Text tt="capitalize" size="xs" c={currentPlayingTrack !== null && currentPlayingTrack !== undefined && song !== null && song !== undefined && isPlaying && currentPlayingTrack.id === song.id ? theme.primaryColor : 'dimmed'}
                         style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {song.type==='artist' ? song.type : `${song.subtitle} • ${song.year!==null && song.year!==undefined ? song.year : song.count}`}
+                        {song.type === 'artist' ? song.type : `${song.subtitle} • ${song.year !== null && song.year !== undefined ? song.year : song.count}`}
                     </Text>
                 </Box>
             </Group>
 
 
             <Group gap="xs" wrap="nowrap">
-                {song.type==='song' && <ActionIcon variant="subtle" color="gray" onClick={()=>downloadFile(song.url!, song.title!)}>
+                {song.type === 'song' && <ActionIcon variant="subtle" color="gray" onClick={() => downloadFile(song.url!, song.title!)}>
                     <IconDownload size={20} />
                 </ActionIcon>}
                 <ActionIcon variant="subtle" color="gray">

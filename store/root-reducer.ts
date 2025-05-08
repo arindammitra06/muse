@@ -5,6 +5,7 @@ import { themeReducer } from './slices/theme.slice';
 import { playlistReducer } from './slices/playlist.slice';
 import { playerReducer } from './slices/player.slice';
 import { searchReducer } from './slices/search.slice';
+import { settingsReducer } from './slices/settings.slice';
 
 const rootReducer = combineReducers({
   // Add your reducers here
@@ -13,7 +14,8 @@ const rootReducer = combineReducers({
   theme:themeReducer,
   player: playerReducer,
   playlist: playlistReducer,
-  search: searchReducer
+  search: searchReducer,
+  settings: settingsReducer
 });
 
 export default rootReducer;

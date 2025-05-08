@@ -7,6 +7,7 @@ import { Box, Group, Image, Text, Slider, ActionIcon, Card, Flex, useMantineThem
 import { useDisclosure } from '@mantine/hooks';
 import { Marquee } from '@gfazioli/mantine-marquee';
 import '@gfazioli/mantine-marquee/styles.layer.css';
+import musicPlaceholder from '../../assets/images/music_placeholder.png';
 
 
 import { IconArrowsShuffle, IconChevronDown, IconChevronLeft, IconDotsVertical, IconDownload, IconPlayerPause, IconPlayerPauseFilled, IconPlayerPlay, IconPlayerPlayFilled, IconPlayerSkipBack, IconPlayerSkipBackFilled, IconPlayerSkipForward, IconPlayerSkipForwardFilled, IconRepeat, IconRepeatOnce, IconShare } from '@tabler/icons-react';
@@ -85,9 +86,8 @@ export function NowPlayingBar() {
             {opened && (
               <Center>
                 <Stack align="center" gap="4" w="100%" px="md" py="sm">
-                  {/* Image */}
                   <Image
-                    src={currentTrack.image}
+                    src={currentTrack?.image || musicPlaceholder.src}
                     w={350}
                     h={350}
                     radius="md"
@@ -96,7 +96,7 @@ export function NowPlayingBar() {
 
                   {currentTrack !== null && currentTrack.title !== undefined &&
                     currentTrack.title !== null && currentTrack.title !== undefined && currentTrack.title.length > 20
-                    ? <Marquee w='100%' fadeEdges pauseOnHover duration={20} my={'xl'}>
+                    ? <Marquee w='100%' fadeEdges pauseOnHover duration={30} my={'xl'}>
                       <Text fw={700} size="32px" ta={'center'} style={{ whiteSpace: 'nowrap' }}>
                         {currentTrack.title}
                       </Text>
@@ -222,7 +222,7 @@ export function NowPlayingBar() {
         <Flex justify="space-between" align="center" p={'xs'} style={{ flex: 1, minWidth: 0 }}>
           <Group wrap="nowrap" style={{ flex: 1, minWidth: 0 }}>
             <Image
-              src={currentTrack?.image || 'https://w7.pngwing.com/pngs/697/346/png-transparent-computer-icons-apple-music-apple-text-rectangle-logo-thumbnail.png'}
+              src={currentTrack?.image || musicPlaceholder.src}
               radius="md"
               w={48}
               h={48}

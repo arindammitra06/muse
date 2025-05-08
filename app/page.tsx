@@ -32,7 +32,8 @@ export default function HomePage() {
 
 
   return (
-    <><SimpleGrid cols={1} spacing="xs" verticalSpacing="xs">
+    <>
+    <SimpleGrid cols={1} spacing="xs" verticalSpacing="xs" mb={100}>
       {
         homedata !== null && homedata !== undefined &&
           homedata.modules !== null && homedata.modules !== undefined ?

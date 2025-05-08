@@ -2,24 +2,18 @@
 
 import AlbumList from '@/components/AlbumList/albumlist';
 import { nprogress } from '@mantine/nprogress';
-import { useEffect, useState } from 'react';
-import { ActionIcon, Avatar, Badge, Box, Group, ScrollArea, Text, Stack, Title, useMantineTheme, Flex, Image, rem, Button, Divider, Skeleton } from '@mantine/core';
+import { useEffect } from 'react';
+import { Box, useMantineTheme } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchAlbumSongs, fetchFeaturedRadio, fetchHomePageData, fetchPlaylistSongs, getSongFromToken } from '@/store/slices/jio.slice';
-import { IconArrowLeft, IconChevronLeft, IconDots, IconDotsVertical, IconDownload, IconHeart, IconPlayerPlay, IconShare } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
-import { SkeletonSongBar, SongBar } from '@/components/SongBar/SongBar';
+import { fetchArtistSongs } from '@/store/slices/jio.slice';
+import React from 'react';
+import HomePageSkeleton from '@/components/Skeletons/HomeSkeleton';
 
 export default function ArtistDetailsPage({ params }: { params: { albumid: string, type: string , singername:string} }) {
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
-  const [albumData, setAlbumData] = useState<any>(null);
-  const router = useRouter();
-  const { automaticPlaylist } = useAppSelector((state) => state.playlist);
-  const handleBack = () => {
-    router.back();
-  };
-
+  const artistData = useAppSelector((state) => state.api.artistData);
+  
   useEffect(() => {
     fetchCall();
   }, [params]);
@@ -33,13 +27,12 @@ export default function ArtistDetailsPage({ params }: { params: { albumid: strin
     nprogress.start();
     
     if (params.type === 'artist') {
-      dispatch(fetchFeaturedRadio({ names:[decodeURIComponent(params.singername)], 
-                                    stationType:params.type , 
-                                    language:'hindi' }))
+      dispatch(fetchArtistSongs({ artistToken:[decodeURIComponent(params.singername)], 
+        category:'latest' , 
+        sortOrder:'desc' }))
         .then((res: any) => {
           console.log(res)
           nprogress.complete();
-          setAlbumData(res.payload);
         });
 
     }
@@ -50,10 +43,23 @@ export default function ArtistDetailsPage({ params }: { params: { albumid: strin
 
   return (
     <Box p="sm"  style={{ minHeight: '100vh',}}>
-      
+      {
+        artistData !== null && artistData !== undefined &&
+        artistData.modules !== null && artistData.modules !== undefined ?
+          <div>
+            {(Object.entries(artistData.modules) as [keyof any, any[keyof any]][]).map(([key, value]) => (
+
+              <AlbumList key={String(key)}
+                name={value.title} subtitle={value.subtitle}
+                list={artistData[String(key)]} />
+            ))}
+          </div>
+          :
+          <HomePageSkeleton />
+      }
       
 
-      <Flex gap="md" align="center" mb="md" wrap="nowrap" style={{ flex: 1, minWidth: 0 }}>
+      {/* <Flex gap="md" align="center" mb="md" wrap="nowrap" style={{ flex: 1, minWidth: 0 }}>
           <Skeleton w={200} h={150}  visible={albumData === null || albumData === undefined}>
             <Image src={albumData !== null && albumData !== undefined && albumData.image} radius="md" w={150} h={150} />
           </Skeleton>
@@ -107,7 +113,7 @@ export default function ArtistDetailsPage({ params }: { params: { albumid: strin
         :
         <SkeletonSongBar count={8}/>
         }
-      </Stack> 
+      </Stack>  */}
     </Box>
   );
 }

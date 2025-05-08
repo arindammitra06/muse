@@ -14,7 +14,22 @@ export const topSearches ='__call=content.getTopSearches';
 import CryptoJS from 'crypto-js';
 
 
-
+export const languages = ['Hindi',
+    'English',
+    'Punjabi',
+    'Tamil',
+    'Telugu',
+    'Marathi',
+    'Gujarati',
+    'Bengali',
+    'Kannada',
+    'Bhojpuri',
+    'Malayalam',
+    'Urdu',
+    'Haryanvi',
+    'Rajasthani',
+    'Odia',
+    'Assamese',];
 type AnyMap = Record<string, any>;
 type AlbumType = 'album' | 'artist' | 'playlist' | 'show';
 const key = '38346591'; // Must be exactly 8 bytes for DES
@@ -325,6 +340,108 @@ function resolveArtist(response: AnyMap): string {
   const music = response.more_info?.music;
   return music ? unescape(music.toString()) : '';
 }
+
+export async function formatArtistTopAlbumsResponse(
+  responseList: any[],
+): Promise<any[]> {
+  const result: any[] = [];
+
+  for (let i = 0; i < responseList.length; i++) {
+    const response = await formatSingleArtistTopAlbumSongResponse(responseList[i]);
+
+    if ('Error' in response) {
+      console.error(
+        `Error at index ${i} inside formatArtistTopAlbumsResponse: ${response.Error}`,
+      );
+    } else {
+      result.push(response);
+    }
+  }
+
+  return result;
+}
+
+export async function formatSingleArtistTopAlbumSongResponse(
+  response: any,
+): Promise<any> {
+  try {
+    const artistNames: string[] = [];
+
+    const artistMap = response.more_info?.artistMap;
+
+    if (!artistMap?.primary_artists?.length) {
+      if (!artistMap?.featured_artists?.length) {
+        if (!artistMap?.artists?.length) {
+          artistNames.push('Unknown');
+        } else {
+          artistMap.artists.forEach((el: { name: string; }) => artistNames.push(el.name));
+        }
+      } else {
+        artistMap.featured_artists.forEach((el: { name: string; }) => artistNames.push(el.name));
+      }
+    } else {
+      artistMap.primary_artists.forEach((el: { name: string; }) => artistNames.push(el.name));
+    }
+
+    return {
+      id: response.id,
+      type: response.type,
+      album: unescape(response.title),
+      year: response.year,
+      language: response.language,
+      genre: response.language,
+      album_id: response.id,
+      subtitle: unescape(response.subtitle),
+      title: unescape(response.title),
+      artist: unescape(artistNames.join(', ')),
+      album_artist: response.more_info?.music ?? response.music ?? '',
+      image: getImageUrl(response.image),
+    };
+  } catch (e) {
+    console.error(`Error inside formatSingleArtistTopAlbumSongResponse: ${e}`);
+    return { Error: e };
+  }
+}
+
+
+export async function formatSimilarArtistsResponse(
+  responseList: any[],
+): Promise<(any | { Error: unknown })[]> {
+  const result: (any | { Error: unknown })[] = [];
+
+  for (let i = 0; i < responseList.length; i++) {
+    const response = await formatSingleSimilarArtistResponse(responseList[i]);
+
+    if ('Error' in response) {
+      console.error(`Error at index ${i} inside formatSimilarArtistsResponse: ${response.Error}`);
+    } else {
+      result.push(response);
+    }
+  }
+
+  return result;
+}
+
+export async function formatSingleSimilarArtistResponse(
+  response: any,
+): Promise<any | { Error: unknown }> {
+  try {
+    return {
+      id: response.id,
+      type: response.type,
+      artist: unescape(response.name),
+      title: unescape(response.name),
+      subtitle: response.dominantType,
+      image: getImageUrl(response.image_url),
+      artistToken: response.perma_url.split('/').pop() ?? '',
+      perma_url: response.perma_url,
+    };
+  } catch (e) {
+    console.error(`Error inside formatSingleSimilarArtistResponse: ${e}`);
+    return { Error: e };
+  }
+}
+
 
 export function unescapeHTML(str: string): string {
   return str.replace(/&amp;/g, '&')

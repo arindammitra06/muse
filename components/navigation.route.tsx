@@ -1,10 +1,13 @@
 'use client'
-import { AppShell, ActionIcon, Box, TextInput, Transition, useMantineTheme, Paper, Flex } from '@mantine/core';
+import { AppShell, ActionIcon, Box, TextInput, Transition, useMantineTheme, Paper, Flex, Burger, Skeleton } from '@mantine/core';
 import { ReactNode, useEffect, useState } from 'react';
 import { AppLogo } from './Common/custom-logo.component';
 import { IconSearch, IconX } from '@tabler/icons-react';
 import { NowPlayingBar } from './NowPlaying/NowPlayingBar';
 import { usePathname, useRouter } from 'next/navigation';
+import { useDisclosure } from '@mantine/hooks';
+import { NavbarMinimal } from './Navbar/NavbarMinimal';
+import { FadingWeightLogo } from './Common/FadingWeightLogo';
 export interface NavigationProps {
   children: ReactNode;
 };
@@ -14,9 +17,13 @@ export default function Navigation({ children }: NavigationProps) {
   const [isSticky, setIsSticky] = useState(false);
   const theme = useMantineTheme();
   const router = useRouter();
+  const [opened, { toggle }] = useDisclosure();
+
+
   const handleBack = () => {
-    router.back();
+    router.push('/');
   };
+  
   useEffect(() => {
     const handleScroll = () => {
       if (pathname === '/') {
@@ -35,6 +42,7 @@ export default function Navigation({ children }: NavigationProps) {
   return (
     <AppShell
       header={{ height: 60 }}
+      navbar={{ width: 50, breakpoint: 'sm', collapsed: { mobile: !opened } }}
       padding="0"
     >
 
@@ -44,19 +52,22 @@ export default function Navigation({ children }: NavigationProps) {
           justify="space-between"
           align="center"
           h="100%"
-          px="md"
+          px="xs"
         >
-          <AppLogo logoPath={''} alt={''} size={''} />
-
+           <Flex justify="flex-start" align="flex-start" p={0}>
+            <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" mt={10} mr={10}/>
+            <FadingWeightLogo text="muse" />
+          </Flex>
           <Flex justify="flex-end" align="flex-end" w="100%">
               <Transition mounted={isSticky} transition="slide-up" duration={200}>
               {(styles) => (
                 pathname === '/' ? <Box ml="auto" style={styles} maw={300} w="100%">
                   <Paper shadow="md" p={0} style={{ boxShadow: '0 4px 12px rgba(93, 92, 92, 0.3)' }}>
                     <TextInput
+                      readOnly
                       onClick={() => router.push(`/search`)}
                       placeholder="Songs, albums or artists"
-                      leftSection={<IconSearch size={20} color={theme.primaryColor} />}
+                      leftSection={<IconSearch size={20} color={theme.colors[theme.primaryColor][5]} />}
                       size="sm"
                       variant="filled"
                       radius="sm"
@@ -73,26 +84,19 @@ export default function Navigation({ children }: NavigationProps) {
           </Flex>
         </Flex>
 
-
-
-        {/* <ThemeDropdown />
-          <ActionIcon
-            onClick={() => setColorScheme(computedColorScheme === 'light' ? 'dark' : 'light')}
-            variant="subtle"
-            size="md"
-            aria-label="Toggle color scheme"
-          >
-            <IconSunFilled className={cx(classes.icon, classes.light)} stroke={1.5} />
-            <IconMoonFilled className={cx(classes.icon, classes.dark)} stroke={1.5} />
-          </ActionIcon> */}
       </AppShell.Header>
+      <AppShell.Navbar p="0" w={50}>
+        <NavbarMinimal toggle={toggle}/>
+      </AppShell.Navbar>
+      
       <AppShell.Main>
         {pathname === '/' && (
           <Paper shadow="md" p={0} m={'xs'} style={{ boxShadow: '0 4px 12px rgba(93, 92, 92, 0.3)' }}>
             <TextInput
+              readOnly
               onClick={() => router.push(`/search`)}
               placeholder="Songs, albums or artists"
-              leftSection={<IconSearch size={20} color={theme.primaryColor} />}
+              leftSection={<IconSearch size={20} color={theme.colors[theme.primaryColor][5]} />}
               size="md"
               variant="filled"
               radius="sm"
@@ -101,8 +105,10 @@ export default function Navigation({ children }: NavigationProps) {
         )}
 
         {children}
+           
       </AppShell.Main>
-      <AppShell.Footer style={{ padding: '0px', borderTop: '0px' }}>
+      <AppShell.Footer ml={{ base: 0, sm: '50px' }} style={{ padding: '0px', borderTop: '0px' }}>
+                  
         <NowPlayingBar />
       </AppShell.Footer>
     </AppShell>
