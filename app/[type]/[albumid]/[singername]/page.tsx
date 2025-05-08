@@ -2,32 +2,40 @@
 
 import AlbumList from '@/components/AlbumList/albumlist';
 import { nprogress } from '@mantine/nprogress';
-import { useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import { Box, useMantineTheme } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchArtistSongs } from '@/store/slices/jio.slice';
 import React from 'react';
 import HomePageSkeleton from '@/components/Skeletons/HomeSkeleton';
-
-export default function ArtistDetailsPage({ params }: { params: { albumid: string, type: string , singername:string} }) {
+type PageProps = {
+  params: {
+    type: string;
+    albumid: string;
+    singername: string;
+  };
+};
+export const  ArtistDetailsPage: FC<PageProps> = ({ params }) => {
+ 
+  const { type, albumid, singername } = params;
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
   const artistData = useAppSelector((state) => state.api.artistData);
   
   useEffect(() => {
     fetchCall();
-  }, [params]);
+  }, [type,albumid,singername]);
 
 
-  console.log(decodeURIComponent(params.singername))
+  console.log(decodeURIComponent(singername))
   
 
   function fetchCall() {
     nprogress.reset();
     nprogress.start();
     
-    if (params.type === 'artist') {
-      dispatch(fetchArtistSongs({ artistToken:[decodeURIComponent(params.singername)], 
+    if (type === 'artist') {
+      dispatch(fetchArtistSongs({ artistToken:[decodeURIComponent(singername)], 
         category:'latest' , 
         sortOrder:'desc' }))
         .then((res: any) => {
