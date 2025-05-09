@@ -28,7 +28,6 @@ export const FadingWeightLogo: React.FC<FadingWeightLogoProps> = ({
             fontWeight: weights[index],
             fontSize: '2rem',
             transition: 'font-weight 0.3s',
-            fontFamily: 'Inter'
           }}
         >
           {char}

@@ -1,3 +1,4 @@
+'use client'
 
 import AlbumList from '@/components/AlbumList/albumlist';
 import { nprogress } from '@mantine/nprogress';
@@ -9,7 +10,7 @@ import React from 'react';
 import HomePageSkeleton from '@/components/Skeletons/HomeSkeleton';
 
 
-export default  function ArtistDetailsPage({
+export default function ArtistDetailsPage({
   params,
 }: {
   params: { type: string; albumid: string , singername: string;};
@@ -25,7 +26,6 @@ export default  function ArtistDetailsPage({
   }, [type,albumid,singername]);
 
 
-  console.log(decodeURIComponent(singername))
   
 
   function fetchCall() {

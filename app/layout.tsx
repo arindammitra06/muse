@@ -2,14 +2,12 @@
 import '@mantine/core/styles.css';
 
 import React from 'react';
-import { ColorSchemeScript, mantineHtmlProps, MantineProvider } from '@mantine/core';
+import { ColorSchemeScript, mantineHtmlProps } from '@mantine/core';
 import RootApp from '@/components/Root/root.route';
-import { Inter } from 'next/font/google'
+import { Inter,  } from 'next/font/google';
 
-const noto = Inter({
-  subsets: ['latin'],
-  display: 'swap', // optional
-})
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-ui' });
 
 // export const metadata = {
 //   title: 'Mantine Next.js template',
@@ -18,7 +16,7 @@ const noto = Inter({
 
 export default function RootLayout({ children }: { children: any }) {
   return (
-    <html lang="en" {...mantineHtmlProps}>
+    <html lang="en" {...mantineHtmlProps} className={`${inter.variable}`}>
       <head>
         <ColorSchemeScript />
         <link rel="shortcut icon" href="/favicon.svg" />
@@ -27,7 +25,7 @@ export default function RootLayout({ children }: { children: any }) {
           content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
         />
       </head>
-      <body className={noto.className}>
+      <body className={`${inter.className}`}>
         <RootApp>{children}</RootApp>
       </body>
     </html>

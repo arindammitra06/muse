@@ -3,17 +3,16 @@ import { nextTrack, play, pause, previousTrack, toggleRepeat, toggleShuffle, } f
 import { formatTime } from '@/utils/formatTime';
 import { setMediaSession } from '@/utils/mediaSession';
 import { useAudioPlayer } from '@/utils/useAudioPlayer';
-import { Box, Group, Image, Text, Slider, ActionIcon, Card, Flex, useMantineTheme, Modal, Center, Stack, Button, Title, ScrollArea, Drawer, rem } from '@mantine/core';
+import { Box, Group, Image, Text, Slider, ActionIcon, Card, Flex, useMantineTheme, Modal, Center, Stack, Button, Drawer, rem } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { Marquee } from '@gfazioli/mantine-marquee';
-import '@gfazioli/mantine-marquee/styles.layer.css';
+//import { Marquee } from '@gfazioli/mantine-marquee';
+//import '@gfazioli/mantine-marquee/styles.layer.css';
 import musicPlaceholder from '../../assets/images/music_placeholder.png';
 
 
-import { IconArrowsShuffle, IconChevronDown, IconChevronLeft, IconDotsVertical, IconDownload, IconPlayerPause, IconPlayerPauseFilled, IconPlayerPlay, IconPlayerPlayFilled, IconPlayerSkipBack, IconPlayerSkipBackFilled, IconPlayerSkipForward, IconPlayerSkipForwardFilled, IconRepeat, IconRepeatOnce, IconShare } from '@tabler/icons-react';
-import { SkeletonSongBar, SongBar } from '../SongBar/SongBar';
+import { IconArrowsShuffle, IconChevronDown, IconDotsVertical, IconDownload, IconPlayerPauseFilled, IconPlayerPlayFilled, IconPlayerSkipBackFilled, IconPlayerSkipForwardFilled, IconRepeat, IconRepeatOnce, IconShare } from '@tabler/icons-react';
+import { SkeletonSongBar } from '../SongBar/SongBar';
 import { PlaylistDndList } from '../SongBar/SortablePlaylist';
-import { useState, useEffect } from 'react';
 import { downloadFile } from '@/utils/fileutil';
 export function NowPlayingBar() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -96,11 +95,9 @@ export function NowPlayingBar() {
 
                   {currentTrack !== null && currentTrack.title !== undefined &&
                     currentTrack.title !== null && currentTrack.title !== undefined && currentTrack.title.length > 20
-                    ? <Marquee w='100%' fadeEdges pauseOnHover duration={30} my={'xl'}>
-                      <Text fw={700} size="32px" ta={'center'} style={{ whiteSpace: 'nowrap' }}>
+                    ? <Text fw={700} size="32px" ta={'center'} style={{ whiteSpace: 'nowrap' }}>
                         {currentTrack.title}
-                      </Text>
-                    </Marquee> :
+                      </Text> :
                     <Text my={'xl'} fw={700} size="32px" ta={'center'} style={{ whiteSpace: 'nowrap' }}>
                       {currentTrack.title}
                     </Text>
@@ -232,11 +229,9 @@ export function NowPlayingBar() {
               <Text size="md" fw={500} truncate>
                 {currentTrack?.title ?? 'No track playing'}
               </Text>
-              <Marquee w="100%" pauseOnHover duration={20}>
-                <Text size="xs" c="dimmed" truncate lineClamp={1}>
+              <Text size="xs" c="dimmed" truncate lineClamp={1}>
                   {currentTrack?.title ? `${currentTrack.subtitle} • ${currentTrack.year}` : ''}
                 </Text>
-              </Marquee>
 
 
             </Box>

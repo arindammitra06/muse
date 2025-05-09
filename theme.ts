@@ -194,14 +194,15 @@ export const orangeTheme: MantineThemeOverride = {
   },
   white: '#fff',
   black: '#000',
-  fontFamily: 'Inter',
-  fontFamilyMonospace: 'Inter',
+  fontFamily: 'var(--font-ui)',
+  fontFamilyMonospace: 'var(--font-ui)',
   defaultGradient: {
     from: 'blue',
     to: 'cyan',
     deg: 45
   },
   headings: {
+    fontFamily:'var(--font-ui)',
     fontWeight: '700',
     sizes: {
       h1: {
@@ -460,6 +461,7 @@ const redTheme: MantineThemeOverride = {
     deg: 45
   },
   headings: {
+    fontFamily:'var(--font-ui)',
     fontWeight: '700',
     sizes: {
       h1: {
@@ -509,8 +511,8 @@ const redTheme: MantineThemeOverride = {
     lg: '1.25rem',
     xl: '2rem'
   },
-  fontFamily: 'Inter',
-  fontFamilyMonospace: 'Inter',
+  fontFamily: 'var(--font-ui)',
+  fontFamilyMonospace: 'var(--font-ui)',
   
   defaultRadius: 'md',
   breakpoints: {
@@ -732,6 +734,7 @@ const seaTheme: MantineThemeOverride = {
     deg: 45
   },
   headings: {
+    fontFamily:'var(--font-ui)',
     fontWeight: '700',
     sizes: {
       h1: {
@@ -781,8 +784,8 @@ const seaTheme: MantineThemeOverride = {
     lg: '1.25rem',
     xl: '2rem'
   },
-  fontFamily: 'Inter',
-  fontFamilyMonospace: 'Inter',
+  fontFamily: 'var(--font-ui)',
+  fontFamilyMonospace: 'var(--font-ui)',
   
   defaultRadius: 'md',
   breakpoints: {
@@ -1005,6 +1008,7 @@ const mossTheme: MantineThemeOverride = {
     deg: 45
   },
   headings: {
+    fontFamily:'var(--font-ui)',
     fontWeight: '700',
     sizes: {
       h1: {
@@ -1054,8 +1058,8 @@ const mossTheme: MantineThemeOverride = {
     lg: '1.25rem',
     xl: '2rem'
   },
-  fontFamily: 'Inter',
-  fontFamilyMonospace: 'Inter',
+  fontFamily: 'var(--font-ui)',
+  fontFamilyMonospace: 'var(--font-ui)',
   
   defaultRadius: 'md',
   breakpoints: {
@@ -1278,6 +1282,7 @@ const blackedTheme: MantineThemeOverride = {
     deg: 45
   },
   headings: {
+    fontFamily:'var(--font-ui)',
     fontWeight: '700',
     sizes: {
       h1: {
@@ -1327,8 +1332,8 @@ const blackedTheme: MantineThemeOverride = {
     lg: '1.25rem',
     xl: '2rem'
   },
-  fontFamily: 'Inter',
-  fontFamilyMonospace: 'Inter',
+  fontFamily: 'var(--font-ui)',
+  fontFamilyMonospace: 'var(--font-ui)',
   
   defaultRadius: 'md',
   breakpoints: {

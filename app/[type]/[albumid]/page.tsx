@@ -6,7 +6,6 @@ import { Box, Group, Text, Stack, useMantineTheme, Flex, Image, Button, Skeleton
 import { useAppDispatch } from '@/store/hooks';
 import { fetchAlbumSongs, fetchFeaturedRadio, fetchPlaylistSongs } from '@/store/slices/jio.slice';
 import { IconDownload, IconPlayerPlay } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
 import { SkeletonSongBar, SongBar } from '@/components/SongBar/SongBar';
 
 
@@ -15,7 +14,7 @@ export default function AlbumDetailsPage({
 }: {
   params: { type: string; albumid: string };
 }) {
-  const { type, albumid } = params;
+  const { type, albumid } =  params;
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
   const [albumData, setAlbumData] = useState<any>(null);
