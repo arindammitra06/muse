@@ -1482,12 +1482,12 @@
   dependencies:
     buffer "^6.0.3"
 
-"@mantine/carousel@^7.17.5":
+"@mantine/carousel@7.17.5":
   version "7.17.5"
   resolved "https://registry.npmjs.org/@mantine/carousel/-/carousel-7.17.5.tgz"
   integrity sha512-hyBLyZNoXdXn6/JzLqJ9dmRXp/6TXYRO3QpwHBmyDPoF/oeW+qDlsVyk2RWjWwWehkfKuR2tkDV6bv7ykMlDOA==
 
-"@mantine/core@>=7.0.0", "@mantine/core@7.17.5", "@mantine/core@8.0.0":
+"@mantine/core@>=7.0.0", "@mantine/core@7.17.5":
   version "7.17.5"
   resolved "https://registry.npmjs.org/@mantine/core/-/core-7.17.5.tgz"
   integrity sha512-66g/lr281cDPfucjtPw8gFo/yNS9G5iSKqysvPGuDpUBG2bEw8FsJMIsU0bMXtravToIpa3vJRrFUuPndPGnpQ==
@@ -1499,17 +1499,17 @@
     react-textarea-autosize "8.5.9"
     type-fest "^4.27.0"
 
-"@mantine/hooks@>=7.0.0", "@mantine/hooks@7.17.5", "@mantine/hooks@8.0.0":
+"@mantine/hooks@>=7.0.0", "@mantine/hooks@7.17.5":
   version "7.17.5"
   resolved "https://registry.npmjs.org/@mantine/hooks/-/hooks-7.17.5.tgz"
   integrity sha512-Q/3AHI1fjl+W7xQ3jEoMmSoTxLqxMI2gPfxIjd73OPmRpPenYWR1zk/diirXXm2t7JOrAbmpA3/O1gzmgqzc/Q==
 
-"@mantine/modals@^8.0.0":
-  version "8.0.0"
-  resolved "https://registry.npmjs.org/@mantine/modals/-/modals-8.0.0.tgz"
-  integrity sha512-yki3KzW9Pykf6hVSezWjeHC0FCiYD3mK2r2Sn6qE0ag+EeXZs1cbrqpjZHYov2rh6j0xzW2jnaoVbKEqYw1vUQ==
+"@mantine/modals@7.17.5":
+  version "7.17.5"
+  resolved "https://registry.npmjs.org/@mantine/modals/-/modals-7.17.5.tgz"
+  integrity sha512-K2rKBkQmndZzL+uPBpQ54qcGwAL1f78ipucQt0Dhf5i252NTBaQVWrRRbPSL0KQQqtK+9TSaV5C8rQ4O9EKUjw==
 
-"@mantine/nprogress@^7.17.5":
+"@mantine/nprogress@7.17.5":
   version "7.17.5"
   resolved "https://registry.npmjs.org/@mantine/nprogress/-/nprogress-7.17.5.tgz"
   integrity sha512-mZMVeMsRz8MQtlklIuFVg/CxSWpV6lmncprX46QoCZFaxMqc0T7a0wgp13aakc/wvHD3FCrfSJ39jeFBSGqufg==
@@ -3784,7 +3784,7 @@ elliptic@^6.5.3, elliptic@^6.5.5:
     minimalistic-assert "^1.0.1"
     minimalistic-crypto-utils "^1.0.1"
 
-embla-carousel-react@>=7.0.0:
+embla-carousel-react@^8.6.0, embla-carousel-react@>=7.0.0:
   version "8.6.0"
   resolved "https://registry.npmjs.org/embla-carousel-react/-/embla-carousel-react-8.6.0.tgz"
   integrity sha512-0/PjqU7geVmo6F734pmPqpyHqiM99olvyecY7zdweCw+6tKEXnrE90pBiBbMMU8s5tICemzpQ3hi5EpxzGW+JA==
@@ -8592,10 +8592,10 @@ webpack-virtual-modules@^0.6.0:
   resolved "https://registry.npmjs.org/webpack-virtual-modules/-/webpack-virtual-modules-0.6.2.tgz"
   integrity sha512-66/V2i5hQanC51vBQKPH4aI8NMAcBW59FVBs+rC7eGHupMyfn34q7rZIE+ETlJ+XTevqfUhVVBgSUNSW2flEUQ==
 
-webpack@^5.0.0, webpack@^5.1.0, webpack@^5.11.0, webpack@^5.20.0, "webpack@>= 4", "webpack@>=4.43.0 <6.0.0", webpack@>=5, webpack@>=5.61.0, webpack@5:
-  version "5.99.7"
-  resolved "https://registry.npmjs.org/webpack/-/webpack-5.99.7.tgz"
-  integrity sha512-CNqKBRMQjwcmKR0idID5va1qlhrqVUKpovi+Ec79ksW8ux7iS1+A6VqzfZXgVYCFRKl7XL5ap3ZoMpwBJxcg0w==
+webpack@^5.0.0, webpack@^5.1.0, webpack@^5.11.0, webpack@^5.20.0, webpack@^5.99.8, "webpack@>= 4", "webpack@>=4.43.0 <6.0.0", webpack@>=5, webpack@>=5.61.0, webpack@5:
+  version "5.99.8"
+  resolved "https://registry.npmjs.org/webpack/-/webpack-5.99.8.tgz"
+  integrity sha512-lQ3CPiSTpfOnrEGeXDwoq5hIGzSjmwD72GdfVzF7CQAI7t47rJG9eDWvcEkEn3CUQymAElVvDg3YNTlCYj+qUQ==
   dependencies:
     "@types/eslint-scope" "^3.7.7"
     "@types/estree" "^1.0.6"
