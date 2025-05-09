@@ -19,6 +19,7 @@ export default function RootLayout({ children }: { children: any }) {
     <html lang="en" {...mantineHtmlProps} className={`${inter.variable}`}>
       <head>
         <ColorSchemeScript />
+        <link rel="manifest" href="/manifest.json" />
         <link rel="shortcut icon" href="/favicon.svg" />
         <meta
           name="viewport"
