@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Howl } from 'howler';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { nextTrack } from '@/store/slices/player.slice';
+import { nextTrack, previousTrack, play as playS, pause as pauseS } from '@/store/slices/player.slice';
 
 export function useAudioPlayer() {
   const dispatch = useAppDispatch();
@@ -35,6 +35,30 @@ export function useAudioPlayer() {
         interval.current = setInterval(() => {
           setSeek(soundRef.current?.seek() as number);
         }, 1000);
+        if ('mediaSession' in navigator && currentTrack) {
+          navigator.mediaSession.metadata = new MediaMetadata({
+            title: currentTrack.title ?? '',
+            artist: currentTrack.artist ?? '',
+            album: currentTrack.album ?? '',
+            artwork: [
+              { src: currentTrack.image ?? '', sizes: '512x512', type: 'image/png' },
+            ],
+          });
+      
+          navigator.mediaSession.setActionHandler('nexttrack', () => {
+            dispatch(nextTrack());
+          });
+          navigator.mediaSession.setActionHandler('previoustrack', () => {
+            dispatch(previousTrack());
+          });
+          navigator.mediaSession.setActionHandler('play', () => {
+            dispatch(playS());
+          });
+          navigator.mediaSession.setActionHandler('pause', () => {
+            dispatch(pauseS());
+          });
+        }
+        
       },
       onend: () => {
         if (interval.current !== null) {
