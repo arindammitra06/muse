@@ -1,5 +1,6 @@
 import React from 'react';
 import { Skeleton, Title, Group, Box, ScrollArea, useMantineTheme } from '@mantine/core';
+import { AppTitles } from '../Common/custom-title';
 
 const HomePageSkeleton = () => {
     const theme = useMantineTheme();
@@ -13,35 +14,29 @@ const HomePageSkeleton = () => {
         ));
 
     return (
-        <div style={{padding: '12px'}}>
+        <div >
             
             {/* Trending Now */}
-            <Title order={4} c={theme.primaryColor} ml={'0'} mt={'xs'} mb={'sm'}>
-                Trending Now
-            </Title>
-            <ScrollArea type="never" scrollbars="x" offsetScrollbars>
+            <AppTitles title={'Trending Now'}/>
+            <ScrollArea type="never" scrollbars="x" offsetScrollbars style={{paddingLeft: '12px'}}>
                 <Group gap="md" wrap="nowrap">
-                    {renderCardSkeleton(8)}
+                    {renderCardSkeleton(10)}
                 </Group>
             </ScrollArea>
 
             {/* Top Charts */}
-            <Title order={4} c={theme.primaryColor} ml={'0'} mt={'xl'} mb={'sm'}>
-                Top Charts
-            </Title>
-            <ScrollArea type="never" scrollbars="x"  offsetScrollbars>
+            <AppTitles title={'Top Charts'}/>
+            <ScrollArea type="never" scrollbars="x"  offsetScrollbars style={{paddingLeft: '12px'}}>
                 <Group gap="md" wrap="nowrap">
-                    {renderCardSkeleton(8)}
+                    {renderCardSkeleton(10)}
                 </Group>
             </ScrollArea>
 
             {/* New Releases */}
-            <Title order={4} c={theme.primaryColor} ml={'0'} mt={'xl'} mb={'sm'}>
-                New Releases
-            </Title>
-            <ScrollArea type="never" scrollbars="x" offsetScrollbars>
+            <AppTitles title={'New Releases'}/>
+            <ScrollArea type="never" scrollbars="x" offsetScrollbars style={{paddingLeft: '12px'}}>
                 <Group gap="md" wrap="nowrap">
-                    {renderCardSkeleton(8)}
+                    {renderCardSkeleton(10)}
                 </Group>
             </ScrollArea>
         </div>

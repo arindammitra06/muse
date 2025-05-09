@@ -15,7 +15,8 @@ export default function SearchedAlbumList({ title, list }: SearchedAlbumListProp
 
     return (
         <SimpleGrid cols={1} spacing="xs" verticalSpacing="0">
-            <Title order={4} c={title==='Top Result' || title==='Artists' ? 'gray': theme.primaryColor} ml={'xs'} mt={'xs'} mb={'xs'}>
+            
+            <Title  style={{fontFamily:'var(--font-ui)'}} order={4} c={title==='Top Result' || title==='Artists' ? 'gray': theme.primaryColor} ml={'xs'} mt={'xs'} mb={'xs'}>
                 {title}
             </Title>
             

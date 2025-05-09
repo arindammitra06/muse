@@ -11,6 +11,7 @@ import { modals } from '@mantine/modals';
 import { useDisclosure } from '@mantine/hooks';
 import { languages } from '@/utils/generic.utils';
 import { RootState } from '@/store/store';
+import { AppTitles } from '@/components/Common/custom-title';
 
 
 export default function SettingsPage() {
@@ -47,9 +48,7 @@ export default function SettingsPage() {
           withBorder
           shadow="sm"
         >
-          <Title order={3} c={theme.primaryColor} ml={'sm'} mt={'xs'}>
-            Theme
-          </Title>
+          <AppTitles title={'Theme'}/>
           <SettingsList title={'Dark Mode'} subtitle='Select muse theme'
             rightElement={<ThemeCheckboxPage />} onClick={undefined} />
 
@@ -62,9 +61,7 @@ export default function SettingsPage() {
           withBorder
           shadow="sm"
         >
-          <Title order={3} c={theme.primaryColor} ml={'sm'} mt={'xs'}>
-            Music & Playback
-          </Title>
+          <AppTitles title={'Music & Playback'}/>
           <SettingsList title={'Music Language'} subtitle='My preferred language for music'
             rightElement={<LanguageSelectorModal/>} onClick={undefined} />
 
@@ -80,9 +77,7 @@ export default function SettingsPage() {
           withBorder
           shadow="sm"
         >
-          <Title order={3} c={theme.primaryColor} ml={'sm'} mt={'xs'}>
-            Backup & Clear
-          </Title>
+          <AppTitles title={'Backup & Clear'}/>
           <SettingsList title={'Clear Cache'} subtitle='Deletes all cache and logs you out'
             rightElement={<></>} onClick={() => openClearCacheModal()} />
         </Paper>
@@ -92,9 +87,7 @@ export default function SettingsPage() {
           withBorder
           shadow="sm"
         >
-          <Title order={3} c={theme.primaryColor} ml={'sm'} mt={'xs'} >
-            About
-          </Title>
+          <AppTitles title={'About'}/>
           <SettingsList title={'More Info'} subtitle='' rightElement={<></>} onClick={() => goToUrl('/abouts')} />
         </Paper>
       </Stack>

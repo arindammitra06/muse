@@ -10,6 +10,7 @@ import { SkeletonSongBar, SongBar } from '@/components/SongBar/SongBar';
 import SearchedAlbumList from '@/components/SearchedAlbumList/SearchedAlbumList';
 import { nprogress } from '@mantine/nprogress';
 import { title } from 'process';
+import { AppTitles } from '@/components/Common/custom-title';
 
 export default function SearchPage() {
   const dispatch = useAppDispatch();
@@ -98,9 +99,7 @@ export default function SearchPage() {
           {topSearches !== null && topSearches !== undefined && topSearches.length > 0
           && 
           <>
-          <Title order={4} c={theme.primaryColor} ml={'xs'} mt={'xs'} mb={'xs'}>
-            Trending Search
-          </Title>
+          <AppTitles title={'Trending Search'}/>
 
           <Flex
             p={10}

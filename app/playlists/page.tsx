@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import { createPlaylist, clearPlaylist, deletePlaylist } from '@/store/slices/playlist.slice';
 import { v4 as uuidv4 } from 'uuid';
 import musicPlaceholder from '../../assets/images/music_placeholder.png';
+import { AppTitles } from '@/components/Common/custom-title';
 
 export default function PlaylistManager() {
   const dispatch = useAppDispatch();
@@ -68,7 +69,7 @@ export default function PlaylistManager() {
   return (
     <Box p="xs">
       <Group justify="space-between">
-        <Title order={3} c={theme.primaryColor} >My Playlists</Title>
+        <AppTitles title={'My Playlists'}/>
         <Button
           size="xs"
           rightSection={<IconPlus size={16} />}

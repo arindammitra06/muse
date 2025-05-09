@@ -3,6 +3,7 @@ import { AlbumCard } from "../AlbumCard/AlbumCard";
 import React from "react";
 import { Carousel } from "@mantine/carousel";
 import '@mantine/carousel/styles.css';
+import { AppTitles } from "../Common/custom-title";
 export interface ArtistListProps {
     name: string;
     subtitle: string;
@@ -18,9 +19,7 @@ export default function ArtistList({ name, subtitle, list }: ArtistListProps) {
 
     return (
         <SimpleGrid cols={1} spacing="xs" verticalSpacing="0">
-            <Title order={4} c={theme.primaryColor} ml={'sm'} mt={'xs'} mb={'xs'}>
-                {name}
-            </Title>
+            <AppTitles title={name}/>
             <div
                 style={{
                     resize: 'horizontal',
