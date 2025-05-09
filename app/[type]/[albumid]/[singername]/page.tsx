@@ -8,16 +8,17 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchArtistSongs } from '@/store/slices/jio.slice';
 import React from 'react';
 import HomePageSkeleton from '@/components/Skeletons/HomeSkeleton';
-type PageProps = {
-  params: {
+
+type ArtistDetailsPageProps = {
+  params: Promise<{
     type: string;
     albumid: string;
     singername: string;
-  };
+  }>;
 };
-export const  ArtistDetailsPage: FC<PageProps> = ({ params }) => {
+export default  async function ArtistDetailsPage({ params }: ArtistDetailsPageProps) {
  
-  const { type, albumid, singername } = params;
+  const { type, albumid, singername } = await params;
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
   const artistData = useAppSelector((state) => state.api.artistData);

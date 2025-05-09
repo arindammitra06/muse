@@ -103,7 +103,7 @@ export default function SettingsPage() {
 }
 
 
-export function ThemeCheckboxPage() {
+function ThemeCheckboxPage() {
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
   const { isDarkTheme } = useAppSelector((state) => state.settings);
@@ -129,7 +129,7 @@ export function ThemeCheckboxPage() {
   );
 }
 
-export function LanguageSelectorModal() {
+ function LanguageSelectorModal() {
   const [opened, { open, close }] = useDisclosure(false);
   const dispatch = useAppDispatch();
   const selectedLanguages = useAppSelector((state: RootState) => state.settings.selectedLanguages) ?? [];

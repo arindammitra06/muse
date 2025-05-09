@@ -9,7 +9,15 @@ import { IconDownload, IconPlayerPlay } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { SkeletonSongBar, SongBar } from '@/components/SongBar/SongBar';
 
-export default function AlbumDetailsPage({ params }: { params: { albumid: string, type: string } }) {
+interface AlbumDetailsPageProps {
+  params: Promise<{
+    type: string;
+    albumid: string;
+  }>;
+}
+
+export default async function AlbumDetailsPage({ params }: AlbumDetailsPageProps) {
+  const { type, albumid } = await params;
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
   const [albumData, setAlbumData] = useState<any>(null);
@@ -21,7 +29,7 @@ export default function AlbumDetailsPage({ params }: { params: { albumid: string
 
   useEffect(() => {
     fetchCall();
-  }, [params]);
+  }, [type, albumid]);
 
 
   
@@ -30,22 +38,35 @@ export default function AlbumDetailsPage({ params }: { params: { albumid: string
     nprogress.reset();
     nprogress.start();
     
-    if (params.type === 'playlist') {
-      dispatch(fetchPlaylistSongs({ albumId: params.albumid }))
+    //TBD
+    // if (type === 'artist') {
+    //       dispatch(fetchArtistSongs({ artistToken:[decodeURIComponent(singername)], 
+    //         category:'latest' , 
+    //         sortOrder:'desc' }))
+    //         .then((res: any) => {
+    //           console.log(res)
+    //           nprogress.complete();
+    //         });
+    
+    //     }
+
+
+    if (type === 'playlist') {
+      dispatch(fetchPlaylistSongs({ albumId: albumid }))
         .then((res: any) => {
           nprogress.complete();
           setAlbumData(res.payload);
         });
 
-    }if (params.type === 'artist') {
-      dispatch(fetchFeaturedRadio({ names:['Hansraj Raghuwanshi'], stationType:params.type , language:'hindi' }))
+    }if (type === 'artist') {
+      dispatch(fetchFeaturedRadio({ names:['Hansraj Raghuwanshi'], stationType:type , language:'hindi' }))
         .then((res: any) => {
           nprogress.complete();
           setAlbumData(res.payload);
         });
 
     }  else {
-      dispatch(fetchAlbumSongs({ albumId: params.albumid }))
+      dispatch(fetchAlbumSongs({ albumId: albumid }))
         .then((res: any) => {
           nprogress.complete();
           setAlbumData(res.payload);

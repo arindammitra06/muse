@@ -26,9 +26,7 @@ export default function PlaylistManager() {
   const favorites = playlists.find((p) => p.id === 'favorites');
 
 
-  const goToUrl = (url: string) => {
-    router.push(url);
-  };
+  
 
   function showCreatePlaylistModal() {
     modals.open({
