@@ -1,4 +1,3 @@
-'use client'
 
 import AlbumList from '@/components/AlbumList/albumlist';
 import { nprogress } from '@mantine/nprogress';
@@ -9,16 +8,14 @@ import { fetchArtistSongs } from '@/store/slices/jio.slice';
 import React from 'react';
 import HomePageSkeleton from '@/components/Skeletons/HomeSkeleton';
 
-type ArtistDetailsPageProps = {
-  params: Promise<{
-    type: string;
-    albumid: string;
-    singername: string;
-  }>;
-};
-export default  async function ArtistDetailsPage({ params }: ArtistDetailsPageProps) {
+
+export default  function ArtistDetailsPage({
+  params,
+}: {
+  params: { type: string; albumid: string , singername: string;};
+}) {
  
-  const { type, albumid, singername } = await params;
+  const { type, albumid, singername } = params;
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
   const artistData = useAppSelector((state) => state.api.artistData);

@@ -9,23 +9,18 @@ import { IconDownload, IconPlayerPlay } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { SkeletonSongBar, SongBar } from '@/components/SongBar/SongBar';
 
-interface AlbumDetailsPageProps {
-  params: Promise<{
-    type: string;
-    albumid: string;
-  }>;
-}
 
-export default async function AlbumDetailsPage({ params }: AlbumDetailsPageProps) {
-  const { type, albumid } = await params;
+export default function AlbumDetailsPage({
+  params,
+}: {
+  params: { type: string; albumid: string };
+}) {
+  const { type, albumid } = params;
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
   const [albumData, setAlbumData] = useState<any>(null);
-  const router = useRouter();
-
-  const handleBack = () => {
-    router.back();
-  };
+  
+  
 
   useEffect(() => {
     fetchCall();
@@ -37,20 +32,7 @@ export default async function AlbumDetailsPage({ params }: AlbumDetailsPageProps
   function fetchCall() {
     nprogress.reset();
     nprogress.start();
-    
-    //TBD
-    // if (type === 'artist') {
-    //       dispatch(fetchArtistSongs({ artistToken:[decodeURIComponent(singername)], 
-    //         category:'latest' , 
-    //         sortOrder:'desc' }))
-    //         .then((res: any) => {
-    //           console.log(res)
-    //           nprogress.complete();
-    //         });
-    
-    //     }
-
-
+   
     if (type === 'playlist') {
       dispatch(fetchPlaylistSongs({ albumId: albumid }))
         .then((res: any) => {
