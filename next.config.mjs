@@ -9,7 +9,8 @@ const withBundleAnalyzer = bundleAnalyzer({
 const config = {
   reactStrictMode: false,
   pwa: {
-    dest: 'public', // The location to store the service worker and manifest
+    dest: 'public', 
+    disable: process.env.NODE_ENV !== 'production', 
     register: true,
     skipWaiting: true,
   },
