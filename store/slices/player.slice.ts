@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
 export type RepeatMode = 'none' | 'all' | 'one';
 
 export interface Track {
@@ -22,12 +23,14 @@ export interface Track {
   perma_url?: string;
   url?: string;
 }
+
 interface PlayerState {
   playlist: Track[];
   currentTrackIndex: number;
   isPlaying: boolean;
   isShuffle: boolean;
-  isRepeat: boolean;
+  repeatMode: RepeatMode;
+  isRepeat: boolean; 
 }
 
 const initialState: PlayerState = {
@@ -35,6 +38,7 @@ const initialState: PlayerState = {
   currentTrackIndex: 0,
   isPlaying: false,
   isShuffle: false,
+  repeatMode: 'none',
   isRepeat: false,
 };
 
@@ -58,7 +62,6 @@ const playerSlice = createSlice({
     pause: (state) => {
       state.isPlaying = false;
     },
-    
     nextTrack: (state) => {
       if (state.isShuffle) {
         state.currentTrackIndex = Math.floor(Math.random() * state.playlist.length);
@@ -70,7 +73,9 @@ const playerSlice = createSlice({
       state.currentTrackIndex = (state.currentTrackIndex - 1 + state.playlist.length) % state.playlist.length;
     },
     toggleRepeat: (state) => {
-      state.isRepeat = !state.isRepeat;
+      const modes: RepeatMode[] = ['none', 'all', 'one'];
+      const currentIndex = modes.indexOf(state.repeatMode);
+      state.repeatMode = modes[(currentIndex + 1) % modes.length];
     },
     toggleShuffle: (state) => {
       state.isShuffle = !state.isShuffle;
@@ -86,7 +91,7 @@ const playerSlice = createSlice({
       const updated = [...state.playlist];
       const [moved] = updated.splice(from, 1);
       updated.splice(to, 0, moved);
-    
+
       // Adjust currentTrackIndex accordingly
       if (from === state.currentTrackIndex) {
         state.currentTrackIndex = to;
@@ -95,17 +100,15 @@ const playerSlice = createSlice({
       } else if (from > state.currentTrackIndex && to <= state.currentTrackIndex) {
         state.currentTrackIndex += 1;
       }
-    
+
       state.playlist = updated;
     },
   }
 });
 
 export const {
-  playTrack, play, pause, nextTrack, previousTrack,setCurrentTrackIndex,
+  playTrack, play, pause, nextTrack, previousTrack, setCurrentTrackIndex,
   toggleRepeat, toggleShuffle, setPlaying, reorderPlaylist
 } = playerSlice.actions;
 
-
 export const playerReducer = playerSlice.reducer;
-
