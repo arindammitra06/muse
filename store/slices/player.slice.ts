@@ -6,7 +6,7 @@ export interface Track {
   type: string;
   album?: string;
   year?: string;
-  duration?: string;
+  duration?: number;
   language?: string;
   genre?: string;
   '320kbps'?: string;

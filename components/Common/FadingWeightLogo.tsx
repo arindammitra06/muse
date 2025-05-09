@@ -20,7 +20,7 @@ export const FadingWeightLogo: React.FC<FadingWeightLogoProps> = ({
   );
  const router = useRouter();
   return (
-    <span style={{ display: 'inline-flex', gap: 1 }} onClick={()=>  router.push("/")}>
+    <span style={{ display: 'inline-flex', gap: 1 , marginRight: '10px'}} onClick={()=>  router.push("/")}>
       {text.split('').map((char, index) => (
         <span
           key={index}

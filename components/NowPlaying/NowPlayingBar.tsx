@@ -1,7 +1,6 @@
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { nextTrack, play, pause, previousTrack, toggleRepeat, toggleShuffle, } from '@/store/slices/player.slice';
 import { formatTime } from '@/utils/formatTime';
-import { setMediaSession } from '@/utils/mediaSession';
 import { useAudioPlayer } from '@/utils/useAudioPlayer';
 import { Box, Group, Image, Text, Slider, ActionIcon, Card, Flex, useMantineTheme, Modal, Center, Stack, Button, Drawer, rem } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -36,8 +35,7 @@ export function NowPlayingBar() {
     return <IconRepeat color="gray" size="1.4rem" stroke={1.5} />;
   };
 
-  if (!currentTrack) return null;
-  setMediaSession(currentTrack, play, pause);
+
 
   function doNoExpandAndPlay(e: React.MouseEvent): void {
     e.stopPropagation();
@@ -95,7 +93,7 @@ export function NowPlayingBar() {
                   {currentTrack !== null && currentTrack.title !== undefined &&
                     currentTrack.title !== null && currentTrack.title !== undefined && currentTrack.title.length > 20
                     ? <Marquee gradient pauseOnHover delay={3}  gradientWidth={50}>
-                        <Text fw={700} size="32px" ta={'center'} style={{ whiteSpace: 'nowrap' }}>
+                        <Text my={'xl'} fw={700} size="32px" ta={'center'} style={{ whiteSpace: 'nowrap' }}>
                           {currentTrack.title}
                         </Text>
                     </Marquee> 
@@ -119,7 +117,7 @@ export function NowPlayingBar() {
                       onChange={seekTo}
                       max={duration}
                       size="sm"
-                      radius={0}
+                      radius={'xl'}
                       color={theme.primaryColor}
                     />
                     <Group justify="space-between" mt={4}>
@@ -214,6 +212,7 @@ export function NowPlayingBar() {
           onChange={seekTo}
           max={duration}
           size="sm"
+          radius={'xl'}
           color={theme.primaryColor}
           defaultValue={0}
           mb={4}

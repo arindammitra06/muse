@@ -20,6 +20,41 @@ export function useAudioPlayer() {
     soundRef.current?.seek(value);
     setSeek(value);
   };
+  // Set Media Session for background controls
+  useEffect(() => {
+    if ('mediaSession' in navigator) {
+      const mediaSession = navigator.mediaSession;
+
+      if (currentTrack) {
+        mediaSession.metadata = new MediaMetadata({
+          title: currentTrack.title,
+          artist: currentTrack.artist,
+          album: currentTrack.album,
+          artwork: [
+            { src: currentTrack.image!, sizes: '96x96', type: 'image/png' },
+            { src: currentTrack.image!, sizes: '128x128', type: 'image/png' },
+            { src: currentTrack.image!, sizes: '192x192', type: 'image/png' },
+          ],
+        });
+
+        // Handle play/pause action from the lock screen
+        mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
+
+        mediaSession.setActionHandler('play', () => dispatch(playS()));
+        mediaSession.setActionHandler('pause', () => dispatch(pauseS()));
+        mediaSession.setActionHandler('nexttrack', () => dispatch(nextTrack()));
+
+        // Optionally add previous track action
+        mediaSession.setActionHandler('previoustrack', () => {
+          // Handle previous track logic if needed
+        });
+
+        mediaSession.setActionHandler('stop', () => {
+          // Handle stop action when the media session stops
+        });
+      }
+    }
+  }, [currentTrack, isPlaying, dispatch]);
 
   useEffect(() => {
     if (!currentTrack?.url) return;
@@ -30,59 +65,22 @@ export function useAudioPlayer() {
     soundRef.current = new Howl({
       src: [currentTrack.url],
       html5: true,
-      
       onplay: () => {
         setDuration(soundRef.current?.duration() ?? 0);
         interval.current = setInterval(() => {
           setSeek(soundRef.current?.seek() as number);
         }, 1000);
-        if ('mediaSession' in navigator) {
-          
-          navigator.mediaSession.metadata = new MediaMetadata({
-            title: currentTrack.title ?? '',
-            artist: currentTrack.artist ?? '',
-            album: currentTrack.album ?? '',
-            artwork: [
-              { src: currentTrack.image ?? '', sizes: '512x512', type: 'image/png' },
-            ],
-          });
-    
-          // Set up media control actions (next, previous, play/pause)
-          navigator.mediaSession.setActionHandler('play', () => {
-            dispatch(playS());
-          });
-          navigator.mediaSession.setActionHandler('pause', () => {
-            dispatch(pauseS());
-          });
-          navigator.mediaSession.setActionHandler('nexttrack', () => {
-            dispatch(nextTrack());
-          });
-          navigator.mediaSession.setActionHandler('previoustrack', () => {
-            dispatch(previousTrack());
-          });
-        }
-        
-        
-      },
-      onpause: () => {
-        dispatch(pauseS()); // Dispatch pause action when track is paused
       },
       onend: () => {
-        dispatch(nextTrack()); // Automatically go to next track
-      },
-      onseek: (seekTime) => {
-        seekTo(seekTime); // Sync the seek time with the Redux state
-      },
-      // onend: () => {
-      //   if (interval.current !== null) {
-      //     clearInterval(interval.current);
-      //   }
-      //   if (isRepeat) {
-      //     play();
-      //   } else {
-      //     dispatch(nextTrack());
-      //   }
-      // }
+        if (interval.current !== null) {
+          clearInterval(interval.current);
+        }
+        if (isRepeat) {
+          play();
+        } else {
+          dispatch(nextTrack());
+        }
+      }
     });
 
     if (isPlaying) play();
