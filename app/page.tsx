@@ -21,7 +21,7 @@ export default function HomePage() {
   function fetchCall() {
     nprogress.reset();
     nprogress.start();
-    dispatch(fetchHomePageData({ lang: 'hi', genre: '' }))
+    dispatch(fetchHomePageData())
       .then((res: any) => {
         nprogress.complete();
       });
