@@ -62,7 +62,7 @@ export default function Navigation({ children }: NavigationProps) {
               <Transition mounted={isSticky} transition="slide-up" duration={200}>
               {(styles) => (
                 pathname === '/' ? <Box ml="auto" style={styles} maw={300} w="100%">
-                  <Paper shadow="md" p={0} style={{ boxShadow: '0 4px 12px rgba(93, 92, 92, 0.3)' }}>
+                  <Paper radius={'xl'} shadow="md" p={0} style={{ boxShadow: '0 4px 12px rgba(93, 92, 92, 0.3)' }}>
                     <TextInput
                       readOnly
                       onClick={() => router.push(`/search`)}
@@ -70,7 +70,7 @@ export default function Navigation({ children }: NavigationProps) {
                       leftSection={<IconSearch size={20} color={theme.colors[theme.primaryColor][5]} />}
                       size="sm"
                       variant="filled"
-                      radius="sm"
+                      radius="xl"
                       mx={0}
                       my={0}
                     />
@@ -91,7 +91,7 @@ export default function Navigation({ children }: NavigationProps) {
       
       <AppShell.Main>
         {pathname === '/' && (
-          <Paper shadow="md" p={0} m={'xs'} style={{ boxShadow: '0 4px 12px rgba(93, 92, 92, 0.3)' }}>
+          <Paper radius={'xl'} shadow="md" p={0} m={'xs'} style={{ boxShadow: '0 4px 12px rgba(93, 92, 92, 0.3)' }}>
             <TextInput
               readOnly
               onClick={() => router.push(`/search`)}
@@ -99,7 +99,7 @@ export default function Navigation({ children }: NavigationProps) {
               leftSection={<IconSearch size={20} color={theme.colors[theme.primaryColor][5]} />}
               size="md"
               variant="filled"
-              radius="sm"
+              radius="xl"
               mx={0}
             /></Paper>
         )}

@@ -11,7 +11,7 @@ export function useAudioPlayer() {
   const [duration, setDuration] = useState(0);
   const soundRef = useRef<Howl | null>(null);
   let interval: { current: ReturnType<typeof setInterval> | null } = { current: null };
-
+  const isRepeatRef = useRef(false);
   const currentTrack = playlist[currentTrackIndex];
 
   const play = () => soundRef.current?.play();
@@ -20,6 +20,13 @@ export function useAudioPlayer() {
     soundRef.current?.seek(value);
     setSeek(value);
   };
+
+  useEffect(() => {
+    isRepeatRef.current = isRepeat;
+  }, [isRepeat]);
+
+
+
   // Set Media Session for background controls
   useEffect(() => {
     if ('mediaSession' in navigator) {
@@ -75,9 +82,12 @@ export function useAudioPlayer() {
         if (interval.current !== null) {
           clearInterval(interval.current);
         }
-        if (isRepeat) {
-          play();
+        if (isRepeatRef.current) {
+          // repeat current track
+          soundRef.current?.seek(0);
+          soundRef.current?.play();
         } else {
+          // move to next track
           dispatch(nextTrack());
         }
       }

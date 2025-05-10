@@ -51,19 +51,20 @@ export default function SearchPage() {
     <Box p="0">
 
       <Stack gap="xs" mb={200} >
+        
         <Paper shadow="md"
          p={0} m={'xs'}
+         radius={'xl'}
          style={{ position: 'sticky',
           top: 80,
           zIndex: 1000, 
           boxShadow: '0 4px 12px rgba(93, 92, 92, 0.3)'
            }}>
-          <TextInput ref={focusTrapRef}
-            placeholder="Type songs, albums or artists and press Enter"
+          <TextInput radius={'xl'} ref={focusTrapRef}
+            placeholder="Type songs, albums or artists and press ->"
             leftSection={<IconSearch size={20} color={theme.colors[theme.primaryColor][5]} />}
             size="md"
             variant="filled"
-            radius="sm"
             mx={0}
             value={query}
             onChange={(event) => setQuery(event.currentTarget.value)}
@@ -73,10 +74,10 @@ export default function SearchPage() {
               }
             }}
             rightSection={
-              <Kbd mr={8} onClick={()=>handleEnter()}>Enter</Kbd>
+              <Kbd  mr={22} onClick={()=>handleEnter()}>Enter</Kbd>
             }
           />
-          </Paper>
+        </Paper>
 
         {searchedStrings !== null && searchedStrings !== undefined && searchedStrings.length > 0
           && <Flex

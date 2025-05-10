@@ -19,7 +19,7 @@ export default function AlbumList({ name, subtitle, list }: AlbumListProps) {
 
     return (
         <SimpleGrid cols={1} spacing="xs" verticalSpacing="0">
-            <AppTitles title={name}/>
+            <AppTitles title={name} />
             <div
                 style={{
                     resize: 'horizontal',
@@ -29,6 +29,7 @@ export default function AlbumList({ name, subtitle, list }: AlbumListProps) {
                 }}
             >
                 <Carousel
+                    dragFree
                     slideGap={rem(8)}      // 5px spacing
                     align="start"
                     slideSize="auto"       // Allow cards to size responsively
@@ -45,8 +46,8 @@ export default function AlbumList({ name, subtitle, list }: AlbumListProps) {
                                     subtitle={item.subtitle}
                                     type={item.type}
                                     id={item.id}
-                                    song={item.type !== null && item.type !== undefined && item.type === 'song' ? item : undefined} 
-                                    year={item.year}                                />
+                                    song={item.type !== null && item.type !== undefined && item.type === 'song' ? item : undefined}
+                                    year={item.year} />
                             </Carousel.Slide>
                         ))
                     }

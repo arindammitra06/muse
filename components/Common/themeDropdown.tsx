@@ -70,8 +70,8 @@ export function ThemeDropdown() {
                     <Menu.Item key={index}
                         onClick={() => setThemeAndWait(eachTheme.theme)}
                         leftSection={<SimpleGrid cols={2}>
-                            <ColorSwatch color={eachTheme.theme.colors[eachTheme.theme.primaryColor][5]} />
-                            <ColorSwatch color={eachTheme.theme.colors.secondary[5]} />
+                            <ColorSwatch color={eachTheme.theme.colors[eachTheme.theme.primaryColor][5]} >P</ColorSwatch>
+                            <ColorSwatch color={eachTheme.theme.colors.secondary[7]} >S</ColorSwatch>
                         </SimpleGrid>} >
                         {eachTheme.label}
                     </Menu.Item>

@@ -28,6 +28,8 @@ interface PlayerState {
   isPlaying: boolean;
   isShuffle: boolean;
   isRepeat: boolean;
+  volume: number; // Volume level (0 to 1)
+  isMuted: boolean; // Mute state
 }
 
 const initialState: PlayerState = {
@@ -36,12 +38,20 @@ const initialState: PlayerState = {
   isPlaying: false,
   isShuffle: false,
   isRepeat: false,
+  volume: 1,
+  isMuted: false
 };
 
 const playerSlice = createSlice({
   name: 'player',
   initialState,
   reducers: {
+    setVolume(state, action: PayloadAction<number>) {
+      state.volume = action.payload;
+    },
+    toggleMute(state) {
+      state.isMuted = !state.isMuted;
+    },
     playTrack: (state, action: PayloadAction<Track>) => {
       const index = state.playlist.findIndex(t => t.id === action.payload.id);
       if (index === -1) {
@@ -102,7 +112,8 @@ const playerSlice = createSlice({
 });
 
 export const {
-  playTrack, play, pause, nextTrack, previousTrack,setCurrentTrackIndex,
+  playTrack, play, setVolume,
+  toggleMute, pause, nextTrack, previousTrack,setCurrentTrackIndex,
   toggleRepeat, toggleShuffle, setPlaying, reorderPlaylist
 } = playerSlice.actions;
 

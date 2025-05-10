@@ -4,6 +4,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type SettingsState = {
   readonly isDarkTheme: boolean;
+  readonly streamingQuality: string;
   readonly languages: string[];
   readonly selectedLanguages: string[];
 };
@@ -11,7 +12,8 @@ export type SettingsState = {
 export const SETTING_INITIAL_STATE: SettingsState = {
   isDarkTheme: false,
   languages: languages,
-  selectedLanguages: ['Hindi', 'Bengali' ]
+  selectedLanguages: ['Hindi', 'Bengali'],
+  streamingQuality: '320 kbps'
 };
 
 
@@ -26,6 +28,9 @@ const settingsSlice = createSlice({
     },
     setSelectedLanguages: (state, action: PayloadAction<string[]>) => {
       state.selectedLanguages = action.payload;
+    },
+    setStreamingQuality: (state, action: PayloadAction<string>) => {
+      state.streamingQuality = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -46,5 +51,5 @@ const settingsSlice = createSlice({
 });
 
 
-export const {setDarkTheme, setSelectedLanguages} = settingsSlice.actions;
+export const {setDarkTheme, setSelectedLanguages,setStreamingQuality} = settingsSlice.actions;
 export const settingsReducer = settingsSlice.reducer;

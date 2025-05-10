@@ -74,7 +74,7 @@ export default function PlaylistManager() {
           size="xs"
           rightSection={<IconPlus size={16} />}
           radius="md"
-          color={theme.colors.secondary[5]}
+          color={theme.colors.secondary[7]}
           onClick={() => showCreatePlaylistModal()}>
           Create Playlist
         </Button>

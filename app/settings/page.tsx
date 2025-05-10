@@ -1,11 +1,11 @@
 'use client'
 
-import { Box, Stack, useMantineTheme, Title, Switch, ActionIcon, useComputedColorScheme, useMantineColorScheme, Text, Paper, Button, Checkbox, Group, Modal } from '@mantine/core';
+import { Box, Stack, useMantineTheme, Title, Switch, ActionIcon, useComputedColorScheme, useMantineColorScheme, Text, Paper, Button, Checkbox, Group, Modal, Menu } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import SettingsList from '@/components/SettingsList/SettingsList';
 import { ThemeDropdown } from '@/components/Common/themeDropdown';
-import { IconSun, IconMoon, IconLanguage } from '@tabler/icons-react';
-import { setDarkTheme, setSelectedLanguages } from '@/store/slices/settings.slice';
+import { IconSun, IconMoon, IconLanguage, IconBrandYoutube, IconCheck } from '@tabler/icons-react';
+import { setDarkTheme, setSelectedLanguages, setStreamingQuality } from '@/store/slices/settings.slice';
 import { useRouter } from 'next/navigation';
 import { modals } from '@mantine/modals';
 import { useDisclosure } from '@mantine/hooks';
@@ -17,7 +17,8 @@ import { AppTitles } from '@/components/Common/custom-title';
 export default function SettingsPage() {
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
-  const { isDarkTheme } = useAppSelector((state) => state.settings);
+  const { isDarkTheme, streamingQuality } = useAppSelector((state) => state.settings);
+
   const router = useRouter();
 
 
@@ -48,12 +49,12 @@ export default function SettingsPage() {
           withBorder
           shadow="sm"
         >
-          <AppTitles title={'Theme'}/>
+          <AppTitles title={'Theme'} />
           <SettingsList title={'Dark Mode'} subtitle='Select muse theme'
             rightElement={<ThemeCheckboxPage />} onClick={undefined} />
 
-          <SettingsList title={'Primary Color'} subtitle='Main accent color in theme' 
-          rightElement={<ThemeDropdown />} onClick={undefined} />
+          <SettingsList title={'Primary Color'} subtitle='Main accent color in theme'
+            rightElement={<ThemeDropdown />} onClick={undefined} />
         </Paper>
 
         <Paper
@@ -61,12 +62,33 @@ export default function SettingsPage() {
           withBorder
           shadow="sm"
         >
-          <AppTitles title={'Music & Playback'}/>
+          <AppTitles title={'Music & Playback'} />
           <SettingsList title={'Music Language'} subtitle='My preferred language for music'
-            rightElement={<LanguageSelectorModal/>} onClick={undefined} />
+            rightElement={<LanguageSelectorModal />} onClick={undefined} />
 
           <SettingsList title={'Streaming Quality'} subtitle='Higher quality uses more data'
-            rightElement={<></>} onClick={undefined} />
+            rightElement={<>
+              <Menu shadow="md" width={200}>
+                <Menu.Target>
+                  <ActionIcon
+                    variant="default"
+                    size="md"
+                    aria-label="Select Quality">
+                    <IconBrandYoutube stroke={1.5}></IconBrandYoutube>
+                  </ActionIcon>
+                </Menu.Target>
+
+                <Menu.Dropdown>
+                  {['96 kbps', '160 kbps', '320 kbps'].map((val) => {
+                    return (<Menu.Item
+                      rightSection={val === streamingQuality ? <IconCheck size={14} /> : null}
+                      onClick={() => dispatch(setStreamingQuality(val))}>
+                      {val}
+                    </Menu.Item>)
+                  })}
+
+                </Menu.Dropdown>
+              </Menu></>} onClick={undefined} />
 
           <SettingsList title={'Retain Session'} subtitle='Add all played songs/playlist to session'
             rightElement={<></>} onClick={undefined} />
@@ -77,7 +99,7 @@ export default function SettingsPage() {
           withBorder
           shadow="sm"
         >
-          <AppTitles title={'Backup & Clear'}/>
+          <AppTitles title={'Backup & Clear'} />
           <SettingsList title={'Clear Cache'} subtitle='Deletes all cache and logs you out'
             rightElement={<></>} onClick={() => openClearCacheModal()} />
         </Paper>
@@ -87,7 +109,7 @@ export default function SettingsPage() {
           withBorder
           shadow="sm"
         >
-          <AppTitles title={'About'}/>
+          <AppTitles title={'About'} />
           <SettingsList title={'More Info'} subtitle='' rightElement={<></>} onClick={() => goToUrl('/abouts')} />
         </Paper>
       </Stack>
@@ -122,7 +144,7 @@ function ThemeCheckboxPage() {
   );
 }
 
- function LanguageSelectorModal() {
+function LanguageSelectorModal() {
   const [opened, { open, close }] = useDisclosure(false);
   const dispatch = useAppDispatch();
   const selectedLanguages = useAppSelector((state: RootState) => state.settings.selectedLanguages) ?? [];
@@ -143,8 +165,8 @@ function ThemeCheckboxPage() {
         variant="default"
         size="md"
         aria-label="Select Languages">
-          <IconLanguage stroke={1.5}></IconLanguage>
-        </ActionIcon>
+        <IconLanguage stroke={1.5}></IconLanguage>
+      </ActionIcon>
       <Modal
         opened={opened}
         onClose={close}
@@ -156,11 +178,11 @@ function ThemeCheckboxPage() {
         transitionProps={{ transition: 'pop', duration: 200 }}
       >
         <Stack gap="sm">
-          {languages.map((lang:string) => (
+          {languages.map((lang: string) => (
             <Checkbox
               key={lang}
               label={lang}
-              checked={selectedLanguages!==undefined && selectedLanguages.includes(lang)}
+              checked={selectedLanguages !== undefined && selectedLanguages.includes(lang)}
               onChange={() => toggleLanguage(lang)}
               size="md"
             />
