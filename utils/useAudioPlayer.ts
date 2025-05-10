@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Howl } from 'howler';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { nextTrack, previousTrack, play as playS, pause as pauseS } from '@/store/slices/player.slice';
+import { getPreferredStreamingQualityUrl } from './generic.utils';
 
 export function useAudioPlayer() {
   const dispatch = useAppDispatch();
@@ -13,7 +14,7 @@ export function useAudioPlayer() {
   let interval: { current: ReturnType<typeof setInterval> | null } = { current: null };
   const isRepeatRef = useRef(false);
   const currentTrack = playlist[currentTrackIndex];
-
+  const { streamingQuality } = useAppSelector((s) => s.settings);
   const play = () => soundRef.current?.play();
   const pause = () => soundRef.current?.pause();
   const seekTo = (value: number) => {
@@ -21,6 +22,8 @@ export function useAudioPlayer() {
     setSeek(value);
   };
 
+  
+  
   useEffect(() => {
     isRepeatRef.current = isRepeat;
   }, [isRepeat]);
@@ -68,9 +71,8 @@ export function useAudioPlayer() {
     if (soundRef.current) {
       soundRef.current.unload();
     }
-
     soundRef.current = new Howl({
-      src: [currentTrack.url],
+      src: [getPreferredStreamingQualityUrl(currentTrack.url, streamingQuality)],
       html5: true,
       onplay: () => {
         setDuration(soundRef.current?.duration() ?? 0);
@@ -113,3 +115,4 @@ export function useAudioPlayer() {
 
   return { currentTrack, isPlaying, play, pause, seek, seekTo, duration };
 }
+

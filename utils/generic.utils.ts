@@ -63,6 +63,16 @@ export function decode(input: string): string {
   
 }
 
+export function getPreferredStreamingQualityUrl(url: string, streamingQuality: string): string {
+    if(url!==null && url!==undefined){
+      const preferredQuality = streamingQuality ?? '96 kbps'
+      const newUrl =  url.replaceAll('_96.',  `_${preferredQuality.replaceAll(' kbps', '')}.`);
+      return newUrl;
+    }else{
+      return url;
+    }
+}
+
 
 export async function formatSongsResponse(
   responseList: any[],

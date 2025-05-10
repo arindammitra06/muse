@@ -3,6 +3,7 @@ import { albumDetails, artistRadio, baseUrl, entityRadio, featuredRadio, formatA
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import axios from "axios";
+import { getCommonHeaders } from "../hooks";
 
 
 
@@ -23,10 +24,11 @@ export const API_INITIAL_STATE: ApiState = {
 
 export const fetchHomePageData = createAsyncThunk(
   "api/fetchHomePageData",
-  async ({ lang, genre }: { lang: string, genre: string }) => {
+  async (_: void, thunkAPI) => {
     try {
+      const headers = getCommonHeaders(thunkAPI.getState() as any);
       const encodedUrl = encodeURIComponent(baseUrl + homeEndpoint);
-      const response = await axios.get(`/api/proxy?url=${encodedUrl}`);
+      const response = await axios.get(`/api/proxy?url=${encodedUrl}`, { headers: headers});
       return response.data;
     } catch (error) {
       console.error(error);
@@ -35,10 +37,12 @@ export const fetchHomePageData = createAsyncThunk(
 
 export const fetchAlbumSongs = createAsyncThunk(
   "api/fetchAlbumSongs",
-  async ({ albumId }: { albumId: string }) => {
+  async ({ albumId }: { albumId: string }, thunkAPI) => {
     try {
+      const headers = getCommonHeaders(thunkAPI.getState() as any);
+      console.log(headers)
       const encodedUrl = encodeURIComponent(`${baseUrl}${homeEndpoint}&${albumDetails}&cc=in&albumid=${albumId}`);
-      const response = await axios.get(`/api/proxy?url=${encodedUrl}`);
+      const response = await axios.get(`/api/proxy?url=${encodedUrl}`, { headers: headers});
 
       return response.data;
     } catch (error) {
@@ -48,10 +52,12 @@ export const fetchAlbumSongs = createAsyncThunk(
 
 export const fetchPlaylistSongs = createAsyncThunk(
   "api/fetchPlaylistSongs",
-  async ({ albumId }: { albumId: string }) => {
+  async ({ albumId }: { albumId: string },thunkAPI) => {
     try {
+      const headers = getCommonHeaders(thunkAPI.getState() as any);
+      console.log(headers)
       const encodedUrl = encodeURIComponent(`${baseUrl}${homeEndpoint}&${playlistDetails}&cc=in&listid=${albumId}`);
-      const response = await axios.get(`/api/proxy?url=${encodedUrl}`);
+      const response = await axios.get(`/api/proxy?url=${encodedUrl}`, { headers: headers});
 
       return response.data;
     } catch (error) {
@@ -62,10 +68,12 @@ export const fetchPlaylistSongs = createAsyncThunk(
 
 export const fetchFeaturedRadio = createAsyncThunk(
   "api/fetchFeaturedRadio",
-  async ({ names, stationType, language }: { names: string[], stationType: string, language?: string }) => {
+  async ({ names, stationType, language }: { names: string[], stationType: string, language?: string },thunkAPI) => {
     try {
       let params;
-
+      const headers = getCommonHeaders(thunkAPI.getState() as any);
+      console.log(headers)
+      
       if (stationType == 'featured') {
         let params = `name=${names[0]}&language=${language}&${featuredRadio}`;
       } else if (stationType == 'artist') {
@@ -75,7 +83,7 @@ export const fetchFeaturedRadio = createAsyncThunk(
       }
 
       const encodedUrl = encodeURIComponent(`${baseUrl}${homeEndpoint}&${params}`);
-      const response = await axios.get(`/api/proxy?url=${encodedUrl}`);
+      const response = await axios.get(`/api/proxy?url=${encodedUrl}`, { headers: headers});
 
       return response.data;
     } catch (error) {
@@ -85,14 +93,17 @@ export const fetchFeaturedRadio = createAsyncThunk(
 
 export const fetchArtistSongs = createAsyncThunk(
   "api/fetchArtistSongs",
-  async ({ artistToken, category = 'latest', sortOrder = 'desc' }: { artistToken: any, category: string, sortOrder?: string }) => {
+  async ({ artistToken, category = 'latest', sortOrder = 'desc' }: { artistToken: any, category: string, sortOrder?: string },thunkAPI) => {
     try {
-
+      const headers = getCommonHeaders(thunkAPI.getState() as any);
+      console.log(headers)
+      
       const finalData: any = {};
       let params = `${fromToken}&type=artist&p=&n_song=50&n_album=50&sub_type=&category=${category}&sort_order=${sortOrder}&includeMetaTags=0&token=${artistToken}`;
 
       const encodedUrl = encodeURIComponent(`${baseUrl}${homeEndpoint}&${params}`);
-      const response = await axios.get(`/api/proxy?url=${encodedUrl}`);
+      const response = await axios.get(`/api/proxy?url=${encodedUrl}`, { headers: headers});
+     
       console.log(response)
       if (response.status === 200) {
         const getMain = response.data;
@@ -149,11 +160,14 @@ export const fetchArtistSongs = createAsyncThunk(
 
 export const getSongFromToken = createAsyncThunk(
   "api/getSongFromToken",
-  async ({ token, type }: { token: string, type: string, }) => {
+  async ({ token, type }: { token: string, type: string, }, thunkAPI) => {
     try {
+      const headers = getCommonHeaders(thunkAPI.getState() as any);
+      console.log(headers)
+      
       let params = `token=${token}&type=${type}&n=10&p=1&${fromToken}`;
       const encodedUrl = encodeURIComponent(`${baseUrl}${homeEndpoint}&${params}`);
-      const response = await axios.get(`/api/proxy?url=${encodedUrl}`);
+      const response = await axios.get(`/api/proxy?url=${encodedUrl}`, { headers: headers});
 
 
       return response.data;
@@ -164,11 +178,14 @@ export const getSongFromToken = createAsyncThunk(
 
 export const getSongFromTokenPhase2 = createAsyncThunk(
   "api/getSongFromTokenPhase2",
-  async ({ token, type, listCount }: { token: string, type: string, listCount: string }) => {
+  async ({ token, type, listCount }: { token: string, type: string, listCount: string }, thunkAPI) => {
     try {
+      const headers = getCommonHeaders(thunkAPI.getState() as any);
+      console.log(headers)
+      
       let params = `token=${token}&type=${type}&n=${listCount}&p=1&${fromToken}`;
       const encodedUrl = encodeURIComponent(`${baseUrl}${homeEndpoint}&${params}`);
-      const response = await axios.get(`/api/proxy?url=${encodedUrl}`);
+      const response = await axios.get(`/api/proxy?url=${encodedUrl}`, { headers: headers});
 
       return response.data;
     } catch (error) {

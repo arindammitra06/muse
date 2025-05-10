@@ -3,6 +3,7 @@ import { baseUrl, formatAlbumResponse, formatSongsResponse, getResults, homeEndp
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import axios from "axios";
+import { getCommonHeaders } from "../hooks";
 
 
 type SearchItem = Record<string, any>;
@@ -35,12 +36,15 @@ export async function fetchSongSearchResults({
   searchQuery: string;
   count?: number;
   page?: number;
-}): Promise<any> {
+}, thunkAPI:any): Promise<any> {
   
   const params = `p=${page}&q=${encodeURIComponent(searchQuery)}&n=${count}&${getResults}`;
   try {
+     const headers = getCommonHeaders(thunkAPI.getState() as any);
+     console.log(headers)
+          
     const encodedUrl = encodeURIComponent(`${baseUrl}${homeEndpoint}&${params}`);
-    const response = await axios.get(`/api/proxy?url=${encodedUrl}`);
+    const response = await axios.get(`/api/proxy?url=${encodedUrl}`, { headers: headers});
       
 
     if (response.status === 200 && response!==null && response!==undefined) {
@@ -82,15 +86,18 @@ export async function fetchSongSearchResults({
 
 export const fetchSearchResults = createAsyncThunk(
   "search/fetchSearchResults",
-  async ({ searchQuery }: { searchQuery: string }) => {
+  async ({ searchQuery }: { searchQuery: string }, thunkAPI) => {
     try {
 
+      const headers = getCommonHeaders(thunkAPI.getState() as any);
+      console.log(headers)
+            
       let params;
       params = `__call=autocomplete.get&cc=in&includeMetaTags=1&query=${encodeURIComponent(searchQuery)}`;
 
 
       const encodedUrl = encodeURIComponent(`${baseUrl}${homeEndpoint}&${params}`);
-      const response = await axios.get(`/api/proxy?url=${encodedUrl}`);
+      const response = await axios.get(`/api/proxy?url=${encodedUrl}`, { headers: headers});
       console.log(response)
   
       if(response.status===200){
@@ -124,7 +131,7 @@ export const fetchSearchResults = createAsyncThunk(
           searchedArtistList = await formatAlbumResponse(artistResponseList, 'artist');
           if (searchedArtistList.length) result['Artists'] = searchedArtistList;
 
-          const songResponse = await fetchSongSearchResults({ searchQuery, count: 5 });
+          const songResponse = await fetchSongSearchResults({ searchQuery, count: 5 }, thunkAPI);
           searchedSongList = songResponse.songs ?? [];
           if (searchedSongList.length) result['Songs'] = searchedSongList;
 
@@ -181,12 +188,14 @@ export const fetchSearchResults = createAsyncThunk(
 
   export const getTopSearches = createAsyncThunk(
     "search/getTopSearches",
-    async () => {
+    async (_: void, thunkAPI) => {
       try {
-  
+        const headers = getCommonHeaders(thunkAPI.getState() as any);
+        console.log(headers)
+        
         let params = topSearches;
         const encodedUrl = encodeURIComponent(`${baseUrl}${homeEndpoint}&${params}`);
-        const response = await axios.get(`/api/proxy?url=${encodedUrl}`);
+        const response = await axios.get(`/api/proxy?url=${encodedUrl}`, { headers: headers});
         return response.data;
         
       } catch (error) {

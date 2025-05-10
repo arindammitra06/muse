@@ -1,10 +1,10 @@
 'use client'
 
-import { Box, Stack, useMantineTheme, Title, Switch, ActionIcon, Image, useMantineColorScheme, Text, Paper, Button, Checkbox, Group, Modal, Badge, TextInput, SimpleGrid, Tooltip } from '@mantine/core';
+import { Box, Stack, useMantineTheme, Title, Switch, ActionIcon, Image, useMantineColorScheme, Text, Paper, Button, Checkbox, Group, Modal, Badge, TextInput, SimpleGrid, Tooltip, Menu } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import SettingsList from '@/components/SettingsList/SettingsList';
 import { ThemeDropdown } from '@/components/Common/themeDropdown';
-import { IconSun, IconMoon, IconLanguage, IconPlus, IconTrash, IconClearAll } from '@tabler/icons-react';
+import { IconSun, IconMoon, IconLanguage, IconPlus, IconTrash, IconClearAll, IconArrowsLeftRight, IconDotsVertical, IconMessageCircle, IconPhoto, IconSearch, IconSettings } from '@tabler/icons-react';
 import { setDarkTheme, setSelectedLanguages } from '@/store/slices/settings.slice';
 import { useRouter } from 'next/navigation';
 import { modals } from '@mantine/modals';
@@ -22,12 +22,12 @@ export default function PlaylistManager() {
   const theme = useMantineTheme();
   const router = useRouter();
   const playlists = useAppSelector((state) => state.playlist.userPlaylist);
-
+  const isDarkTheme = useAppSelector((state) => state.settings.isDarkTheme);
   const otherPlaylists = playlists.filter((p) => p.id !== 'favorites');
   const favorites = playlists.find((p) => p.id === 'favorites');
 
 
-  
+
 
   function showCreatePlaylistModal() {
     modals.open({
@@ -36,7 +36,7 @@ export default function PlaylistManager() {
       children: <CreatePlaylistForm />,
     });
   }
-  const openDeleteModal = (id:string, name:string) =>
+  const openDeleteModal = (id: string, name: string) =>
     modals.openConfirmModal({
       title: 'Delete Playlist?',
       centered: true,
@@ -51,30 +51,30 @@ export default function PlaylistManager() {
       onConfirm: () => dispatch(deletePlaylist(id)),
     });
 
-    const openClearModal = (id:string, name:string) =>
-      modals.openConfirmModal({
-        title: 'Clear Playlist?',
-        centered: true,
-        children: (
-          <Text size="sm">
-            Are you sure you want to clear all tracks from playlist - {name}?
-          </Text>
-        ),
-        labels: { confirm: 'Clear', cancel: "No" },
-        confirmProps: { color: 'red' },
-        onCancel: () => console.log('Cancel'),
-        onConfirm: () => dispatch(clearPlaylist(id)),
-   });
+  const openClearModal = (id: string, name: string) =>
+    modals.openConfirmModal({
+      title: 'Clear Playlist?',
+      centered: true,
+      children: (
+        <Text size="sm">
+          Are you sure you want to clear all tracks from playlist - {name}?
+        </Text>
+      ),
+      labels: { confirm: 'Clear', cancel: "No" },
+      confirmProps: { color: 'red' },
+      onCancel: () => console.log('Cancel'),
+      onConfirm: () => dispatch(clearPlaylist(id)),
+    });
 
   return (
     <Box p="xs">
       <Group justify="space-between">
-        <AppTitles title={'My Playlists'}/>
+        <AppTitles title={'My Playlists'} />
         <Button
           size="xs"
           rightSection={<IconPlus size={16} />}
           radius="md"
-          color={theme.colors.secondary[7]}
+          color={theme.colors.secondary[5]}
           onClick={() => showCreatePlaylistModal()}>
           Create Playlist
         </Button>
@@ -82,18 +82,27 @@ export default function PlaylistManager() {
 
       <Stack mt="xl" gap="sm">
         {favorites && (
-          <Paper shadow="xs" p="5" withBorder bg="yellow.0">
+          <Paper shadow="xs" p="5" withBorder bg={isDarkTheme ? theme.colors.secondary[0]: theme.colors.secondary[9]}>
             <Group justify="space-between">
-              <SimpleGrid cols={1} spacing={1}>
-              <Text fw={600}>❤️ Favorites </Text>
-                <Badge ml={20} color="pink" radius={'xs'} variant="light">{favorites.tracks.length} songs</Badge>
-              </SimpleGrid>
-              <Tooltip label={'Clear All Tracks'}  transitionProps={{ duration: 0 }}>
-                <ActionIcon size="md" color="orange" variant="light" onClick={() => openClearModal('favorites', 'Favorites')}>
-                  <IconClearAll size={'1.5rem'} stroke={1.5}/>
-                </ActionIcon>
-                </Tooltip>
+              <Group p={0}>
+                <Image src={musicPlaceholder.src} radius="md" w={50} h={50} />
+                <Text fw={600}>Favorites</Text>
               </Group>
+
+              <Group>
+                <Text size="sm" fw={500} c="dimmed">{favorites.tracks.length} Tracks</Text>
+                <Menu shadow="md">
+                  <Menu.Target>
+                    <ActionIcon variant="transparent" color="gray" ><IconDotsVertical /></ActionIcon>
+                  </Menu.Target>
+                  <Menu.Dropdown>
+                    <Menu.Item onClick={() => openClearModal('favorites', 'Favorites')} leftSection={<IconClearAll size={14} />}>
+                      Clear Tracks
+                    </Menu.Item>
+                  </Menu.Dropdown>
+                </Menu>
+              </Group>
+            </Group>
           </Paper>
         )}
 
@@ -101,23 +110,27 @@ export default function PlaylistManager() {
           <Paper key={playlist.id} shadow="xs" p="5" withBorder>
             <Group justify="space-between">
               <Group p={0}>
-                <Image src={playlist !== null && playlist !== undefined && playlist.image!== null && playlist.image !== undefined 
-                    ?  playlist.image : musicPlaceholder.src} radius="md" w={50} h={50} />
-                  <Text fw={600}>{playlist.name}</Text>
-                </Group>
+                <Image src={playlist !== null && playlist !== undefined && playlist.image !== null && playlist.image !== undefined
+                  ? playlist.image : musicPlaceholder.src} radius="md" w={50} h={50} />
+                <Text fw={600}>{playlist.name}</Text>
+              </Group>
               <Group>
                 <Text size="sm" fw={500} c="dimmed">{playlist.tracks.length} Tracks</Text>
-                <Tooltip label={'Clear All Tracks'}  transitionProps={{ duration: 0 }}>
-                <ActionIcon size="md" color="orange" variant="light" onClick={() => openClearModal(playlist.id, playlist.name)}>
-                  <IconClearAll size={'1.5rem'} stroke={1.5}/>
-                </ActionIcon>
-                </Tooltip>
-                
-                <Tooltip label={'Delete Playlist'}  transitionProps={{ duration: 0 }}>
-                <ActionIcon size="md" color="red" variant="filled" onClick={() => openDeleteModal(playlist.id, playlist.name)}>
-                  <IconTrash size={'1.5rem'} stroke={1.5}/>
-                </ActionIcon>
-                </Tooltip>
+                <Menu shadow="md">
+                  <Menu.Target>
+                    <ActionIcon variant="transparent" color="gray" ><IconDotsVertical /></ActionIcon>
+                  </Menu.Target>
+                  <Menu.Dropdown>
+                    <Menu.Item onClick={() => openClearModal(playlist.id, playlist.name)} leftSection={<IconClearAll size={14} />}>
+                      Clear Tracks
+                    </Menu.Item>
+                    <Menu.Item
+                      color="red" onClick={() => openDeleteModal(playlist.id, playlist.name)}
+                      leftSection={<IconTrash size={14} />}  >
+                      Delete 
+                    </Menu.Item>
+                  </Menu.Dropdown>
+                </Menu>
               </Group>
             </Group>
           </Paper>
@@ -130,7 +143,7 @@ export default function PlaylistManager() {
 function CreatePlaylistForm() {
   const [playlistName, setPlaylistName] = useState('');
   const dispatch = useAppDispatch();
-  
+
   useEffect(() => {
     setPlaylistName(''); // resets on mount
   }, []);
@@ -148,7 +161,7 @@ function CreatePlaylistForm() {
         fullWidth
         onClick={() => {
           if (playlistName.trim()) {
-            dispatch(createPlaylist({ id: uuidv4(), name: playlistName.trim() , image: null}));
+            dispatch(createPlaylist({ id: uuidv4(), name: playlistName.trim(), image: null }));
             setPlaylistName('');
           }
           modals.closeAll()

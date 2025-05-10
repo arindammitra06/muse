@@ -3,11 +3,11 @@ import { getSongFromToken } from '@/store/slices/jio.slice';
 import { playTrack } from '@/store/slices/player.slice';
 import { getLastSectionOfUrl, formatSongsResponse } from '@/utils/generic.utils';
 import { Flex, Group, Box, ActionIcon, Image, Text, useMantineTheme, Paper } from "@mantine/core"
-import { IconDownload, IconDotsVertical } from "@tabler/icons-react"
-import { PlayingIndicator } from '../SongBar/SongBar';
+import { IconDotsVertical } from "@tabler/icons-react"
 import { useRouter } from 'next/navigation';
-import { downloadFile } from '@/utils/fileutil';
 import toast from 'react-hot-toast';
+import { FavoriteButton } from '../FavoriteButton/FavoriteButton';
+import { DownloadButton } from '../DownloadButton/DownloadButton';
 
 export interface SearchResultSongBarProps {
     idx: string;
@@ -22,7 +22,7 @@ export const SearchResultSongBar = ({ idx, song, type, title }: SearchResultSong
     const { playlist, currentTrackIndex, isPlaying } = useAppSelector(s => s.player);
     const currentPlayingTrack = playlist[currentTrackIndex];
     const router = useRouter();
-
+    
 
     const handleClick = () => {
         if (title === 'Top Result' || title === 'Artists') {
@@ -102,9 +102,10 @@ export const SearchResultSongBar = ({ idx, song, type, title }: SearchResultSong
 
 
             <Group gap="xs" wrap="nowrap">
-                {song.type === 'song' && <ActionIcon variant="subtle" color="gray" onClick={() => downloadFile(song.url!, song.title!)}>
-                    <IconDownload size={20} />
-                </ActionIcon>}
+                
+                <FavoriteButton song={song}/>
+                {song.type === 'song' && <DownloadButton song={song}/>}
+                
                 <ActionIcon variant="subtle" color="gray">
                     <IconDotsVertical size={20} />
                 </ActionIcon>

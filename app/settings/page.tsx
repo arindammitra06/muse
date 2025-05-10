@@ -4,8 +4,8 @@ import { Box, Stack, useMantineTheme, Title, Switch, ActionIcon, useComputedColo
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import SettingsList from '@/components/SettingsList/SettingsList';
 import { ThemeDropdown } from '@/components/Common/themeDropdown';
-import { IconSun, IconMoon, IconLanguage, IconBrandYoutube, IconCheck } from '@tabler/icons-react';
-import { setDarkTheme, setSelectedLanguages, setStreamingQuality } from '@/store/slices/settings.slice';
+import { IconSun, IconMoon, IconLanguage, IconBrandYoutube, IconCheck, IconDownload } from '@tabler/icons-react';
+import { setDarkTheme, setDownloadQuality, setSelectedLanguages, setStreamingQuality } from '@/store/slices/settings.slice';
 import { useRouter } from 'next/navigation';
 import { modals } from '@mantine/modals';
 import { useDisclosure } from '@mantine/hooks';
@@ -17,7 +17,7 @@ import { AppTitles } from '@/components/Common/custom-title';
 export default function SettingsPage() {
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
-  const { isDarkTheme, streamingQuality } = useAppSelector((state) => state.settings);
+  const { isDarkTheme, streamingQuality, downloadQuality } = useAppSelector((state) => state.settings);
 
   const router = useRouter();
 
@@ -79,10 +79,37 @@ export default function SettingsPage() {
                 </Menu.Target>
 
                 <Menu.Dropdown>
-                  {['96 kbps', '160 kbps', '320 kbps'].map((val) => {
+                  {['96 kbps', '160 kbps', '320 kbps'].map((val, index) => {
                     return (<Menu.Item
+                      key={index}
                       rightSection={val === streamingQuality ? <IconCheck size={14} /> : null}
                       onClick={() => dispatch(setStreamingQuality(val))}>
+                      {val}
+                    </Menu.Item>)
+                  })}
+
+                </Menu.Dropdown>
+              </Menu></>} onClick={undefined} />
+
+
+           <SettingsList title={'Download Quality'} subtitle='Higher quality uses more disk space'
+            rightElement={<>
+              <Menu shadow="md" width={200}>
+                <Menu.Target>
+                  <ActionIcon
+                    variant="default"
+                    size="md"
+                    aria-label="Select Quality">
+                    <IconDownload stroke={1.5}></IconDownload>
+                  </ActionIcon>
+                </Menu.Target>
+
+                <Menu.Dropdown>
+                  {['96 kbps', '160 kbps', '320 kbps'].map((val, index) => {
+                    return (<Menu.Item
+                      key={index}
+                      rightSection={val === downloadQuality ? <IconCheck size={14} /> : null}
+                      onClick={() => dispatch(setDownloadQuality(val))}>
                       {val}
                     </Menu.Item>)
                   })}
@@ -148,7 +175,7 @@ function LanguageSelectorModal() {
   const [opened, { open, close }] = useDisclosure(false);
   const dispatch = useAppDispatch();
   const selectedLanguages = useAppSelector((state: RootState) => state.settings.selectedLanguages) ?? [];
-  console.log(selectedLanguages);
+
 
   const toggleLanguage = (lang: string) => {
     if (selectedLanguages.includes(lang)) {

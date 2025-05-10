@@ -23,6 +23,7 @@ export interface Track {
   url?: string;
 }
 interface PlayerState {
+  isLoading: boolean;
   playlist: Track[];
   currentTrackIndex: number;
   isPlaying: boolean;
@@ -39,7 +40,8 @@ const initialState: PlayerState = {
   isShuffle: false,
   isRepeat: false,
   volume: 1,
-  isMuted: false
+  isMuted: false,
+  isLoading: false
 };
 
 const playerSlice = createSlice({
@@ -53,6 +55,7 @@ const playerSlice = createSlice({
       state.isMuted = !state.isMuted;
     },
     playTrack: (state, action: PayloadAction<Track>) => {
+      state.isLoading = true;
       const index = state.playlist.findIndex(t => t.id === action.payload.id);
       if (index === -1) {
         state.playlist.unshift(action.payload);
@@ -61,6 +64,7 @@ const playerSlice = createSlice({
         state.currentTrackIndex = index;
       }
       state.isPlaying = true;
+      state.isLoading = false;
     },
     play: (state) => {
       state.isPlaying = true;

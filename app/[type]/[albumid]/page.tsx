@@ -7,6 +7,7 @@ import { useAppDispatch } from '@/store/hooks';
 import { fetchAlbumSongs, fetchFeaturedRadio, fetchPlaylistSongs } from '@/store/slices/jio.slice';
 import { IconDownload, IconPlayerPlay } from '@tabler/icons-react';
 import { SkeletonSongBar, SongBar } from '@/components/SongBar/SongBar';
+import { DownloadButton } from '@/components/DownloadButton/DownloadButton';
 
 
 export default function AlbumDetailsPage({
@@ -36,6 +37,7 @@ export default function AlbumDetailsPage({
       dispatch(fetchPlaylistSongs({ albumId: albumid }))
         .then((res: any) => {
           nprogress.complete();
+          console.log(res)
           setAlbumData(res.payload);
         });
 
@@ -43,6 +45,7 @@ export default function AlbumDetailsPage({
       dispatch(fetchFeaturedRadio({ names:['Hansraj Raghuwanshi'], stationType:type , language:'hindi' }))
         .then((res: any) => {
           nprogress.complete();
+          console.log(res)
           setAlbumData(res.payload);
         });
 
@@ -50,6 +53,7 @@ export default function AlbumDetailsPage({
       dispatch(fetchAlbumSongs({ albumId: albumid }))
         .then((res: any) => {
           nprogress.complete();
+          console.log(res)
           setAlbumData(res.payload);
         });
     }
@@ -88,16 +92,8 @@ export default function AlbumDetailsPage({
                 >
                   Play All
                 </Button>
-                <Button
-                  size="xs"
-                  variant='light'
-                  rightSection={<IconDownload size={16} />}
-                  radius="md"
-                  color={theme.primaryColor}
-                  //onClick={()=>downloadFile()}
-                >
-                 Download
-                </Button>
+                <DownloadButton song={undefined}/>
+                
                 
               </Group>
             </Box>

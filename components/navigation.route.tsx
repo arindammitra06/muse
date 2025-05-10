@@ -1,13 +1,14 @@
 'use client'
-import { AppShell, ActionIcon, Box, TextInput, Transition, useMantineTheme, Paper, Flex, Burger, Skeleton } from '@mantine/core';
+import { AppShell, ActionIcon, Box, TextInput, Transition, useMantineTheme, Paper, Flex, Burger, Skeleton, Stack } from '@mantine/core';
 import { ReactNode, useEffect, useState } from 'react';
 import { AppLogo } from './Common/custom-logo.component';
 import { IconSearch, IconX } from '@tabler/icons-react';
 import { NowPlayingBar } from './NowPlaying/NowPlayingBar';
 import { usePathname, useRouter } from 'next/navigation';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { NavbarMinimal } from './Navbar/NavbarMinimal';
 import { FadingWeightLogo } from './Common/FadingWeightLogo';
+import { BottomNavigation } from './BottomNavigation/BottomNavigation';
 export interface NavigationProps {
   children: ReactNode;
 };
@@ -18,12 +19,13 @@ export default function Navigation({ children }: NavigationProps) {
   const theme = useMantineTheme();
   const router = useRouter();
   const [opened, { toggle }] = useDisclosure();
+  const isDesktop = useMediaQuery(`(min-width: ${theme.breakpoints.sm})`);
 
 
   const handleBack = () => {
     router.push('/');
   };
-  
+
   useEffect(() => {
     const handleScroll = () => {
       if (pathname === '/') {
@@ -42,7 +44,7 @@ export default function Navigation({ children }: NavigationProps) {
   return (
     <AppShell
       header={{ height: 60 }}
-      navbar={{ width: 50, breakpoint: 'sm', collapsed: { mobile: !opened } }}
+      navbar={isDesktop ? { width: 50, breakpoint: 'sm' } : undefined}
       padding="0"
     >
 
@@ -54,12 +56,15 @@ export default function Navigation({ children }: NavigationProps) {
           h="100%"
           px="xs"
         >
-           <Flex justify="flex-start" align="flex-start" p={0}>
-            <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" mt={10} mr={10}/>
+          <Flex justify="flex-start" align="flex-start" p={0}>
             <FadingWeightLogo text="muse" />
           </Flex>
           <Flex justify="flex-end" align="flex-end" w="100%">
-              <Transition mounted={isSticky} transition="slide-up" duration={200}>
+            <Transition mounted={isSticky}
+              transition="slide-up"
+              duration={150}
+              timingFunction="ease"
+              keepMounted>
               {(styles) => (
                 pathname === '/' ? <Box ml="auto" style={styles} maw={300} w="100%">
                   <Paper radius={'xl'} shadow="md" p={0} style={{ boxShadow: '0 4px 12px rgba(93, 92, 92, 0.3)' }}>
@@ -78,19 +83,20 @@ export default function Navigation({ children }: NavigationProps) {
                 </Box> : <></>
               )}
             </Transition>
-            {pathname !== '/' && <ActionIcon variant="light" color="gray" size="lg" radius="lg" onClick={()=>handleBack()}>
-              <IconX size={'1.5rem'} stroke={2.5}/>
+            {pathname !== '/' && <ActionIcon variant="light" color="gray" size="lg" radius="lg" onClick={() => handleBack()}>
+              <IconX size={'1.5rem'} stroke={2.5} />
             </ActionIcon>}
           </Flex>
         </Flex>
 
       </AppShell.Header>
-      <AppShell.Navbar p="0" w={50}>
-        <NavbarMinimal toggle={toggle}/>
-      </AppShell.Navbar>
-      
+
+      {isDesktop && (<AppShell.Navbar p="0" w={50}>
+        <NavbarMinimal toggle={toggle} />
+      </AppShell.Navbar>)}
+
       <AppShell.Main>
-        {pathname === '/' && (
+        {pathname === '/' && !isSticky && (
           <Paper radius={'xl'} shadow="md" p={0} m={'xs'} style={{ boxShadow: '0 4px 12px rgba(93, 92, 92, 0.3)' }}>
             <TextInput
               readOnly
@@ -105,11 +111,13 @@ export default function Navigation({ children }: NavigationProps) {
         )}
 
         {children}
-           
+
       </AppShell.Main>
       <AppShell.Footer ml={{ base: 0, sm: '50px' }} style={{ padding: '0px', borderTop: '0px' }}>
-                  
-        <NowPlayingBar />
+        <Stack gap="0" m={0}>
+          <NowPlayingBar />
+          {!isDesktop && <BottomNavigation />}
+        </Stack>
       </AppShell.Footer>
     </AppShell>
   );

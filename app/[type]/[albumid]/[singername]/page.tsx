@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchArtistSongs } from '@/store/slices/jio.slice';
 import React from 'react';
 import HomePageSkeleton from '@/components/Skeletons/HomeSkeleton';
+import { DownloadButton } from '@/components/DownloadButton/DownloadButton';
 
 
 export default function ArtistDetailsPage({
@@ -90,16 +91,7 @@ export default function ArtistDetailsPage({
                 >
                   Play All
                 </Button>
-                <Button
-                  size="xs"
-                  variant='light'
-                  rightSection={<IconDownload size={16} />}
-                  radius="md"
-                  color={theme.primaryColor}
-                  //onClick={()=>downloadFile()}
-                >
-                 Download
-                </Button>
+                 <DownloadButton song={undefined}/>
                 
               </Group>
             </Box>

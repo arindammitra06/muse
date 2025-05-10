@@ -5,8 +5,8 @@ import { cookies } from 'next/headers';
 
 export async function GET(req: NextRequest) {
   const cookieStore = cookies();
-  const token = (await cookieStore).get('token')?.value;
-
+  const Language_Params = req.headers.get('Language_Params');
+  
   const target = req.nextUrl.searchParams.get('url');
 
   if (!target) {
@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   try {
     const response = await axios.get(proxyUrl, {
       headers: {
-        Cookie: `L=hindi,bengali`, // only on server
+        Cookie: Language_Params, // only on server
       },
     });
 

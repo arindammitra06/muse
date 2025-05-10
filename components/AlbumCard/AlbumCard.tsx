@@ -17,7 +17,7 @@ import { playTrack, } from '@/store/slices/player.slice';
 import { getSongFromToken } from '@/store/slices/jio.slice';
 import { getLastSectionOfUrl, formatSongsResponse } from '@/utils/generic.utils';
 import toast from 'react-hot-toast';
-import { FavoriteButton } from '../Common/favorites-icon';
+import { FavoriteButton } from '../FavoriteButton/FavoriteButton';
 
 interface AlbumCardProps {
   id: string;

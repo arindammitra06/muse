@@ -7,11 +7,12 @@ import { useDisclosure } from '@mantine/hooks';
 import musicPlaceholder from '../../assets/images/music_placeholder.png';
 import Marquee from "react-fast-marquee";
 
-import { IconArrowsShuffle, IconChevronDown, IconDotsVertical, IconDownload, IconPlayerPauseFilled, IconPlayerPlayFilled, IconPlayerSkipBackFilled, IconPlayerSkipForwardFilled, IconRepeat, IconRepeatOnce, IconShare } from '@tabler/icons-react';
+import { IconArrowsShuffle, IconChevronDown, IconDotsVertical, IconPlayerPauseFilled, IconPlayerPlayFilled, IconPlayerSkipBackFilled, IconPlayerSkipForwardFilled, IconRepeat, IconRepeatOnce, IconShare } from '@tabler/icons-react';
 import { SkeletonSongBar } from '../SongBar/SongBar';
 import { PlaylistDndList } from '../SongBar/SortablePlaylist';
-import { downloadFile } from '@/utils/fileutil';
 import { NowPlayingOverlay } from './NowPlayingOverlay';
+import { DownloadButton } from '../DownloadButton/DownloadButton';
+import { FavoriteButton } from '../FavoriteButton/FavoriteButton';
 
 export function NowPlayingBar() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -28,7 +29,7 @@ export function NowPlayingBar() {
   const playlist = useAppSelector((state) => state.player.playlist);
   const hasPrevious = currentTrackIndex > 0;
   const hasNext = currentTrackIndex < playlist.length - 1;
-
+  
 
 
   const renderRepeatIcon = () => {
@@ -61,22 +62,22 @@ export function NowPlayingBar() {
 
           <Modal.Body>
             <NowPlayingOverlay opened={opened} onClose={close} closeDrawer={closeDrawer} >
-              
+
               <Flex align="end" justify="space-between" mb="sm" style={{ flex: 1, minWidth: 0 }} px={'xs'}>
 
-                <ActionIcon size={'xl'} variant="subtle" color="gray" onClick={()=>close()} ml={5}>
+                <ActionIcon size={'xl'} variant="subtle" color="gray" onClick={() => close()} ml={5}>
                   <IconChevronDown size={'1.5rem'} />
                 </ActionIcon>
 
                 <Group gap="xs">
-                  <ActionIcon size={'xl'} variant="subtle" color="gray" onClick={() => downloadFile(currentTrack.url!, currentTrack.title!)}>
-                    <IconDownload size={'1.5rem'}/>
+                  <FavoriteButton song={currentTrack}/>
+                  <DownloadButton song={currentTrack}/>
+                  
+                  <ActionIcon size={'xl'} variant="subtle" color="gray">
+                    <IconShare size={'1.5rem'} />
                   </ActionIcon>
                   <ActionIcon size={'xl'} variant="subtle" color="gray">
-                    <IconShare size={'1.5rem'}/>
-                  </ActionIcon>
-                  <ActionIcon size={'xl'} variant="subtle" color="gray">
-                    <IconDotsVertical size={'1.5rem'}/>
+                    <IconDotsVertical size={'1.5rem'} />
                   </ActionIcon>
                 </Group>
               </Flex>
@@ -94,7 +95,7 @@ export function NowPlayingBar() {
 
                     {currentTrack !== null && currentTrack.title !== undefined &&
                       currentTrack.title !== null && currentTrack.title !== undefined && currentTrack.title.length > 20
-                      ? <Marquee  pauseOnHover delay={3}>
+                      ? <Marquee pauseOnHover delay={3}>
                         <Text my={'xl'} fw={700} size="32px" ta={'center'} style={{ whiteSpace: 'nowrap' }}>
                           {currentTrack.title}
                         </Text>
@@ -110,7 +111,7 @@ export function NowPlayingBar() {
                       {currentTrack.subtitle !== null && currentTrack.subtitle !== undefined && currentTrack.subtitle !== ''
                         ? `${currentTrack.subtitle} • ${currentTrack.year}` : `${currentTrack.artist} • ${currentTrack.genre} • ${currentTrack.year}`}
                     </Text>
-                        
+
                     {/* Seekbar */}
                     <Box w="100%" mt="sm">
                       <Slider
@@ -220,22 +221,21 @@ export function NowPlayingBar() {
           radius={'xl'}
           color={theme.primaryColor}
           defaultValue={0}
-          mb={4}
         />
-        <Flex justify="space-between" align="center" px={'xs'} pt={4} pb={15} style={{ flex: 1, minWidth: 0 }}>
-          <Group wrap="nowrap" style={{ flex: 1, minWidth: 0 }}>
+        <Flex justify="space-between" align="center" px={'md'} py={4} style={{ flex: 1, minWidth: 0 }}>
+          <Group wrap="nowrap" style={{ flex: 1, minWidth: 0 }} gap={'xs'}>
             <Image
               src={currentTrack?.image || musicPlaceholder.src}
               radius="md"
-              w={48}
-              h={48}
+              w={40}
+              h={40}
               alt={currentTrack?.title}
             />
-            <Box style={{ minWidth: 0 }} pr={10}>
+            <Box style={{ minWidth: 0 }} >
               <Text size="md" fw={500} truncate>
                 {currentTrack?.title ?? 'No track playing'}
               </Text>
-              <Marquee  pauseOnHover delay={3} >
+              <Marquee pauseOnHover delay={3} >
                 <Text size="xs" c="dimmed" truncate lineClamp={1}>
                   {currentTrack?.title ? `${currentTrack.subtitle} • ${currentTrack.year}` : ''}
                 </Text>

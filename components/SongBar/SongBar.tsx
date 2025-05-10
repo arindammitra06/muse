@@ -3,12 +3,13 @@ import { getSongFromToken } from '@/store/slices/jio.slice';
 import { playTrack } from '@/store/slices/player.slice';
 import { getLastSectionOfUrl, formatSongsResponse } from '@/utils/generic.utils';
 import { Flex, Group, Box, ActionIcon, Image, Text, Skeleton, useMantineTheme } from "@mantine/core"
-import { IconDownload, IconDotsVertical, IconGripVertical } from "@tabler/icons-react"
+import { IconDotsVertical, IconGripVertical } from "@tabler/icons-react"
 import classes from './songbar.module.css';
 import { useRef, useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { downloadFile } from '@/utils/fileutil';
+import { FavoriteButton } from '../FavoriteButton/FavoriteButton';
+import { DownloadButton } from '../DownloadButton/DownloadButton';
 
 
 export interface SongBarProps {
@@ -24,8 +25,6 @@ export interface SongBarProps {
 
 export const SongBar = ({ idx, song, type, isPlaying, onClickOverride, currentPlayingTrack, dragHandleProps, withHandle = false }: SongBarProps) => {
     const dispatch = useAppDispatch();
-
-
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: song.id });
     const theme = useMantineTheme();
     const [dragging, setDragging] = useState(false);
@@ -129,9 +128,8 @@ export const SongBar = ({ idx, song, type, isPlaying, onClickOverride, currentPl
 
 
             <Group gap="xs" wrap="nowrap">
-                <ActionIcon variant="subtle" color="gray" onClick={()=>downloadFile(song.url!, song.title!)}>
-                    <IconDownload size={20} />
-                </ActionIcon>
+                <FavoriteButton song={song}/>
+                <DownloadButton song={song}/>
                 <ActionIcon variant="subtle" color="gray">
                     <IconDotsVertical size={20} />
                 </ActionIcon>
