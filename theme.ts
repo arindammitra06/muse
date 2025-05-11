@@ -4,7 +4,7 @@ import { createTheme } from '@mantine/core';
 
 import { MantineThemeOverride, virtualColor } from '@mantine/core';
 
-export const orangeTheme: MantineThemeOverride = {
+export const jioTheme: MantineThemeOverride = {
   colors: {
     dark: [
       '#C9C9C9',
@@ -18,17 +18,29 @@ export const orangeTheme: MantineThemeOverride = {
       '#1f1f1f',
       '#141414'
     ],
+    jio:[
+      "#e4fefb",
+      "#d5f7f4",
+      "#adede6",
+      "#83e3d8",
+      "#60dacc",
+      "#4ad5c5",
+      "#3ad3c1",
+      "#29baaa",
+      "#16a697",
+      "#009082"
+    ],
     secondary:[
-      "#fff0e4",
-      "#ffe0cf",
-      "#fac0a1",
-      "#f69e6e",
-      "#f28043",
-      "#f06e27",
-      "#f06418",
-      "#d6530c",
-      "#bf4906",
-      "#a73c00"
+      "#f5f5f5",
+      "#e7e7e7",
+      "#cdcdcd",
+      "#b2b2b2",
+      "#9a9a9a",
+      "#8b8b8b",
+      "#848484",
+      "#717171",
+      "#656565",
+      "#575757"
     ],
     gray: [
       '#f8f9fa',
@@ -187,7 +199,7 @@ export const orangeTheme: MantineThemeOverride = {
       '#d9480f'
     ]
   },
-  primaryColor: 'orange',
+  primaryColor: 'jio',
   primaryShade: {
     light: 6,
     dark: 8
@@ -1348,7 +1360,7 @@ const blackedTheme: MantineThemeOverride = {
 };
 
 export const staticThemes = [
-  { label: 'Orange', theme: orangeTheme},
+  { label: 'Jio', theme: jioTheme},
   { label: 'Red', theme: redTheme},
   { label: 'Sea', theme: seaTheme},
   { label: 'Moss', theme: mossTheme},

@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { nextTrack, play, pause, previousTrack, toggleRepeat, toggleShuffle, } from '@/store/slices/player.slice';
 import { formatTime } from '@/utils/formatTime';
 import { useAudioPlayer } from '@/utils/useAudioPlayer';
-import { Box, Group, Image, Text, Slider, ActionIcon, Card, Flex, useMantineTheme, Modal, Center, Stack, Button, Drawer, rem } from '@mantine/core';
+import { Box, Group, Image, Text, Slider, ActionIcon, Card, Flex, useMantineTheme, Modal, Center, Stack, Button, Drawer, rem, Loader } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import musicPlaceholder from '../../assets/images/music_placeholder.png';
 import Marquee from "react-fast-marquee";
@@ -25,7 +25,7 @@ export function NowPlayingBar() {
   const { currentTrack, isPlaying, seek, duration, seekTo } = useAudioPlayer();
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
-  const { isRepeat, isShuffle, currentTrackIndex } = useAppSelector((s) => s.player);
+  const {isLoading, isRepeat, isShuffle, currentTrackIndex } = useAppSelector((s) => s.player);
   const playlist = useAppSelector((state) => state.player.playlist);
   const hasPrevious = currentTrackIndex > 0;
   const hasNext = currentTrackIndex < playlist.length - 1;
@@ -33,7 +33,7 @@ export function NowPlayingBar() {
 
 
   const renderRepeatIcon = () => {
-    if (isRepeat) return <IconRepeatOnce color={theme.colors.secondary[7]} size="1.4rem" stroke={1.5} />;
+    if (isRepeat) return <IconRepeatOnce color={theme.colors[theme.primaryColor][5]} size="1.4rem" stroke={1.5} />;
     return <IconRepeat color="gray" size="1.4rem" stroke={1.5} />;
   };
 
@@ -46,7 +46,8 @@ export function NowPlayingBar() {
 
   function doNoExpandAndNext(e: React.MouseEvent): void {
     e.stopPropagation();
-    dispatch(nextTrack())
+    dispatch(nextTrack());
+    dispatch(play())
   }
   return (
     <>
@@ -95,7 +96,7 @@ export function NowPlayingBar() {
 
                     {currentTrack !== null && currentTrack.title !== undefined &&
                       currentTrack.title !== null && currentTrack.title !== undefined && currentTrack.title.length > 20
-                      ? <Marquee pauseOnHover delay={3}>
+                      ? <Marquee pauseOnHover delay={3} speed={15}>
                         <Text my={'xl'} fw={700} size="32px" ta={'center'} style={{ whiteSpace: 'nowrap' }}>
                           {currentTrack.title}
                         </Text>
@@ -107,10 +108,11 @@ export function NowPlayingBar() {
                     }
 
                     {/* Subtitle */}
-                    <Text ta="center" c="dimmed" size="md" truncate w="100%">
+                    <Marquee pauseOnHover delay={3} speed={15}>
+                      <Text ta="center" c="dimmed" size="md" truncate w="100%">
                       {currentTrack.subtitle !== null && currentTrack.subtitle !== undefined && currentTrack.subtitle !== ''
                         ? `${currentTrack.subtitle} • ${currentTrack.year}` : `${currentTrack.artist} • ${currentTrack.genre} • ${currentTrack.year}`}
-                    </Text>
+                    </Text></Marquee>
 
                     {/* Seekbar */}
                     <Box w="100%" mt="sm">
@@ -133,10 +135,10 @@ export function NowPlayingBar() {
                     {/* Controls */}
                     <Group justify="center" mt="md" gap="md">
                       <ActionIcon variant="subtle" size="xl" radius="lg" onClick={() => dispatch(toggleShuffle())}>
-                        <IconArrowsShuffle color={isShuffle ? theme.colors.secondary[7] : 'gray'} size="1.4rem" stroke={1.5} />
+                        <IconArrowsShuffle color={isShuffle ? theme.colors[theme.primaryColor][5] : 'gray'} size="1.4rem" stroke={1.5} />
                       </ActionIcon>
 
-                      <ActionIcon disabled={!hasPrevious} c={hasPrevious ? theme.colors.secondary[7] : 'gray'} variant="subtle" size="xl" radius="lg" onClick={() => dispatch(previousTrack())}>
+                      <ActionIcon disabled={!hasPrevious} c={hasPrevious ? theme.primaryColor : 'gray'} variant="subtle" size="xl" radius="lg" onClick={() => dispatch(previousTrack())}>
                         <IconPlayerSkipBackFilled size="1.8rem" stroke={1.5} />
                       </ActionIcon>
 
@@ -153,7 +155,7 @@ export function NowPlayingBar() {
                         )}
                       </ActionIcon>
 
-                      <ActionIcon variant="subtle" size="xl" c={hasNext ? theme.colors.secondary[7] : 'gray'} radius="lg" onClick={() => dispatch(nextTrack())} disabled={!hasNext}>
+                      <ActionIcon variant="subtle" size="xl" c={hasNext ? theme.primaryColor : 'gray'} radius="lg" onClick={() => dispatch(nextTrack())} disabled={!hasNext}>
                         <IconPlayerSkipForwardFilled size="1.8rem" stroke={1.5} />
                       </ActionIcon>
 
@@ -235,7 +237,7 @@ export function NowPlayingBar() {
               <Text size="md" fw={500} truncate>
                 {currentTrack?.title ?? 'No track playing'}
               </Text>
-              <Marquee pauseOnHover delay={3} >
+              <Marquee pauseOnHover delay={3} speed={15}>
                 <Text size="xs" c="dimmed" truncate lineClamp={1}>
                   {currentTrack?.title ? `${currentTrack.subtitle} • ${currentTrack.year}` : ''}
                 </Text>
@@ -245,12 +247,13 @@ export function NowPlayingBar() {
             </Box>
           </Group>
           <Group gap="sm" wrap="nowrap">
-
+            <FavoriteButton song={currentTrack}/>
             <ActionIcon variant="subtle" px={0}
-              size="xl" radius="lg" onClick={(e) => doNoExpandAndPlay(e)}>
-              {isPlaying ? <IconPlayerPauseFilled size={'6rem'} stroke={1.5} /> : <IconPlayerPlayFilled size={'6rem'} stroke={1.5} />}
+              size="md" radius="lg" onClick={(e) => doNoExpandAndPlay(e)}>
+              {isLoading ? <Loader size={'2rem'}/> :  isPlaying ? <IconPlayerPauseFilled size={'2rem'} stroke={1.5} /> : <IconPlayerPlayFilled size={'2rem'} stroke={1.5} />}
             </ActionIcon>
-            <ActionIcon c={theme.colors.secondary[7]} variant="light" p={'2'} size="md" mr={10} radius="lg" onClick={(e) => doNoExpandAndNext(e)} disabled={!hasNext}>
+            
+            <ActionIcon variant="subtle" p={'2'} size="md" mr={10} radius="lg" onClick={(e) => doNoExpandAndNext(e)} disabled={!hasNext}>
               <IconPlayerSkipForwardFilled size={'2rem'} stroke={1.5} />
             </ActionIcon>
           </Group>

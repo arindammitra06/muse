@@ -59,7 +59,7 @@ function NavbarLink({ icon: Icon, label,  href, toggle}: NavbarLinkProps) {
 export const mockdata = [
   { icon: IconHome2, label: 'Home', href:'/' },
   { icon: IconSearch, label: 'Search' , href:'/search'},
-  { icon: IconPlaylist, label: 'Playlists' , href:'/playlists'},
+  { icon: IconPlaylist, label: 'Library' , href:'/library'},
   { icon: IconSettings, label: 'Settings' , href:'/settings'},
 ];
 

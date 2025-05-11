@@ -6,10 +6,10 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import Navigation from "../navigation.route";
 import { NavigationProgress } from "@mantine/nprogress";
-import { orangeTheme } from "@/theme";
 import { useAppSelector } from "@/store/hooks";
 import { Toaster } from "react-hot-toast";
 import { ModalsProvider } from "@mantine/modals";
+import { jioTheme } from "@/theme";
 
 export interface MantineContentProps {
   children: ReactNode;
@@ -27,7 +27,7 @@ export default function MantineContent({ children }: MantineContentProps) {
 
   return (
 
-    <MantineProvider theme={currentTheme !== null && currentTheme !== undefined ? currentTheme : orangeTheme} withCssVariables>
+    <MantineProvider theme={currentTheme !== null && currentTheme !== undefined ? currentTheme : jioTheme} withCssVariables>
       <NavigationProgress />
       <Toaster
         position="bottom-center"

@@ -8,6 +8,7 @@ import {
   rem,
   Stack,
   Center,
+  useMantineTheme,
 } from '@mantine/core';
 import { IconPlayerPlayFilled, IconShare } from '@tabler/icons-react';
 import { useState } from 'react';
@@ -18,6 +19,7 @@ import { getSongFromToken } from '@/store/slices/jio.slice';
 import { getLastSectionOfUrl, formatSongsResponse } from '@/utils/generic.utils';
 import toast from 'react-hot-toast';
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton';
+import { useMediaQuery } from '@mantine/hooks';
 
 interface AlbumCardProps {
   id: string;
@@ -33,7 +35,8 @@ export function AlbumCard({ id, image, title, subtitle, type, song, year }: Albu
   const [hovered, setHovered] = useState(false);
   const router = useRouter();
   const dispatch = useAppDispatch();
-
+  const theme = useMantineTheme();
+  const isDesktop = useMediaQuery(`(min-width: ${theme.breakpoints.sm})`);
 
   function playSongAndAddToPlaylist(song: any): void {
     if (type !== null && type !== undefined && song !== null && song !== undefined && song.perma_url !== null && song.perma_url !== undefined) {

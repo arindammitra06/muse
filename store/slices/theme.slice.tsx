@@ -1,5 +1,5 @@
 
-import { orangeTheme } from "@/theme";
+import { jioTheme, } from "@/theme";
 import { baseUrl } from "@/utils/generic.utils";
 import { MantineThemeOverride } from "@mantine/core";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
@@ -12,7 +12,7 @@ export type ThemeState = {
 };
 
 export const THEME_INITIAL_STATE: ThemeState = {
-  theme: orangeTheme,
+  theme: jioTheme,
   themeLoading: false,
   temptheme: null
 };
@@ -110,7 +110,7 @@ const themeSlice = createSlice({
       })
       .addCase(setCurrentTheme.rejected, (state, action) => {
         state.themeLoading = false;
-        state.theme = orangeTheme;
+        state.theme = jioTheme;
       })
       .addCase(setTemporaryCurrentTheme.pending, (state) => {
         state.themeLoading = true;
@@ -124,7 +124,7 @@ const themeSlice = createSlice({
       })
       .addCase(setTemporaryCurrentTheme.rejected, (state, action) => {
         state.themeLoading = false;
-        state.theme = orangeTheme;
+        state.theme = jioTheme;
       })
       .addCase(revertToOriginalTheme.pending, (state) => {
         state.themeLoading = true;
@@ -135,7 +135,7 @@ const themeSlice = createSlice({
       })
       .addCase(revertToOriginalTheme.rejected, (state, action) => {
         state.themeLoading = false;
-        state.theme = orangeTheme;
+        state.theme = jioTheme;
       })
   },
 });

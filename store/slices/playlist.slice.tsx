@@ -14,14 +14,20 @@ interface PlaylistState {
 }
 
 const initialState: PlaylistState = {
-   userPlaylist: [
+  userPlaylist: [
     {
       id: 'favorites',
       name: 'Favorites',
       image: null,
       tracks: [],
     },
-   ]
+    {
+      id: 'downloads',
+      name: 'Downlaods',
+      image: null,
+      tracks: [],
+    },
+  ],
 };
 
 const playlistSlice = createSlice({
