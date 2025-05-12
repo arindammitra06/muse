@@ -9,7 +9,9 @@ export const artistRadio = '__call=webradio.createArtistStation';
 export const entityRadio = '__call=webradio.createEntityStation';
 export const getResults = '__call=search.getResults';
 export const topSearches ='__call=content.getTopSearches';
-
+export const albumResults= '__call=search.getAlbumResults';
+export const artistResults= '__call=search.getArtistResults';
+export const playlistResults= '__call=search.getPlaylistResults';
 
 import CryptoJS from 'crypto-js';
 
@@ -31,7 +33,7 @@ export const languages = ['Hindi',
     'Odia',
     'Assamese',];
 type AnyMap = Record<string, any>;
-type AlbumType = 'album' | 'artist' | 'playlist' | 'show';
+
 const key = '38346591'; // Must be exactly 8 bytes for DES
 
 export function getLastSectionOfUrl(url: string): string | undefined {
@@ -226,11 +228,11 @@ export function formatSingleAlbumSongResponse(response: Record<string, any>): Re
 
 
 
-export async function formatAlbumResponse(responseList: AnyMap[], type: AlbumType): Promise<AnyMap[]> {
+export async function formatAlbumResponse(responseList: AnyMap[], type: string): Promise<AnyMap[]> {
   const searchedAlbumList: AnyMap[] = [];
 
   for (let i = 0; i < responseList.length; i++) {
-    let response: AnyMap | null = null;
+    let response: any | null = null;
 
     try {
       switch (type) {
@@ -289,13 +291,14 @@ async function formatSingleAlbumResponse(response: AnyMap): Promise<AnyMap> {
 
 async function formatSingleArtistResponse(response: AnyMap): Promise<AnyMap> {
   try {
+
     return {
       id: response.id,
-      title: unescape(response.title?.toString()),
-      subtitle: response.subtitle?.toString(),
+      title: unescape(response.title!==undefined? response.title?.toString() : response.name?.toString()),
+      subtitle: response.subtitle!==undefined? response.subtitle?.toString(): response.type ,
       type: response.type,
       image: getImageUrl(response.image?.toString()),
-      description: response.description?.toString(),
+      description: response.description!==undefined? response.description?.toString(): response.type ,
       perma_url: response.perma_url?.toString(),
     };
   } catch (e) {
@@ -452,6 +455,49 @@ export async function formatSingleSimilarArtistResponse(
   }
 }
 
+export function getSubTitle(item: any): string {
+  const type = item.type;
+
+  const getSubtitleOrDefault = () =>
+    !item.subtitle?.trim()
+      ? 'JioSaavn'
+      : unescapeHTML(item.subtitle);
+
+  switch (type) {
+    case 'charts':
+      return '';
+
+    case 'radio_station':
+      return `Radio • ${getSubtitleOrDefault()}`;
+
+    case 'playlist':
+      return `Playlist • ${getSubtitleOrDefault()}`;
+
+    case 'song':
+      return `Single • ${item.artist ? unescapeHTML(item.artist) : ''}`;
+
+    case 'mix':
+      return `Mix • ${getSubtitleOrDefault()}`;
+
+    case 'show':
+      return `Podcast • ${getSubtitleOrDefault()}`;
+
+    case 'album': {
+      const artists = item.more_info?.artistMap?.artists?.map((a: { name: any; }) => a.name);
+      if (artists?.length) {
+        return `Album • ${unescapeHTML(artists.join(', '))}`;
+      } else if (item.subtitle?.trim()) {
+        return `Album • ${unescapeHTML(item.subtitle)}`;
+      }
+      return 'Album';
+    }
+
+    default: {
+      const artists = item.more_info?.artistMap?.artists?.map((a: { name: any; }) => a.name);
+      return artists?.length ? unescapeHTML(artists.join(', ')) : '';
+    }
+  }
+}
 
 export function unescapeHTML(str: string): string {
   return str.replace(/&amp;/g, '&')

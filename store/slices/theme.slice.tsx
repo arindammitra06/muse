@@ -94,7 +94,6 @@ const themeSlice = createSlice({
   reducers: {
     getCurrentTheme(state: any, action: any,) {
       const currentTheme = state.theme;
-      console.log("Current theme:", currentTheme);
 
       return currentTheme;
     },
@@ -120,7 +119,6 @@ const themeSlice = createSlice({
         const deepCopyOldTheme: any = Object.assign({}, state.theme);
         state.temptheme = deepCopyOldTheme;
         state.theme = action.payload;
-        console.log(state)
       })
       .addCase(setTemporaryCurrentTheme.rejected, (state, action) => {
         state.themeLoading = false;

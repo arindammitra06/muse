@@ -11,7 +11,7 @@ export const fetchGaanaHomepage = createAsyncThunk(
     try {
       const encodedUrl = encodeURIComponent(url);
       const response = await axios.get(`/api/proxy?url=${encodedUrl}`);
-      console.log(response)
+
       if (response.data && response.data.data) {
         return response.data.data;
       }

@@ -2,43 +2,47 @@
 
 import AlbumList from '@/components/AlbumList/albumlist';
 import { nprogress } from '@mantine/nprogress';
-import { FC, useEffect } from 'react';
-import { Box, useMantineTheme } from '@mantine/core';
+import { useEffect } from 'react';
+import { Box, Button, Group, Overlay, Space, Stack, Title, useMantineTheme } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchArtistSongs } from '@/store/slices/jio.slice';
 import React from 'react';
-import HomePageSkeleton from '@/components/Skeletons/HomeSkeleton';
 import { DownloadButton } from '@/components/DownloadButton/DownloadButton';
-
+import { SkeletonCarousel, SkeletonSongBar, SongBar } from '@/components/SongBar/SongBar';
+import '@mantine/carousel/styles.css';
+import { IconPlayerPlay } from '@tabler/icons-react';
+import { AppTitles } from '@/components/Common/custom-title';
 
 export default function ArtistDetailsPage({
   params,
 }: {
-  params: { type: string; albumid: string , singername: string;};
+  params: { type: string; albumid: string, singername: string; };
 }) {
- 
+
   const { type, albumid, singername } = params;
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
   const artistData = useAppSelector((state) => state.api.artistData);
-  
+
+
   useEffect(() => {
     fetchCall();
-  }, [type,albumid,singername]);
+  }, [type, albumid, singername]);
 
 
-  
+
 
   function fetchCall() {
     nprogress.reset();
     nprogress.start();
-    
+
     if (type === 'artist') {
-      dispatch(fetchArtistSongs({ artistToken:[decodeURIComponent(singername)], 
-        category:'latest' , 
-        sortOrder:'desc' }))
+      dispatch(fetchArtistSongs({
+        artistToken: [singername],
+        category: 'latest',
+        sortOrder: 'desc'
+      }))
         .then((res: any) => {
-          console.log(res)
           nprogress.complete();
         });
 
@@ -49,69 +53,81 @@ export default function ArtistDetailsPage({
 
 
   return (
-    <Box p="sm"  style={{ minHeight: '100vh',}}>
+    <Box p="0" mb={150} style={{ minHeight: '100vh', }}>
       {
-        artistData !== null && artistData !== undefined &&
-        artistData.modules !== null && artistData.modules !== undefined ?
-          <div>
-            {(Object.entries(artistData.modules) as [keyof any, any[keyof any]][]).map(([key, value]) => (
+        artistData !== null && artistData !== undefined && <Box
+          style={{
+            position: 'relative',
+            backgroundImage: `url(${artistData['image']})`, // Replace with your image path
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            height: '300px',
+            color: 'white',
+            overflow: 'hidden',
+          }}
+        >
+          <Overlay gradient="linear-gradient(to top, #000, rgba(0,0,0,0.3))" zIndex={1} />
 
-              <AlbumList key={String(key)}
-                name={value.title} subtitle={value.subtitle}
-                list={artistData[String(key)]} />
-            ))}
-          </div>
-          :
-          <HomePageSkeleton />
+
+
+          <Group
+            gap="xs"
+            style={{ position: 'absolute', bottom: 20, left: 20, zIndex: 2 }}
+          >
+            <Title order={2}>{artistData['name']}</Title>
+            <Group>
+              <Button
+                size="md"
+                rightSection={<IconPlayerPlay size={16} />}
+                radius="md"
+                color={theme.primaryColor}
+              >
+                Play All
+              </Button>
+              <DownloadButton song={undefined} />
+            </Group>
+          </Group>
+        </Box>
       }
-      
+      <Stack p={'xs'} >{
 
-      {/* <Flex gap="md" align="center" mb="md" wrap="nowrap" style={{ flex: 1, minWidth: 0 }}>
-          <Skeleton w={200} h={150}  visible={albumData === null || albumData === undefined}>
-            <Image src={albumData !== null && albumData !== undefined && albumData.image} radius="md" w={150} h={150} />
-          </Skeleton>
+        artistData !== null && artistData !== undefined ?
+          <Stack gap="0" mb={20} >
+            <AppTitles title={'Top Songs'} />
 
-          <Skeleton visible={albumData === null || albumData === undefined} style={{ minWidth: 0}}> 
-            <Box style={{ minWidth: 0}}>
-              <Text fw={700} size="lg" lineClamp={2} >
-                {albumData !== null && albumData !== undefined && albumData.title}
-              </Text>
-              <Text size="sm" c="dimmed">
-              {albumData !== null && albumData !== undefined && albumData.list.length>0 ? `${albumData.list.length} Songs` : '0 Songs'} 
-              </Text>
-              <Text size="sm" c="dimmed">
-              {albumData !== null && albumData !== undefined && albumData.header_desc}
-              </Text>
-              <Group mt="xs" gap="xs">
-                <Button
-                  size="xs"
-                  rightSection={<IconPlayerPlay size={16} />}
-                  radius="md"
-                  color={theme.primaryColor}
-                >
-                  Play All
-                </Button>
-                 <DownloadButton song={undefined}/>
-                
-              </Group>
-            </Box>
-            </Skeleton>
-      </Flex>
+            {artistData['Top Songs'] !== null && artistData['Top Songs'] !== undefined && artistData['Top Songs'].length > 0
+              && artistData['Top Songs'].map((song: any, idx: number) => (
+                <SongBar key={idx} idx={idx} song={song} type={song.type}
+                  isPlaying={false} currentPlayingTrack={undefined} onClickOverride={undefined} />
+              ))
+            }
+          </Stack>
+          :
+          <SkeletonSongBar count={8} />
+      }
+      </Stack>
 
-      <Text size="lg" fw={600} mt="lg" mb="sm" c={theme.primaryColor}>
-        Songs
-      </Text>
-      
-      <Stack gap="xs" mb={100} > 
-        {albumData !== null && albumData !== undefined && albumData.list.length>0?
-         albumData.list.map((song:any, idx:number) => (
-          <SongBar key={idx} idx={idx} song={song} type={song.type} 
-              isPlaying={false} currentPlayingTrack={undefined} onClickOverride={undefined} />
-        ))
-        :
-        <SkeletonSongBar count={8}/>
-        }
-      </Stack>  */}
+      {artistData ? (
+        Object.entries(artistData)
+          .filter(
+            ([key, value]) =>
+              !['Top Songs', 'artistId', 'name'].includes(key) && Array.isArray(value)
+          )
+          .map(([key, value]) => (
+            <div key={key}>
+              <AlbumList
+                name={key}
+                subtitle={key}
+                list={value as any[]} // ✅ Explicit cast to array
+              />
+              <Space h={20} />
+            </div>
+          ))
+      ) : (
+        <SkeletonCarousel count={8} />
+      )}
+
+
     </Box>
   );
 }

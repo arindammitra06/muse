@@ -44,6 +44,7 @@
     "react-fast-marquee": "^1.6.5",
     "react-h5-audio-player": "^3.10.0-rc.1",
     "react-hot-toast": "^2.5.2",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-jinke-music-player": "^4.24.2",
     "react-redux": "^9.2.0",
     "redux": "^5.0.1",

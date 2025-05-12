@@ -46,7 +46,9 @@ export default function ArtistList({ name, subtitle, list }: ArtistListProps) {
                                     type={item.type}
                                     id={item.id}
                                     song={item.type !== null && item.type !== undefined && item.type === 'song' ? item : undefined} 
-                                    year={item.year}                                />
+                                    year={item.year}   
+                                    perma_url={item.perma_url}
+                                    />
                             </Carousel.Slide>
                         ))
                     }

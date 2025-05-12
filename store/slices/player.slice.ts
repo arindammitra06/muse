@@ -95,6 +95,10 @@ const playerSlice = createSlice({
     setCurrentTrackIndex(state, action: PayloadAction<number>) {
       state.currentTrackIndex = action.payload;
     },
+    addTrackAfterCurrent: (state, action: PayloadAction<Track>) => {
+      const insertIndex = state.currentTrackIndex + 1;
+      state.playlist.splice(insertIndex, 0, action.payload);
+    },
     reorderPlaylist: (state, action: PayloadAction<{ from: number; to: number }>) => {
       const { from, to } = action.payload;
       const updated = [...state.playlist];
@@ -116,7 +120,7 @@ const playerSlice = createSlice({
 });
 
 export const {
-  playTrack, play, setVolume,
+  playTrack, play, setVolume,addTrackAfterCurrent,
   toggleMute, pause, nextTrack, previousTrack,setCurrentTrackIndex,
   toggleRepeat, toggleShuffle, setPlaying, reorderPlaylist
 } = playerSlice.actions;

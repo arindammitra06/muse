@@ -5,22 +5,22 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { IconSearch } from '@tabler/icons-react';
 import { useFocusTrap } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
-import { addSearchedString, fetchSearchResults, getTopSearches, removeSearchedString } from '@/store/slices/search.slice';
+import {  fetchSearchResults, getTopSearches, } from '@/store/slices/search.slice';
 import { SkeletonSongBar, SongBar } from '@/components/SongBar/SongBar';
 import SearchedAlbumList from '@/components/SearchedAlbumList/SearchedAlbumList';
 import { nprogress } from '@mantine/nprogress';
 import { title } from 'process';
 import { AppTitles } from '@/components/Common/custom-title';
+import { addSearchedString, removeSearchedString, setSearchQuery } from '@/store/slices/search-params.slice';
 
 export default function SearchPage() {
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
   const focusTrapRef = useFocusTrap();
-  const {topSearches, searchedStrings, searchResult, isLoading } = useAppSelector((state) => state.search);
-  const [query, setQuery] = useState('');
+  const {topSearches, searchResult, isLoading } = useAppSelector((state) => state.search);
+  const {searchedStrings, queryString } = useAppSelector((state) => state.searchParams);
 
 
-  
     useEffect(() => {
       nprogress.reset();
       nprogress.start();
@@ -32,17 +32,15 @@ export default function SearchPage() {
   
   
   const handlePillClick = (key:string) => {
-      console.log('Enter pressed with:', key);
-      setQuery(key);
+      dispatch(setSearchQuery(key));
       dispatch(addSearchedString(key));
       dispatch(fetchSearchResults({searchQuery: key}));
     };
 
 
   const handleEnter = () => {
-    console.log('Enter pressed with:', query);
-    dispatch(addSearchedString(query));
-    dispatch(fetchSearchResults({searchQuery: query}));
+    dispatch(addSearchedString(queryString));
+    dispatch(fetchSearchResults({searchQuery: queryString}));
   };
 
 
@@ -66,8 +64,8 @@ export default function SearchPage() {
             size="md"
             variant="filled"
             mx={0}
-            value={query}
-            onChange={(event) => setQuery(event.currentTarget.value)}
+            value={queryString}
+            onChange={(e) => dispatch(setSearchQuery(e.currentTarget.value))}
             onKeyDown={(event) => {
               if (event.key === 'Enter') {
                 handleEnter();
@@ -124,7 +122,10 @@ export default function SearchPage() {
             <>
             {searchResult !== null && searchResult !== undefined && searchResult.length>0?
                      searchResult.map((each:any, idx:number) => (
-                      <SearchedAlbumList key={idx} title={each.title} list={each.items}/>
+                      <SearchedAlbumList key={idx} title={each.title} 
+                            list={each.items} 
+                            type={each.title==='Albums'? 'album': each.title==='Playlists' ? 'playlist' : each.title==='Artists' ? 'artist' : 'song' } 
+                            query={queryString}/>
                     ))
                     :
               <></>

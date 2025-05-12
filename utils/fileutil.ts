@@ -1,3 +1,5 @@
+import { getPreferredStreamingQualityUrl } from "./generic.utils";
+
 export async function downloadFile(url: string, filename: string): Promise<void> {
   try {
     const response = await fetch(url);
@@ -26,5 +28,16 @@ export async function downloadFile(url: string, filename: string): Promise<void>
     window.URL.revokeObjectURL(blobUrl);
   } catch (error) {
     console.error('Download failed:', error);
+  }
+}
+
+export function downloadAllFiles(allFiles: any, downloadQuality: string): void {
+    console.log(allFiles)
+  if(allFiles!==null && allFiles!==undefined && allFiles.list!==null && allFiles.list!==undefined && allFiles.list.length>0){
+    console.log(allFiles.list);
+    for(let i=0;i<allFiles.list.length;i++){
+      const newUrl = getPreferredStreamingQualityUrl(allFiles.list[i].url!, downloadQuality)
+      downloadFile(newUrl!==null && newUrl!==undefined  ? newUrl : allFiles.url!, allFiles.title!);
+    }
   }
 }

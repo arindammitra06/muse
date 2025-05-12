@@ -7,7 +7,16 @@ import { playerReducer } from './slices/player.slice';
 import { searchReducer } from './slices/search.slice';
 import { settingsReducer } from './slices/settings.slice';
 import { gaanaReducer } from './slices/gaana.slice';
+import { searchParamsReducer } from './slices/search-params.slice';
+import storage from 'redux-persist/lib/storage';
+import { persistReducer } from 'redux-persist';
 
+const settingsPersistConfig = {
+  key: 'settings',
+  storage,
+  whitelist: ['isDarkTheme', 'storeSession', 'selectedLanguages', 'streamingQuality', 'downloadQuality'], // skip static `languages`
+};
+const persistedSettingsReducer = persistReducer(settingsPersistConfig, settingsReducer);
 const rootReducer = combineReducers({
   // Add your reducers here
   user: userReducer,
@@ -17,7 +26,8 @@ const rootReducer = combineReducers({
   player: playerReducer,
   playlist: playlistReducer,
   search: searchReducer,
-  settings: settingsReducer
+  settings: persistedSettingsReducer,
+  searchParams:searchParamsReducer
 });
 
 export default rootReducer;

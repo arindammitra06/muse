@@ -8,15 +8,17 @@ import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton';
 import { DownloadButton } from '../DownloadButton/DownloadButton';
+import { PlaylistMenuOptions } from '../PlaylistMenu/PlaylistMenuOptions';
 
 export interface SearchResultSongBarProps {
     idx: string;
     song: any;
     type: string;
     title: string
+    perma_url: string
 }
 
-export const SearchResultSongBar = ({ idx, song, type, title }: SearchResultSongBarProps) => {
+export const SearchResultSongBar = ({ idx, song, type, title,perma_url }: SearchResultSongBarProps) => {
     const dispatch = useAppDispatch();
     const theme = useMantineTheme();
     const { playlist, currentTrackIndex, isPlaying } = useAppSelector(s => s.player);
@@ -25,17 +27,19 @@ export const SearchResultSongBar = ({ idx, song, type, title }: SearchResultSong
     
 
     const handleClick = () => {
-        if (title === 'Top Result' || title === 'Artists') {
-            toast.error('Top Results & Artist coming soon')
+        if (title === 'Top Result') {
+            toast.error('Top Results unavailable')
             
-        } else {
+        } else if (title === 'Artists') {
+            toast.error('Check View All')
+            
+        }else {
             if (type === 'song') {
                 playSongAndAddToPlaylist(song);
             } else {
-                console.log(song);
-
                 if (type === 'artist') {
-                    router.push(`/${type}/${idx}/${song.title}`);
+                    let token = getLastSectionOfUrl(perma_url);
+                    router.push(`/${type}/${idx}/${token}`);
                 } else {
                     router.push(`/${type}/${idx}/`);
                 }
@@ -80,7 +84,7 @@ export const SearchResultSongBar = ({ idx, song, type, title }: SearchResultSong
                 <Box pos="relative" >
                     <Paper shadow='sm'>
                         <Image src={song.image} 
-                        style={{filter: title === 'Top Result' || title === 'Artists' ? 'grayscale(100%)' : 'none'}}
+                        style={{filter: title === 'Top Result' || title === 'Artists'  ? 'grayscale(100%)' : 'none'}}
                         radius="md" w={50} h={50} />
                     </Paper>
                 </Box>
@@ -101,14 +105,11 @@ export const SearchResultSongBar = ({ idx, song, type, title }: SearchResultSong
             </Group>
 
 
-            <Group gap="xs" wrap="nowrap">
+            <Group gap="xs" wrap="nowrap" mr={'xs'}>
                 
-                <FavoriteButton song={song}/>
+                {song.type === 'song' && <FavoriteButton song={song}/>}
                 {song.type === 'song' && <DownloadButton song={song}/>}
-                
-                <ActionIcon variant="subtle" color="gray">
-                    <IconDotsVertical size={20} />
-                </ActionIcon>
+                {song.type === 'song' && <PlaylistMenuOptions song={song} type={song.type}/>}
             </Group>
         </Flex>)
 }

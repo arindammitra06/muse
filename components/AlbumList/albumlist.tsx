@@ -4,6 +4,7 @@ import React from "react";
 import { Carousel } from "@mantine/carousel";
 import '@mantine/carousel/styles.css';
 import { AppTitles } from "../Common/custom-title";
+import { getSubTitle } from "@/utils/generic.utils";
 export interface AlbumListProps {
     name: string;
     subtitle: string;
@@ -37,17 +38,18 @@ export default function AlbumList({ name, subtitle, list }: AlbumListProps) {
                     height="auto"
                 >
                     {
-                        list !== null && list !== undefined && list.length > 0 && list.map((item, index) => (
+                        list !== null && list !== undefined && list.length > 0 && list?.map((item, index) => (
                             <Carousel.Slide key={index} style={{ width: 'min(40vw, 200px)' }} >
                                 <AlbumCard
                                     key={index}
                                     image={item.image}
                                     title={item.title}
-                                    subtitle={item.subtitle}
+                                    subtitle={getSubTitle(item)}
                                     type={item.type}
                                     id={item.id}
                                     song={item.type !== null && item.type !== undefined && item.type === 'song' ? item : undefined}
-                                    year={item.year} />
+                                    year={item.year} 
+                                    perma_url={item.perma_url} />
                             </Carousel.Slide>
                         ))
                     }

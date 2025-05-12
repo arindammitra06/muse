@@ -11,8 +11,8 @@ interface FadingWeightLogoProps {
 export const FadingWeightLogo: React.FC<FadingWeightLogoProps> = ({
   text,
   maxWeight = 900,
-  minWeight = 300,
-  step = 100,
+  minWeight = 200,
+  step = 150,
 }) => {
   const length = text.length;
   const weights = Array.from({ length }, (_, i) =>

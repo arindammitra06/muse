@@ -29,9 +29,10 @@ interface AlbumCardProps {
   subtitle: string;
   song: any;
   year: string;
+  perma_url: string;
 }
 
-export function AlbumCard({ id, image, title, subtitle, type, song, year }: AlbumCardProps) {
+export function AlbumCard({ id, image, title, subtitle, type, song, year, perma_url }: AlbumCardProps) {
   const [hovered, setHovered] = useState(false);
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -44,7 +45,7 @@ export function AlbumCard({ id, image, title, subtitle, type, song, year }: Albu
 
       if (token !== null && token !== undefined && token !== '') {
         dispatch(getSongFromToken({ token: token, type: type })).then(async (res: any) => {
-          console.log(type)
+
           if (res.payload !== null && res.payload !== undefined) {
 
             let songsList = res.payload['songs'];
@@ -61,10 +62,9 @@ export function AlbumCard({ id, image, title, subtitle, type, song, year }: Albu
   }
   const handleClick = () => {
     if (type === 'artist') {
-      toast.error('Top Results & Artist coming soon')
-
+      let token = getLastSectionOfUrl(perma_url);
+      router.push(`/${type}/${id}/${token}`);
     } else {
-
       if (type === 'song') {
         playSongAndAddToPlaylist(song);
       } else {
@@ -88,9 +88,13 @@ export function AlbumCard({ id, image, title, subtitle, type, song, year }: Albu
         style={{
           position: 'relative',
           width: '100%',
-          aspectRatio: '1 / 1', // Square shape
+          aspectRatio: '1 / 1',
           overflow: 'hidden',
           cursor: 'pointer',
+          transition: 'transform 200ms ease, box-shadow 200ms ease',
+          transform: hovered && isDesktop ? 'scale(1.02)' : 'scale(1)',
+          boxShadow: hovered && isDesktop ? theme.shadows.md : theme.shadows.sm,
+          zIndex: hovered ? 10 : 1, // optional: elevate above others
         }}
       >
         <Image
@@ -104,14 +108,14 @@ export function AlbumCard({ id, image, title, subtitle, type, song, year }: Albu
 
 
 
-        {hovered && (
+        {hovered && isDesktop ? (
           <>
-            <Overlay
+            {type !== null && type !== undefined && type === 'song' && <Overlay
               color="black"
-              opacity={0.5}
+              opacity={0.6}
               zIndex={1}
               style={{ transition: 'opacity 200ms ease' }}
-            />
+            />}
 
             <Group
               flex="right"
@@ -123,7 +127,7 @@ export function AlbumCard({ id, image, title, subtitle, type, song, year }: Albu
               }}
               gap="xs"
             >
-              <FavoriteButton song={song}/>
+              {type !== null && type !== undefined && type === 'song' && <FavoriteButton song={song} />}
               <ActionIcon variant="light" color="white" radius="xl">
                 <IconShare size="1.2rem" />
               </ActionIcon>
@@ -146,11 +150,50 @@ export function AlbumCard({ id, image, title, subtitle, type, song, year }: Albu
                   radius="xl"
                   onClick={() => playSongAndAddToPlaylist(song)}
                 >
-                  <IconPlayerPlayFilled size="1.5rem" color="black" />
+                  <IconPlayerPlayFilled size="1.5rem" color="white" />
                 </ActionIcon>
               </Center>}
           </>
-        )}
+        ) :
+          !isDesktop ? <>
+            <Group
+              flex="right"
+              style={{
+                position: 'absolute',
+                top: rem(10),
+                right: rem(10),
+                zIndex: 2,
+              }}
+              gap="xs"
+            >
+              {type !== null && type !== undefined && type === 'song' && <FavoriteButton song={song} />}
+
+              <ActionIcon variant="light" color="white" radius="xl">
+                <IconShare size="1.2rem" />
+              </ActionIcon>
+            </Group>
+
+            {type !== null && type !== undefined && type === 'song' &&
+              <Center
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  height: '100%',
+                  width: '100%',
+                  zIndex: 2,
+                }}
+              >
+                <ActionIcon
+                  variant="filled"
+                  size="xl"
+                  radius="xl"
+                  onClick={() => playSongAndAddToPlaylist(song)}
+                >
+                  <IconPlayerPlayFilled size="1.8rem" color="white" />
+                </ActionIcon>
+              </Center>}
+          </> : <></>}
       </Card>
 
       {/* Title and subtitle below the card */}
@@ -158,7 +201,7 @@ export function AlbumCard({ id, image, title, subtitle, type, song, year }: Albu
         {title}
       </Text>
       <Text tt="capitalize" size="xs" c="dimmed" ta={'center'} lineClamp={1} m={0} mx={10}>
-        {type} • {subtitle !== null && subtitle !== undefined ? subtitle : year}
+        {subtitle}
       </Text>
     </Stack>
   );

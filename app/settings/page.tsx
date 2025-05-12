@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import SettingsList from '@/components/SettingsList/SettingsList';
 import { ThemeDropdown } from '@/components/Common/themeDropdown';
 import { IconSun, IconMoon, IconLanguage, IconBrandYoutube, IconCheck, IconDownload } from '@tabler/icons-react';
-import { setDarkTheme, setDownloadQuality, setSelectedLanguages, setStreamingQuality } from '@/store/slices/settings.slice';
+import { setDarkTheme, setDownloadQuality, setSelectedLanguages, setStoreSession, setStreamingQuality } from '@/store/slices/settings.slice';
 import { useRouter } from 'next/navigation';
 import { modals } from '@mantine/modals';
 import { useDisclosure } from '@mantine/hooks';
@@ -17,10 +17,9 @@ import { AppTitles } from '@/components/Common/custom-title';
 export default function SettingsPage() {
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
-  const { isDarkTheme, streamingQuality, downloadQuality } = useAppSelector((state) => state.settings);
+  const { isDarkTheme, streamingQuality, downloadQuality, storeSession } = useAppSelector((state) => state.settings);
 
   const router = useRouter();
-
 
   const goToUrl = (url: string) => {
     router.push(url);
@@ -92,7 +91,7 @@ export default function SettingsPage() {
               </Menu></>} onClick={undefined} />
 
 
-           <SettingsList title={'Download Quality'} subtitle='Higher quality uses more disk space'
+          <SettingsList title={'Download Quality'} subtitle='Higher quality uses more disk space'
             rightElement={<>
               <Menu shadow="md" width={200}>
                 <Menu.Target>
@@ -118,7 +117,13 @@ export default function SettingsPage() {
               </Menu></>} onClick={undefined} />
 
           <SettingsList title={'Retain Session'} subtitle='Add all played songs/playlist to session'
-            rightElement={<></>} onClick={undefined} />
+            rightElement={<Checkbox
+              size='md'
+              p={3}
+              checked={storeSession}
+              onChange={(event) => setStoreSession(event.currentTarget.checked)}
+            />}
+            onClick={undefined} />
         </Paper>
 
         <Paper

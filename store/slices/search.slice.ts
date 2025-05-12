@@ -10,8 +10,6 @@ type SearchItem = Record<string, any>;
 type SearchResult = { title: string; items: SearchItem[] };
 
 export type SearchState = {
-  readonly searchString: string | null;
-  searchedStrings: string[];
   topSearches: any[];
   searchResult: SearchResult[] | undefined;
   readonly isLoading: boolean;
@@ -19,10 +17,8 @@ export type SearchState = {
 };
 
 export const SEARCH_INITIAL_STATE: SearchState = {
-  searchString: null,
   isLoading: false,
   error: null,
-  searchedStrings: [],
   searchResult: [],
   topSearches: [],
 };
@@ -41,7 +37,7 @@ export async function fetchSongSearchResults({
   const params = `p=${page}&q=${encodeURIComponent(searchQuery)}&n=${count}&${getResults}`;
   try {
      const headers = getCommonHeaders(thunkAPI.getState() as any);
-     console.log(headers)
+     
           
     const encodedUrl = encodeURIComponent(`${baseUrl}${homeEndpoint}&${params}`);
     const response = await axios.get(`/api/proxy?url=${encodedUrl}`, { headers: headers});
@@ -90,7 +86,7 @@ export const fetchSearchResults = createAsyncThunk(
     try {
 
       const headers = getCommonHeaders(thunkAPI.getState() as any);
-      console.log(headers)
+      
             
       let params;
       params = `__call=autocomplete.get&cc=in&includeMetaTags=1&query=${encodeURIComponent(searchQuery)}`;
@@ -98,12 +94,11 @@ export const fetchSearchResults = createAsyncThunk(
 
       const encodedUrl = encodeURIComponent(`${baseUrl}${homeEndpoint}&${params}`);
       const response = await axios.get(`/api/proxy?url=${encodedUrl}`, { headers: headers});
-      console.log(response)
+
   
       if(response.status===200){
         const result: Record<string, SearchItem[]> = {};
         const position: Record<number, string> = {};
-        
         
         let searchedSongList: SearchItem[] = [];
         let searchedAlbumList: SearchItem[] = [];
@@ -191,7 +186,7 @@ export const fetchSearchResults = createAsyncThunk(
     async (_: void, thunkAPI) => {
       try {
         const headers = getCommonHeaders(thunkAPI.getState() as any);
-        console.log(headers)
+        
         
         let params = topSearches;
         const encodedUrl = encodeURIComponent(`${baseUrl}${homeEndpoint}&${params}`);
@@ -208,16 +203,7 @@ const searchSlice = createSlice({
   name: "search",
   initialState: SEARCH_INITIAL_STATE,
   reducers: {
-    addSearchedString: (state, action: PayloadAction<string>) => {
-      const str = action.payload;
-      if (!state.searchedStrings.includes(str)) {
-        state.searchedStrings.push(str);
-      }
-    },
-    removeSearchedString: (state, action: PayloadAction<string>) => {
-      const str = action.payload;
-      state.searchedStrings = state.searchedStrings.filter(s => s !== str);
-    },
+    
   },
   extraReducers: (builder) => {
     builder
@@ -247,5 +233,5 @@ const searchSlice = createSlice({
 });
 
 
-export const { addSearchedString ,removeSearchedString} = searchSlice.actions;
+export const { } = searchSlice.actions;
 export const searchReducer = searchSlice.reducer;

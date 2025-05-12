@@ -6,6 +6,7 @@ export type SettingsState = {
   readonly isDarkTheme: boolean;
   readonly streamingQuality: string;
   readonly downloadQuality: string;
+  readonly storeSession: boolean;
   readonly languages: string[];
   readonly selectedLanguages: string[];
 };
@@ -15,7 +16,8 @@ export const SETTING_INITIAL_STATE: SettingsState = {
   languages: languages,
   selectedLanguages: ['Hindi', 'Bengali'],
   streamingQuality: '96 kbps',
-  downloadQuality: '320 kbps'
+  downloadQuality: '320 kbps',
+  storeSession: true
 };
 
 
@@ -28,6 +30,9 @@ const settingsSlice = createSlice({
       const isDarkTheme = action.payload;
       state.isDarkTheme = isDarkTheme;
     },
+    setStoreSession: (state, action: PayloadAction<boolean>) => {
+      state.storeSession = action.payload;
+    },
     setSelectedLanguages: (state, action: PayloadAction<string[]>) => {
       state.selectedLanguages = action.payload;
     },
@@ -39,22 +44,14 @@ const settingsSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // builder
-    //   .addCase(fetchSearchResults.pending, (state) => {
-    //     state.isLoading = true;
-    //     state.error = null;
-    //   })
-    //   .addCase(fetchSearchResults.fulfilled, (state, action) => {
-    //     state.isLoading = false;
-    //     state.searchResult = action.payload;
-    //   })
-    //   .addCase(fetchSearchResults.rejected, (state, action) => {
-    //     state.isLoading = false;
-    //     state.error = action.error.message != null ? action.error.message : "";
-    //   })
+    builder.addDefaultCase((state) => {
+      if (!state.languages || state.languages.length === 0) {
+        state.languages = languages; // restore static value
+      }
+    });
   },
 });
 
 
-export const {setDarkTheme, setSelectedLanguages,setStreamingQuality, setDownloadQuality} = settingsSlice.actions;
+export const {setDarkTheme, setStoreSession, setSelectedLanguages,setStreamingQuality, setDownloadQuality} = settingsSlice.actions;
 export const settingsReducer = settingsSlice.reducer;

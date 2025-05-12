@@ -2,7 +2,7 @@ import { useAppDispatch } from '@/store/hooks';
 import { getSongFromToken } from '@/store/slices/jio.slice';
 import { playTrack } from '@/store/slices/player.slice';
 import { getLastSectionOfUrl, formatSongsResponse } from '@/utils/generic.utils';
-import { Flex, Group, Box, ActionIcon, Image, Text, Skeleton, useMantineTheme } from "@mantine/core"
+import { Flex, Group, Box, ActionIcon, Image, Text, Skeleton, useMantineTheme, ScrollArea } from "@mantine/core"
 import { IconDotsVertical, IconGripVertical } from "@tabler/icons-react"
 import classes from './songbar.module.css';
 import { useRef, useState } from 'react';
@@ -10,6 +10,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton';
 import { DownloadButton } from '../DownloadButton/DownloadButton';
+import { PlaylistMenuOptions } from '../PlaylistMenu/PlaylistMenuOptions';
 
 
 export interface SongBarProps {
@@ -82,10 +83,13 @@ export const SongBar = ({ idx, song, type, isPlaying, onClickOverride, currentPl
             style={{
                 transform: CSS.Transform.toString(transform),
                 transition,
+                cursor:'pointer',
+                marginBottom: '8px'
             }}
             onPointerDown={handlePointerDown}
             onPointerUp={handlePointerUp}
             onClick={handleClick} >
+
             <Group gap="xs" wrap="nowrap" style={{ flex: 1, minWidth: 0 }}>
                 {withHandle && (
                     <ActionIcon m={0} variant="subtle" color="gray" {...listeners} {...attributes} >
@@ -94,7 +98,9 @@ export const SongBar = ({ idx, song, type, isPlaying, onClickOverride, currentPl
                 )}
 
                 <Box pos="relative">
-                    <Image src={song.image} radius="md" w={60} h={60} />
+                    <Image src={song.image} 
+                    fallbackSrc={`https://placehold.co/600x400?text=${type}`}
+                    fit='cover' radius="md" w={60} h={60} />
 
                     {currentPlayingTrack !== null && currentPlayingTrack !== undefined
                             && song !== null && song !== undefined && isPlaying && currentPlayingTrack.id === song.id &&<Box
@@ -130,9 +136,7 @@ export const SongBar = ({ idx, song, type, isPlaying, onClickOverride, currentPl
             <Group gap="xs" wrap="nowrap">
                 <FavoriteButton song={song}/>
                 <DownloadButton song={song}/>
-                <ActionIcon variant="subtle" color="gray">
-                    <IconDotsVertical size={20} />
-                </ActionIcon>
+                <PlaylistMenuOptions song={song} type={song.type}/>
             </Group>
         </Flex>)
 }
@@ -156,6 +160,30 @@ export const SkeletonSongBar = (props: any) => {
         ))}
     </>
 }
+
+export const SkeletonCarousel = (props: any) => {
+      const renderCardSkeleton = (count: number) =>
+            Array.from({ length: count }).map((_, index) => (
+                <Box key={index} style={{ minWidth: 160 }}>
+                    <Skeleton height={160} radius="md" />
+                    <Skeleton height={12} mt="sm" width="80%" />
+                    <Skeleton height={10} mt={6} width="60%" />
+                </Box>
+            ));
+    
+    return <>
+         <div >
+                    
+                    <Skeleton height={12} ml={'12px'} mb="sm" width="30%" />
+                    <ScrollArea type="never" scrollbars="x" offsetScrollbars style={{paddingLeft: '12px'}}>
+                        <Group gap="md" wrap="nowrap">
+                            {renderCardSkeleton(10)}
+                        </Group>
+                    </ScrollArea>
+                    </div>
+    </>
+}
+
 
 
 export const PlayingIndicator = () => {

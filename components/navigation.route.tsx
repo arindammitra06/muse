@@ -23,7 +23,7 @@ export default function Navigation({ children }: NavigationProps) {
 
 
   const handleBack = () => {
-    router.push('/');
+    router.back();
   };
 
   useEffect(() => {
