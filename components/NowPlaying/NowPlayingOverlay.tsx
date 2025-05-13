@@ -68,7 +68,6 @@ export function NowPlayingOverlay({
         margin: 0, // Ensure no unwanted space or margin
         padding: 0,
         height: '100vh', // Full-screen modal
-        overflow: 'hidden', // Prevent body scrolling while modal is active
       }}
     >
       <AnimatedDiv
@@ -85,7 +84,6 @@ export function NowPlayingOverlay({
           left: 0,
           right: 0,
           willChange: 'transform',
-          overflow: 'hidden', // Prevent any content overflow during swipe
         }}
       >
         <div

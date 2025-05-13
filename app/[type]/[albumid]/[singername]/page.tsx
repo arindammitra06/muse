@@ -97,7 +97,7 @@ export default function ArtistDetailsPage({
 
             {artistData['Top Songs'] !== null && artistData['Top Songs'] !== undefined && artistData['Top Songs'].length > 0
               && artistData['Top Songs'].map((song: any, idx: number) => (
-                <SongBar key={idx} idx={idx} song={song} type={song.type}
+                <SongBar key={idx} id={song.id}  song={song} type={song.type}
                   isPlaying={false} currentPlayingTrack={undefined} onClickOverride={undefined} />
               ))
             }

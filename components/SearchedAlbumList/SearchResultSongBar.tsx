@@ -2,8 +2,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { getSongFromToken } from '@/store/slices/jio.slice';
 import { playTrack } from '@/store/slices/player.slice';
 import { getLastSectionOfUrl, formatSongsResponse } from '@/utils/generic.utils';
-import { Flex, Group, Box, ActionIcon, Image, Text, useMantineTheme, Paper } from "@mantine/core"
-import { IconDotsVertical } from "@tabler/icons-react"
+import { Flex, Group, Box, Image, Text, useMantineTheme, Paper } from "@mantine/core"
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton';
@@ -109,7 +108,8 @@ export const SearchResultSongBar = ({ idx, song, type, title,perma_url }: Search
                 
                 {song.type === 'song' && <FavoriteButton song={song}/>}
                 {song.type === 'song' && <DownloadButton song={song}/>}
-                {song.type === 'song' && <PlaylistMenuOptions song={song} type={song.type}/>}
+                {song.type === 'song' &&  <Box onClick={(e) => e.stopPropagation()}>
+                    <PlaylistMenuOptions song={song} type={song.type} album={undefined} isForAlbums={false} isPlayingSongBar={false} albumType={''} playlistId={''}/></Box>}
             </Group>
         </Flex>)
 }

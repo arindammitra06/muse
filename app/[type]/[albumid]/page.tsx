@@ -12,6 +12,7 @@ import { downloadAllFiles, downloadFile } from '@/utils/fileutil';
 import { formatSongsResponse, getLastSectionOfUrl, getPreferredStreamingQualityUrl } from '@/utils/generic.utils';
 import { modals } from '@mantine/modals';
 import toast from 'react-hot-toast';
+import { PlaylistMenuOptions } from '@/components/PlaylistMenu/PlaylistMenuOptions';
 
 
 export default function AlbumDetailsPage({
@@ -34,16 +35,16 @@ export default function AlbumDetailsPage({
 
   async function fetchAndDownloadAllFiles(albumData: any, downloadQuality: string) {
     toast.success('Starting download in background')
-            
+
     if (albumData !== null && albumData !== undefined && albumData.length > 0) {
       for (let i = 0; i < albumData.length; i++) {
-        if (albumData[i] !== null && albumData[i] !== undefined  && albumData[i].perma_url !== null && albumData[i].perma_url !== undefined) {
-          let token = getLastSectionOfUrl(albumData[i].perma_url);  
+        if (albumData[i] !== null && albumData[i] !== undefined && albumData[i].perma_url !== null && albumData[i].perma_url !== undefined) {
+          let token = getLastSectionOfUrl(albumData[i].perma_url);
           if (token !== null && token !== undefined && token !== '') {
             await dispatch(getSongFromToken({ token: token, type: albumData[i].type })).then(async (res: any) => {
               if (res.payload !== null && res.payload !== undefined) {
                 let songsList = res.payload['songs'];
-                
+
                 if (songsList !== null && songsList !== undefined && songsList.length > 0) {
                   const songsFetched = await formatSongsResponse(songsList, type);
                   const newUrl = getPreferredStreamingQualityUrl(songsFetched[0].url!, downloadQuality)
@@ -57,19 +58,19 @@ export default function AlbumDetailsPage({
     }
   }
 
-    const openConfirmodal = () =>
-      modals.openConfirmModal({
-        title: 'Download all tracks?',
-        centered: true,
-        children: (
-          <Text size="sm">
-           Are you sure you want to download all tracks?
-          </Text>
-        ),
-        labels: { confirm: 'Yes', cancel: "No" },
-        onCancel: () => console.log('Cancel'),
-        onConfirm: () => fetchAndDownloadAllFiles(albumData.list, downloadQuality),
-      });
+  const openConfirmodal = () =>
+    modals.openConfirmModal({
+      title: 'Download all tracks?',
+      centered: true,
+      children: (
+        <Text size="sm">
+          Are you sure you want to download all tracks?
+        </Text>
+      ),
+      labels: { confirm: 'Yes', cancel: "No" },
+      onCancel: () => console.log('Cancel'),
+      onConfirm: () => fetchAndDownloadAllFiles(albumData.list, downloadQuality),
+    });
 
   function fetchCall() {
     nprogress.reset();
@@ -139,7 +140,7 @@ export default function AlbumDetailsPage({
                 onClick={() => openConfirmodal()}>
                 <IconDownload size={24} stroke={2} />
               </ActionIcon>
-
+              <PlaylistMenuOptions song={undefined} type={type} album={albumData} isForAlbums={true} isPlayingSongBar={false} albumType={''} playlistId={''} />
 
             </Group>
           </Box>
@@ -153,7 +154,7 @@ export default function AlbumDetailsPage({
       <Stack gap="0" mb={100} >
         {albumData !== null && albumData !== undefined && albumData.list.length > 0 ?
           albumData.list.map((song: any, idx: number) => (
-            <SongBar key={idx} idx={idx} song={song} type={song.type}
+            <SongBar key={idx} id={song.id} song={song} type={song.type}
               isPlaying={false} currentPlayingTrack={undefined} onClickOverride={undefined} />
           ))
           :

@@ -1,21 +1,17 @@
 'use client'
 
-import { Box, Stack, useMantineTheme, Title, Switch, ActionIcon, Image, useMantineColorScheme, Text, Paper, Button, Checkbox, Group, Modal, Badge, TextInput, SimpleGrid, Tooltip, Menu } from '@mantine/core';
+import { Box, Stack, useMantineTheme, ActionIcon, Image, Text, Paper, Button, Group, TextInput, Menu } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import SettingsList from '@/components/SettingsList/SettingsList';
-import { ThemeDropdown } from '@/components/Common/themeDropdown';
-import { IconSun, IconMoon, IconLanguage, IconPlus, IconTrash, IconClearAll, IconArrowsLeftRight, IconDotsVertical, IconMessageCircle, IconPhoto, IconSearch, IconSettings } from '@tabler/icons-react';
-import { setDarkTheme, setSelectedLanguages } from '@/store/slices/settings.slice';
+import { IconPlus, IconTrash, IconClearAll, IconDotsVertical } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { modals } from '@mantine/modals';
-import { useDisclosure } from '@mantine/hooks';
-import { languages } from '@/utils/generic.utils';
-import { RootState } from '@/store/store';
 import { useEffect, useState } from 'react';
 import { createPlaylist, clearPlaylist, deletePlaylist } from '@/store/slices/playlist.slice';
 import { v4 as uuidv4 } from 'uuid';
 import musicPlaceholder from '../../assets/images/music_placeholder.png';
 import { AppTitles } from '@/components/Common/custom-title';
+import { useDisclosure } from '@mantine/hooks';
+import SortablePlaylistDrawer from '@/components/SortablePlaylistViewer/SortablePlaylistViewer';
 
 export default function PlaylistManager() {
   const dispatch = useAppDispatch();
@@ -25,9 +21,18 @@ export default function PlaylistManager() {
   const isDarkTheme = useAppSelector((state) => state.settings.isDarkTheme);
   const otherPlaylists = playlists.filter((p) => p.id !== 'favorites');
   const favorites = playlists.find((p) => p.id === 'favorites');
+  const [
+      drawerOpened,
+      { open: openDrawer, close: closeDrawer },
+    ] = useDisclosure(false);
+  
+  
+  const [playlistId, setPlaylistId] = useState<string | null>(null);
 
-
-
+  const openPlaylist = (id: string) => {
+    setPlaylistId(id);
+    openDrawer();
+  };
 
   function showCreatePlaylistModal() {
     modals.open({
@@ -68,6 +73,14 @@ export default function PlaylistManager() {
 
   return (
     <Box p="xs">
+      {playlistId && (
+        <SortablePlaylistDrawer
+          playlistId={playlistId}
+          drawerOpened={drawerOpened}
+          closeDrawer={() => closeDrawer()}
+        />
+      )}
+      
       <Group justify="space-between">
         <AppTitles title={'My Playlists'} />
         <Button
@@ -82,7 +95,8 @@ export default function PlaylistManager() {
 
       <Stack mt="xl" gap="sm">
         {favorites && (
-          <Paper shadow="xs" p="5" withBorder bg={isDarkTheme ? theme.colors.secondary[0]: theme.colors.secondary[9]}>
+          <Paper shadow="xs" p="5" withBorder onClick={()=>openPlaylist('favorites')}
+          bg={isDarkTheme ? theme.colors.secondary[0]: theme.colors.secondary[9]}>
             <Group justify="space-between">
               <Group p={0}>
                 <Image src={musicPlaceholder.src} radius="md" w={50} h={50} />
@@ -107,33 +121,61 @@ export default function PlaylistManager() {
         )}
 
         {otherPlaylists.map((playlist) => (
-          <Paper key={playlist.id} shadow="xs" p="5" withBorder>
-            <Group justify="space-between">
-              <Group p={0}>
-                <Image src={playlist !== null && playlist !== undefined && playlist.image !== null && playlist.image !== undefined
-                  ? playlist.image : musicPlaceholder.src} radius="md" w={50} h={50} />
-                <Text fw={600}>{playlist.name}</Text>
-              </Group>
-              <Group>
-                <Text size="sm" fw={500} c="dimmed">{playlist.tracks.length} Tracks</Text>
-                <Menu shadow="md">
-                  <Menu.Target>
-                    <ActionIcon variant="transparent" color="gray" ><IconDotsVertical /></ActionIcon>
-                  </Menu.Target>
-                  <Menu.Dropdown>
-                    <Menu.Item onClick={() => openClearModal(playlist.id, playlist.name)} leftSection={<IconClearAll size={14} />}>
-                      Clear Tracks
-                    </Menu.Item>
-                    <Menu.Item
-                      color="red" onClick={() => openDeleteModal(playlist.id, playlist.name)}
-                      leftSection={<IconTrash size={14} />}  >
-                      Delete 
-                    </Menu.Item>
-                  </Menu.Dropdown>
-                </Menu>
-              </Group>
+          <Paper key={playlist.id} shadow="xs" p="5" withBorder onClick={()=>openPlaylist(playlist.id)}>
+          <Group justify="space-between" wrap="nowrap">
+            {/* Playlist Image and Name */}
+            <Group p={0} wrap="nowrap" style={{ minWidth: 0 }}>
+              <Image
+                src={
+                  playlist?.image ?? musicPlaceholder.src
+                }
+                radius="md"
+                w={50}
+                h={50}
+              />
+              <Text
+                fw={600}
+                style={{
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  maxWidth: 180, // adjust based on your layout
+                }}
+              >
+                {playlist.name}
+              </Text>
             </Group>
-          </Paper>
+        
+            {/* Tracks count and menu */}
+            <Group wrap="nowrap">
+              <Text size="sm" fw={500} c="dimmed" style={{ whiteSpace: 'nowrap' }}>
+                {playlist.tracks.length} Tracks
+              </Text>
+              <Menu shadow="md">
+                <Menu.Target>
+                  <ActionIcon variant="transparent" color="gray">
+                    <IconDotsVertical />
+                  </ActionIcon>
+                </Menu.Target>
+                <Menu.Dropdown>
+                  <Menu.Item
+                    onClick={() => openClearModal(playlist.id, playlist.name)}
+                    leftSection={<IconClearAll size={14} />}
+                  >
+                    Clear Tracks
+                  </Menu.Item>
+                  <Menu.Item
+                    color="red"
+                    onClick={() => openDeleteModal(playlist.id, playlist.name)}
+                    leftSection={<IconTrash size={14} />}
+                  >
+                    Delete
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+            </Group>
+          </Group>
+        </Paper>
         ))}
       </Stack>
     </Box>

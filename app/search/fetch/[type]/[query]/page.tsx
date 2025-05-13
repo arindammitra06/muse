@@ -51,9 +51,9 @@ export default function AlbumSearchPage({ params }: { params: { type: string; qu
         loader={<Center><Loader /></Center>}
         endMessage={<Title ta={'center'} order={5}>No more data</Title>}
       >
-        {albums.map(album => (
+        {albums.map((album, index) => (
           <SearchResultSongBar
-            key={album.id}
+            key={index}
             idx={album.id}
             song={album}
             type={album.type}

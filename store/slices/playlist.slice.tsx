@@ -23,7 +23,7 @@ const initialState: PlaylistState = {
     },
     {
       id: 'downloads',
-      name: 'Downlaods',
+      name: 'Downloads',
       image: null,
       tracks: [],
     },
@@ -36,6 +36,9 @@ const playlistSlice = createSlice({
   reducers: {
     createPlaylist(state, action: PayloadAction<{ id: string; name: string ;image:string|null}>) {
       state.userPlaylist.push({ id: action.payload.id, name: action.payload.name, tracks: [], image: action.payload.image });
+    },
+    copyPlaylist(state, action: PayloadAction<{ id: string; name: string ;image:string|null, tracks:any[]}> ) {
+      state.userPlaylist.push({ id: action.payload.id, name: action.payload.name, tracks: action.payload.tracks, image: action.payload.image });
     },
     deletePlaylist(state, action: PayloadAction<string>) {
       state.userPlaylist = state.userPlaylist.filter((p) => p.id !== action.payload);
@@ -60,6 +63,12 @@ const playlistSlice = createSlice({
         playlist.tracks = [];
       }
     },
+    updatePlaylistOrder: (state, action: PayloadAction<{ playlistId: string; tracks: Track[] }>) => {
+      const playlist = state.userPlaylist.find((p) => p.id === action.payload.playlistId);
+      if (playlist) {
+        playlist.tracks = action.payload.tracks;
+      }
+    },
     toggleFavorite(state, action: PayloadAction<Track>) {
       const favorites = state.userPlaylist.find((p) => p.id === 'favorites');
       if (!favorites) return;
@@ -76,7 +85,8 @@ const playlistSlice = createSlice({
 
 export const { createPlaylist,
   deletePlaylist,
+  copyPlaylist,
   addSongToPlaylist,
   removeSongFromPlaylist,
-  clearPlaylist,toggleFavorite } = playlistSlice.actions;
+  clearPlaylist,toggleFavorite, updatePlaylistOrder } = playlistSlice.actions;
 export const playlistReducer = playlistSlice.reducer;

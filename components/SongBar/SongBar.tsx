@@ -3,7 +3,7 @@ import { getSongFromToken } from '@/store/slices/jio.slice';
 import { playTrack } from '@/store/slices/player.slice';
 import { getLastSectionOfUrl, formatSongsResponse } from '@/utils/generic.utils';
 import { Flex, Group, Box, ActionIcon, Image, Text, Skeleton, useMantineTheme, ScrollArea } from "@mantine/core"
-import { IconDotsVertical, IconGripVertical } from "@tabler/icons-react"
+import { IconGripVertical } from "@tabler/icons-react"
 import classes from './songbar.module.css';
 import { useRef, useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
@@ -14,7 +14,7 @@ import { PlaylistMenuOptions } from '../PlaylistMenu/PlaylistMenuOptions';
 
 
 export interface SongBarProps {
-    idx: number;
+    id: string;
     song: any;
     type: string;
     isPlaying: boolean;
@@ -22,11 +22,14 @@ export interface SongBarProps {
     onClickOverride: any;
     dragHandleProps?: any;
     withHandle?: boolean;
+    isPlayingSongBar?: boolean;
+    albumType?: string;
+    playlistId?: string;
 }
 
-export const SongBar = ({ idx, song, type, isPlaying, onClickOverride, currentPlayingTrack, dragHandleProps, withHandle = false }: SongBarProps) => {
+export const SongBar = ({ id, song, type, isPlaying, onClickOverride, currentPlayingTrack, dragHandleProps, withHandle = false, isPlayingSongBar = false, albumType = 'session', playlistId = "" }: SongBarProps) => {
     const dispatch = useAppDispatch();
-    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: song.id });
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: id });
     const theme = useMantineTheme();
     const [dragging, setDragging] = useState(false);
     const dragTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -78,12 +81,13 @@ export const SongBar = ({ idx, song, type, isPlaying, onClickOverride, currentPl
 
 
     return (
-        <Flex key={idx}
+        <Flex
+            key={id + ''}
             ref={setNodeRef}
             style={{
                 transform: CSS.Transform.toString(transform),
                 transition,
-                cursor:'pointer',
+                cursor: 'pointer',
                 marginBottom: '8px'
             }}
             onPointerDown={handlePointerDown}
@@ -92,29 +96,33 @@ export const SongBar = ({ idx, song, type, isPlaying, onClickOverride, currentPl
 
             <Group gap="xs" wrap="nowrap" style={{ flex: 1, minWidth: 0 }}>
                 {withHandle && (
-                    <ActionIcon m={0} variant="subtle" color="gray" {...listeners} {...attributes} >
-                        <IconGripVertical size={20} />
-                    </ActionIcon>
+                    <Group
+                        {...dragHandleProps}
+                        className="drag-handle"
+                        style={{ touchAction: 'none', cursor: 'grab' }}
+                    >
+                        <IconGripVertical size={26} />
+                    </Group>
                 )}
 
                 <Box pos="relative">
-                    <Image src={song.image} 
-                    fallbackSrc={`https://placehold.co/600x400?text=${type}`}
-                    fit='cover' radius="md" w={60} h={60} />
+                    <Image src={song.image}
+                        fallbackSrc={`https://placehold.co/600x400?text=${type}`}
+                        fit='cover' radius="md" w={60} h={60} />
 
                     {currentPlayingTrack !== null && currentPlayingTrack !== undefined
-                            && song !== null && song !== undefined && isPlaying && currentPlayingTrack.id === song.id &&<Box
-                        pos="absolute"
-                        top={0}
-                        left={0}
-                        w="100%"
-                        h="100%"
-                        display="flex"
-                        ta="center"
-                        flex="center"
-                        bg="rgba(0, 0, 0, 0.1)" >
-                         <PlayingIndicator />
-                    </Box>}
+                        && song !== null && song !== undefined && isPlaying && currentPlayingTrack.id === song.id && <Box
+                            pos="absolute"
+                            top={0}
+                            left={0}
+                            w="100%"
+                            h="100%"
+                            display="flex"
+                            ta="center"
+                            flex="center"
+                            bg="rgba(0, 0, 0, 0.1)" >
+                            <PlayingIndicator />
+                        </Box>}
                 </Box>
 
 
@@ -134,9 +142,16 @@ export const SongBar = ({ idx, song, type, isPlaying, onClickOverride, currentPl
 
 
             <Group gap="xs" wrap="nowrap">
-                <FavoriteButton song={song}/>
-                <DownloadButton song={song}/>
-                <PlaylistMenuOptions song={song} type={song.type}/>
+                <FavoriteButton song={song} />
+                <DownloadButton song={song} />
+                <Box onClick={(e) => e.stopPropagation()}>
+                    <PlaylistMenuOptions
+                        song={song} type={song.type} album={undefined} isForAlbums={false}
+                        isPlayingSongBar={isPlayingSongBar}
+                        albumType={albumType}
+                        playlistId={playlistId} />
+                </Box>
+
             </Group>
         </Flex>)
 }
@@ -162,25 +177,25 @@ export const SkeletonSongBar = (props: any) => {
 }
 
 export const SkeletonCarousel = (props: any) => {
-      const renderCardSkeleton = (count: number) =>
-            Array.from({ length: count }).map((_, index) => (
-                <Box key={index} style={{ minWidth: 160 }}>
-                    <Skeleton height={160} radius="md" />
-                    <Skeleton height={12} mt="sm" width="80%" />
-                    <Skeleton height={10} mt={6} width="60%" />
-                </Box>
-            ));
-    
+    const renderCardSkeleton = (count: number) =>
+        Array.from({ length: count }).map((_, index) => (
+            <Box key={index} style={{ minWidth: 160 }}>
+                <Skeleton height={160} radius="md" />
+                <Skeleton height={12} mt="sm" width="80%" />
+                <Skeleton height={10} mt={6} width="60%" />
+            </Box>
+        ));
+
     return <>
-         <div >
-                    
-                    <Skeleton height={12} ml={'12px'} mb="sm" width="30%" />
-                    <ScrollArea type="never" scrollbars="x" offsetScrollbars style={{paddingLeft: '12px'}}>
-                        <Group gap="md" wrap="nowrap">
-                            {renderCardSkeleton(10)}
-                        </Group>
-                    </ScrollArea>
-                    </div>
+        <div >
+
+            <Skeleton height={12} ml={'12px'} mb="sm" width="30%" />
+            <ScrollArea type="never" scrollbars="x" offsetScrollbars style={{ paddingLeft: '12px' }}>
+                <Group gap="md" wrap="nowrap">
+                    {renderCardSkeleton(10)}
+                </Group>
+            </ScrollArea>
+        </div>
     </>
 }
 
@@ -194,5 +209,5 @@ export const PlayingIndicator = () => {
             <span /><span /><span /><span />
         </Box>
     );
-    
+
 }

@@ -55,7 +55,7 @@ export default function SearchPage() {
          radius={'xl'}
          style={{ position: 'sticky',
           top: 80,
-          zIndex: 1000, 
+          zIndex: 90, 
           boxShadow: '0 4px 12px rgba(93, 92, 92, 0.3)'
            }}>
           <TextInput radius={'xl'} ref={focusTrapRef}

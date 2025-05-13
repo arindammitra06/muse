@@ -7,12 +7,14 @@ import { useDisclosure } from '@mantine/hooks';
 import musicPlaceholder from '../../assets/images/music_placeholder.png';
 import Marquee from "react-fast-marquee";
 
-import { IconArrowsShuffle, IconChevronDown, IconDotsVertical, IconPlayerPauseFilled, IconPlayerPlayFilled, IconPlayerSkipBackFilled, IconPlayerSkipForwardFilled, IconRepeat, IconRepeatOnce, IconShare } from '@tabler/icons-react';
+import { IconArrowsShuffle, IconChevronDown, IconPlayerPauseFilled, IconPlayerPlayFilled, IconPlayerSkipBackFilled, IconPlayerSkipForwardFilled, IconRepeat, IconRepeatOnce } from '@tabler/icons-react';
 import { SkeletonSongBar } from '../SongBar/SongBar';
-import { PlaylistDndList } from '../SongBar/SortablePlaylist';
 import { NowPlayingOverlay } from './NowPlayingOverlay';
 import { DownloadButton } from '../DownloadButton/DownloadButton';
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton';
+import { PlaylistMenuOptions } from '../PlaylistMenu/PlaylistMenuOptions';
+import BottomStickyItem from './BottomStickyItem';
+import SortableSessionDrawer from '../SongBar/SortablePlaylist';
 
 export function NowPlayingBar() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -25,12 +27,11 @@ export function NowPlayingBar() {
   const { currentTrack, isPlaying, seek, duration, seekTo } = useAudioPlayer();
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
-  const {isLoading, isRepeat, isShuffle, currentTrackIndex } = useAppSelector((s) => s.player);
+  const { isLoading, isRepeat, isShuffle, currentTrackIndex } = useAppSelector((s) => s.player);
   const playlist = useAppSelector((state) => state.player.playlist);
   const hasPrevious = currentTrackIndex > 0;
   const hasNext = currentTrackIndex < playlist.length - 1;
-  
-
+  let exactNextTrack  = hasNext ? playlist[currentTrackIndex+1] : undefined;
 
   const renderRepeatIcon = () => {
     if (isRepeat) return <IconRepeatOnce color={theme.colors[theme.primaryColor][5]} size="1.4rem" stroke={1.5} />;
@@ -71,15 +72,20 @@ export function NowPlayingBar() {
                 </ActionIcon>
 
                 <Group gap="xs">
-                  <FavoriteButton song={currentTrack}/>
-                  <DownloadButton song={currentTrack}/>
-                  
-                  <ActionIcon size={'xl'} variant="subtle" color="gray">
-                    <IconShare size={'1.5rem'} />
-                  </ActionIcon>
-                  <ActionIcon size={'xl'} variant="subtle" color="gray">
-                    <IconDotsVertical size={'1.5rem'} />
-                  </ActionIcon>
+                  <FavoriteButton song={currentTrack} />
+                  <DownloadButton song={currentTrack} />
+
+                  {currentTrack !== null && currentTrack !== undefined && currentTrack.type === 'song'
+                    && <Box onClick={(e) => e.stopPropagation()}>
+                      <PlaylistMenuOptions
+                        song={currentTrack}
+                        type={currentTrack.type}
+                        album={undefined}
+                        isForAlbums={false}
+                        isPlayingSongBar={false}
+                        albumType={''}
+                        playlistId={''} />
+                    </Box>}
                 </Group>
               </Flex>
 
@@ -110,9 +116,9 @@ export function NowPlayingBar() {
                     {/* Subtitle */}
                     <Marquee pauseOnHover delay={3} speed={15}>
                       <Text ta="center" c="dimmed" size="md" truncate w="100%">
-                      {currentTrack.subtitle !== null && currentTrack.subtitle !== undefined && currentTrack.subtitle !== ''
-                        ? `${currentTrack.subtitle} • ${currentTrack.year}` : `${currentTrack.artist} • ${currentTrack.genre} • ${currentTrack.year}`}
-                    </Text></Marquee>
+                        {currentTrack.subtitle !== null && currentTrack.subtitle !== undefined && currentTrack.subtitle !== ''
+                          ? `${currentTrack.subtitle} • ${currentTrack.year}` : `${currentTrack.artist} • ${currentTrack.genre} • ${currentTrack.year}`}
+                      </Text></Marquee>
 
                     {/* Seekbar */}
                     <Box w="100%" mt="sm">
@@ -166,39 +172,30 @@ export function NowPlayingBar() {
 
                     <Button mt={20} variant="transparent" size='md' onClick={openDrawer} > Up Next</Button>
 
+                  {exactNextTrack && <BottomStickyItem exactNextTrack={exactNextTrack}/>}
+
                     <Drawer
                       opened={drawerOpened}
                       onClose={closeDrawer}
                       position="bottom"
-                      size="60%"
-                      withCloseButton={false}
+                      size="90%"
+                      withCloseButton
                       padding="xs"
                       radius="md"
-                      styles={{
-                        body: { paddingTop: rem(12) },
-                      }}
                     >
-                      {/* Holder (grab handle) */}
-                      <Center>
-                        <Box
-                          style={{
-                            width: rem(40),
-                            height: rem(4),
-                            borderRadius: rem(4),
-                            backgroundColor: '#ccc',
-                            marginBottom: rem(12),
-                          }}
-                        />
-                      </Center>
-
-                      {/* Your content */}
-                      <Stack>
-                        {playlist !== null && playlist !== undefined && playlist.length > 0 ?
-                          <PlaylistDndList />
-                          :
-                          <SkeletonSongBar count={8} />
-                        }
-                      </Stack>
+                      <div
+                        onClick={(e) => e.stopPropagation()}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onPointerDown={(e) => e.stopPropagation()}
+                      >
+                        <Stack p={0}>
+                          {playlist !== null && playlist !== undefined && playlist.length > 0 ?
+                            <SortableSessionDrawer  drawerOpened={drawerOpened} closeDrawer={closeDrawer} />
+                            :
+                            <SkeletonSongBar count={8} />
+                          }
+                        </Stack>
+                      </div>
                     </Drawer>
                   </Stack>
 
@@ -247,12 +244,12 @@ export function NowPlayingBar() {
             </Box>
           </Group>
           <Group gap="sm" wrap="nowrap">
-            <FavoriteButton song={currentTrack}/>
+            <FavoriteButton song={currentTrack} />
             <ActionIcon variant="subtle" px={0}
               size="md" radius="lg" onClick={(e) => doNoExpandAndPlay(e)}>
-              {isLoading ? <Loader size={'2rem'}/> :  isPlaying ? <IconPlayerPauseFilled size={'2rem'} stroke={1.5} /> : <IconPlayerPlayFilled size={'2rem'} stroke={1.5} />}
+              {isLoading ? <Loader size={'2rem'} /> : isPlaying ? <IconPlayerPauseFilled size={'2rem'} stroke={1.5} /> : <IconPlayerPlayFilled size={'2rem'} stroke={1.5} />}
             </ActionIcon>
-            
+
             <ActionIcon variant="subtle" p={'2'} size="md" mr={10} radius="lg" onClick={(e) => doNoExpandAndNext(e)} disabled={!hasNext}>
               <IconPlayerSkipForwardFilled size={'2rem'} stroke={1.5} />
             </ActionIcon>

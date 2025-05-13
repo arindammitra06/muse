@@ -97,7 +97,42 @@ const playerSlice = createSlice({
     },
     addTrackAfterCurrent: (state, action: PayloadAction<Track>) => {
       const insertIndex = state.currentTrackIndex + 1;
-      state.playlist.splice(insertIndex, 0, action.payload);
+      const trackId = action.payload.id;
+    
+      // Find if the track already exists in the playlist
+      const existingIndex = state.playlist.findIndex(track => track.id === trackId);
+    
+      // If track exists, remove it from current position
+      if (existingIndex !== -1) {
+        state.playlist.splice(existingIndex, 1);
+    
+        // Adjust insertIndex if necessary
+        if (existingIndex < insertIndex) {
+          state.playlist.splice(insertIndex - 1, 0, action.payload);
+        } else {
+          state.playlist.splice(insertIndex, 0, action.payload);
+        }
+      } else {
+        // If track is not in the playlist, insert normally
+        state.playlist.splice(insertIndex, 0, action.payload);
+      }
+    },
+    removeTrackFromPlaylist: (state, action: PayloadAction<string>) => {
+      const trackIdToRemove = action.payload;
+      const index = state.playlist.findIndex(track => track.id === trackIdToRemove);
+    
+      if (index !== -1) {
+        state.playlist.splice(index, 1);
+    
+        // Adjust currentTrackIndex if needed
+        if (index < state.currentTrackIndex) {
+          state.currentTrackIndex -= 1;
+        } else if (index === state.currentTrackIndex) {
+          // Optional: pause or move to next track depending on app logic
+          state.currentTrackIndex = 0;
+          state.isPlaying = false;
+        }
+      }
     },
     reorderPlaylist: (state, action: PayloadAction<{ from: number; to: number }>) => {
       const { from, to } = action.payload;
@@ -116,13 +151,29 @@ const playerSlice = createSlice({
     
       state.playlist = updated;
     },
+    setPlaylistAndPlay: (state, action: PayloadAction<Track[]>) => {
+      const newTracks = action.payload;
+      let tracksWithUrl = [];
+      
+      // Remove duplicates from existing playlist
+      const uniqueNewTracks = newTracks.filter(
+        (track) => !state.playlist.some((t) => t.id === track.id)
+      );
+      
+      // Prepend new tracks and keep the rest of the playlist
+      state.playlist = [...uniqueNewTracks, ...state.playlist.filter(t => !uniqueNewTracks.find(nt => nt.id === t.id))];
+    
+      state.currentTrackIndex = 0;
+      state.isPlaying = true;
+      state.isLoading = false;
+    },
   }
 });
 
 export const {
-  playTrack, play, setVolume,addTrackAfterCurrent,
+  playTrack, play, setVolume,addTrackAfterCurrent,removeTrackFromPlaylist,
   toggleMute, pause, nextTrack, previousTrack,setCurrentTrackIndex,
-  toggleRepeat, toggleShuffle, setPlaying, reorderPlaylist
+  toggleRepeat, toggleShuffle, setPlaying, reorderPlaylist,setPlaylistAndPlay
 } = playerSlice.actions;
 
 
