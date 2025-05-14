@@ -1,37 +1,63 @@
-# Mantine Next.js template
+## About
+A modern, open-source music player built with React, focused on seamless mobile playback and inspired by the Flutter-based BlackHole app.
 
-This is a template for [Next.js](https://nextjs.org/) app router + [Mantine](https://mantine.dev/).
-If you want to use pages router instead, see [next-pages-template](https://github.com/mantinedev/next-pages-template).
+Designed for personal use, it offers a responsive, immersive experience across devices. Contributions are welcome!
 
-## Features
+We do not support or promote piracy in any form. This project is created strictly for educational and personal use. It serves as a learning tool for developers interested in building music applications with modern web technologies.
 
-This template comes with the following features:
+Please respect artists and copyright laws by streaming music only through legal and authorized sources.
 
-- [PostCSS](https://postcss.org/) with [mantine-postcss-preset](https://mantine.dev/styles/postcss-preset)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Storybook](https://storybook.js.org/)
-- [Jest](https://jestjs.io/) setup with [React Testing Library](https://testing-library.com/docs/react-testing-library/intro)
-- ESLint setup with [eslint-config-mantine](https://github.com/mantinedev/eslint-config-mantine)
+I am not sharing the demo link as it might get blacklisted on heavy usage. If you want your copy of music player, follow along.
 
-## npm scripts
+ 1. Fork repository.
+ 2. Setup your firebase account. Add firestore & authentication to be used for saving playlists.
+ 3. Link project to Vercel
+ 4. Add environment variables ->
+	
+		NEXT_PUBLIC_FIREBASE_API_KEY=******
+    	NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=******
+    	NEXT_PUBLIC_FIREBASE_PROJECT_ID=******
+    	NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=******
+    	NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=******
+    	NEXT_PUBLIC_FIREBASE_APP_ID=******
+    	NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=******
+5. Voila... you have your personal copy of music player.
 
-### Build and dev scripts
+### Don't forget to ⭐ the repo
 
-- `dev` – start dev server
-- `build` – bundle application for production
-- `analyze` – analyzes application bundle with [@next/bundle-analyzer](https://www.npmjs.com/package/@next/bundle-analyzer)
 
-### Testing scripts
+## License
 
-- `typecheck` – checks TypeScript types
-- `lint` – runs ESLint
-- `prettier:check` – checks files with Prettier
-- `jest` – runs jest tests
-- `jest:watch` – starts jest watch
-- `test` – runs `jest`, `prettier:check`, `lint` and `typecheck` scripts
+```
+Copyright © 2025 Arindam Mitra
 
-### Other scripts
+muse is a free software licensed under GPL v3.0
+It is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-- `storybook` – starts storybook dev server
-- `storybook:build` – build production storybook bundle to `storybook-static`
-- `prettier:write` – formats all files with Prettier
+```
+
+```
+Being Open Source doesn't mean you can just make a copy of the app and upload it on playstore or sell
+a closed source copy of the same.
+Read the following carefully:
+1. Any copy of a software under GPL must be under same license. So you can't upload the app on a closed source
+  app repository like PlayStore/AppStore without distributing the source code.
+2. You can't sell any copied/modified version of the app under any "non-free" license.
+   You must provide the copy with the original software or with instructions on how to obtain original software,
+   should clearly state all changes, should clearly disclose full source code, should include same license
+   and all copyrights should be retained.
+
+In simple words, You can ONLY use the source code of this app for `Open Source` Project under `GPL v3.0` or later
+with all your source code CLEARLY DISCLOSED on any code hosting platform like GitHub, with clear INSTRUCTIONS on
+how to obtain the original software, should clearly STATE ALL CHANGES made and should RETAIN all copyrights.
+Use of this software under any "non-free" license is NOT permitted.
+
+```
+
+See the  [GNU General Public License](https://github.com/arindammitra06/muse/LICENSE)  for more details.
+
+
+## Facing any Issue?
+
+Have a look at some  [common Issues](https://github.com/arindammitra06/muse/issues)  that you might face. If your problem is not there, feel free to open an Issue :)
