@@ -29,8 +29,6 @@ export function NowPlayingBar() {
   ] = useDisclosure(false);
 
   const { currentTrack, isPlaying, seek, duration, seekTo } = useAudioPlayer();
-  //Unncomment if you have musixmatch API key
-  //useSyncedLyrics(seek);
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
   const { isLoading, isRepeat, isShuffle, currentTrackIndex } = useAppSelector((s) => s.player);
