@@ -2,7 +2,7 @@
 'use client'
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useAuth } from '@/utils/useAuth';
-import { Button, Container, Text, Space, Center, Group, TextInput, useMantineTheme, Divider } from '@mantine/core';
+import { Button, Container, Text, Space, Title, Group, TextInput, useMantineTheme, Divider } from '@mantine/core';
 import { IconUser } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -18,8 +18,8 @@ export default function SignInPage() {
 
 
     return (
-        <Container size="sm" style={{ minHeight: '100vh', paddingTop: '10vh' }}>
-            <Text size="32px" fw={900} c={theme.primaryColor} mb={50}>Open. Stream. Repeat.</Text>
+        <Container size="xs" style={{ minHeight: '90vh',paddingTop: '5vh' }}>
+            <Text size="32px" fw={900} c={theme.primaryColor} mb={'20vh'}>Open. Stream. Repeat.</Text>
             <Text size="48px" fw={900} c={theme.colors.secondary[5]}>Your Music...</Text>
             <Text size="48px" fw={900} c="white">Your Server...</Text>
 
@@ -41,14 +41,14 @@ export default function SignInPage() {
                 >
                     Get Started
                 </Button>
-                <Divider my="0" label="Or use Google to save playlists" labelPosition="center" />
+                <Divider my="0" label="or use google to save playlists" labelPosition="center" />
 
                 <GoogleButton onClick={login} radius="md">Google</GoogleButton>
             </Group>
 
             <Space h="md" />
             <Text size="xs" c="dimmed">
-                <strong>Disclaimer:</strong> We respect your privacy more than anything else. Only your name, which you will enter here, will be recorded.
+                <Title order={5}>Disclaimer:</Title> We respect your privacy more than anything else. We do not sell or share your data with anyone else.
             </Text>
 
         </Container>

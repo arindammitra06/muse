@@ -25,8 +25,8 @@ export default function Navigation({ children }: NavigationProps) {
   const playlist = useAppSelector((state) => state.player.playlist);
   const user = useAppSelector((state) => state.user.currentUser);
   const { logout } = useAuth();
-  
-  
+
+
   const handleBack = () => {
     router.back();
   };
@@ -62,20 +62,28 @@ export default function Navigation({ children }: NavigationProps) {
           h="100%"
           px="xs"
         >
-          <ActionIcon variant="light"
-            mt={5}
-            mr={5}
-            style={{ visibility: pathname === '/' ? 'hidden' : 'visible' }}
-            color="gray" size="lg"
-            radius="lg" mx={'0'}
-            onClick={() => handleBack()}>
-            <IconChevronLeft size={'2rem'} stroke={2} />
-          </ActionIcon>
+          <Flex
+            justify="left"
+            align="center"
+            h="100%"
+            px="0"
+          >
+            <ActionIcon variant="light"
+              mt={5}
+              mr={5}
+              style={{ visibility: pathname === '/' ? 'hidden' : 'visible' }}
+              color="gray" size="lg"
+              radius="lg" mx={'0'}
+              onClick={() => handleBack()}>
+              <IconChevronLeft size={'2rem'} stroke={2} />
+            </ActionIcon>
 
 
-          <Flex justify="flex-start" align="flex-start" p={0}>
-            <FadingWeightLogo text="muse" />
+            <Flex justify="flex-start" align="flex-start" p={0}>
+              <FadingWeightLogo text="muse" />
+            </Flex>
           </Flex>
+
 
           {user && <Flex justify="flex-end" align="flex-end" w="100%">
             <Transition mounted={isSticky}
@@ -172,7 +180,7 @@ export default function Navigation({ children }: NavigationProps) {
       </AppShell.Main>
       <AppShell.Footer ml={{ base: 0, sm: '50px' }} style={{ padding: '0px', borderTop: '0px' }}>
         {user && <Stack gap="0" m={0}>
-          {playlist!==null && playlist!==undefined && playlist.length>0 && <NowPlayingBar />}
+          {playlist !== null && playlist !== undefined && playlist.length > 0 && <NowPlayingBar />}
           {!isDesktop && <BottomNavigation />}
         </Stack>}
       </AppShell.Footer>
