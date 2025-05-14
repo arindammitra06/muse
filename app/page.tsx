@@ -15,9 +15,12 @@ export default function HomePage() {
   const theme = useMantineTheme();
   const homedata = useAppSelector((state) => state.api.homedata);
   const user = useAppSelector((state) => state.user.currentUser);
+
+
   useEffect(() => {
     fetchCall();
-  }, []);
+
+  }, [user]);
 
 
   function fetchCall() {

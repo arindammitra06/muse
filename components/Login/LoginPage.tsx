@@ -43,12 +43,12 @@ export default function SignInPage() {
                 </Button>
                 <Divider my="0" label="or use google to save playlists" labelPosition="center" />
 
-                <GoogleButton onClick={login} radius="md">Google</GoogleButton>
+                <GoogleButton onClick={login} radius="md">Sign-in with Google</GoogleButton>
             </Group>
 
             <Space h="md" />
             <Text size="xs" c="dimmed">
-                <Title order={5}>Disclaimer:</Title> We respect your privacy more than anything else. We do not sell or share your data with anyone else.
+                <strong>Disclaimer:</strong> We respect your privacy more than anything else. We do not sell or share your data with anyone else.
             </Text>
 
         </Container>
