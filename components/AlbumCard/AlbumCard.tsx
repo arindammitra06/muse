@@ -2,23 +2,19 @@ import {
   Card,
   Image,
   Text,
-  Overlay,
-  Group,
   ActionIcon,
   rem,
   Stack,
   Center,
   useMantineTheme,
 } from '@mantine/core';
-import { IconPlayerPlayFilled, IconShare } from '@tabler/icons-react';
+import { IconPlayerPlayFilled } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch } from '@/store/hooks';
 import { playTrack, } from '@/store/slices/player.slice';
 import { getSongFromToken } from '@/store/slices/jio.slice';
 import { getLastSectionOfUrl, formatSongsResponse } from '@/utils/generic.utils';
-import toast from 'react-hot-toast';
-import { FavoriteButton } from '../FavoriteButton/FavoriteButton';
 import { useMediaQuery } from '@mantine/hooks';
 
 interface AlbumCardProps {
@@ -40,6 +36,7 @@ export function AlbumCard({ id, image, title, subtitle, type, song, year, perma_
   const isDesktop = useMediaQuery(`(min-width: ${theme.breakpoints.sm})`);
 
   function playSongAndAddToPlaylist(song: any): void {
+    
     if (type !== null && type !== undefined && song !== null && song !== undefined && song.perma_url !== null && song.perma_url !== undefined) {
       let token = getLastSectionOfUrl(song.perma_url);
 
@@ -51,6 +48,7 @@ export function AlbumCard({ id, image, title, subtitle, type, song, year, perma_
             let songsList = res.payload['songs'];
             if (songsList !== null && songsList !== undefined && songsList.length > 0) {
               const songs = await formatSongsResponse(songsList, type);
+              
               dispatch(playTrack(songs[0]));
               //dispatch(playPause())
             }

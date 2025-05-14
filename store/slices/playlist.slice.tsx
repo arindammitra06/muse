@@ -21,12 +21,6 @@ const initialState: PlaylistState = {
       image: null,
       tracks: [],
     },
-    {
-      id: 'downloads',
-      name: 'Downloads',
-      image: null,
-      tracks: [],
-    },
   ],
 };
 

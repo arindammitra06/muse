@@ -9,6 +9,7 @@ import { resetAll } from '@/store/actions';
 import { useRouter } from 'next/navigation';
 import { fetchPlaylistFromFirestore, savePlaylistToFirestore } from './playlistHooks';
 import { setUserPlaylists } from '@/store/slices/playlist.slice';
+import { hideGlobalLoader, showGlobalLoader } from './useLoader';
 
 export function useAuth() {
   const dispatch = useAppDispatch();
@@ -70,11 +71,13 @@ export function useAuth() {
   const logout = async () => {
     try {
       if (currentUser) {
+        showGlobalLoader('Logging out...');
         await savePlaylistToFirestore(currentUser.uid, userPlaylist);
         await signOut(auth);
         dispatch(resetAll()); 
         dispatch(logoutSlice());
         router.push('/')
+        hideGlobalLoader();
       }
     } catch (err: any) {
       console.error('Logout error:', err);

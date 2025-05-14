@@ -10,6 +10,7 @@ import { useAppSelector } from "@/store/hooks";
 import { Toaster } from "react-hot-toast";
 import { ModalsProvider } from "@mantine/modals";
 import { jioTheme } from "@/theme";
+import  { LoaderModal } from "../Common/GlobalLoader";
 
 export interface MantineContentProps {
   children: ReactNode;
@@ -33,7 +34,7 @@ export default function MantineContent({ children }: MantineContentProps) {
         position="bottom-center"
         reverseOrder={false} />
       <Navigation>
-        <ModalsProvider>
+        <ModalsProvider modals={{ loader: LoaderModal }}>
           {children}
         </ModalsProvider>
       </Navigation>

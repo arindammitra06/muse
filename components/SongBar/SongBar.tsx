@@ -53,6 +53,7 @@ export const SongBar = ({ id, song, type, isPlaying, onClickOverride, currentPla
     };
 
     function playSongAndAddToPlaylist(song: any): void {
+        
         if (type !== null && type !== undefined && song !== null && song !== undefined && song.perma_url !== null && song.perma_url !== undefined) {
             let token = getLastSectionOfUrl(song.perma_url);
 
@@ -63,7 +64,7 @@ export const SongBar = ({ id, song, type, isPlaying, onClickOverride, currentPla
                         let songsList = res.payload['songs'];
                         if (songsList !== null && songsList !== undefined && songsList.length > 0) {
                             const songs = await formatSongsResponse(songsList, type);
-
+                            
                             if (currentPlayingTrack !== null && currentPlayingTrack !== undefined
                                 && songs[0] !== null && songs[0] !== undefined && isPlaying && currentPlayingTrack.id === songs[0].id) {
                                 onClickOverride();

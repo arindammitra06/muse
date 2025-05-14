@@ -24,6 +24,7 @@
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@gfazioli/mantine-flip": "^2.0.0",
     "@hello-pangea/dnd": "^18.0.1",
     "@mantine/carousel": "7.17.5",
     "@mantine/core": "7.17.5",
@@ -52,6 +53,7 @@
     "react-redux": "^9.2.0",
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
+    "string-similarity": "^4.0.4",
     "uuid": "^11.1.0",
     "uuidv4": "^6.2.13",
     "webpack": "^5.99.8"
@@ -73,6 +75,7 @@
     "@types/node": "^22.13.11",
     "@types/react": "19.0.12",
     "@types/react-beautiful-dnd": "^13.1.8",
+    "@types/string-similarity": "^4.0.2",
     "babel-loader": "^10.0.0",
     "eslint": "^9.23.0",
     "eslint-config-mantine": "^4.0.3",

@@ -21,6 +21,9 @@ I am not sharing the demo link as it might get blacklisted on heavy usage. If yo
     	NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=******
     	NEXT_PUBLIC_FIREBASE_APP_ID=******
     	NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=******
+		<!-- Get Client ID and Secret from Spotify if you want to turn on Lyrics. This is experimental but works as of now-->
+		NEXT_PUBLIC_SPOTIFY_CLIENT_ID= **********
+		NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET=*********
 5. Voila... you have your personal copy of music player.
 
 ### Don't forget to ⭐ the repo

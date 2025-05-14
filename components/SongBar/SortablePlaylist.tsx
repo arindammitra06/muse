@@ -37,8 +37,8 @@ export default function SortableSessionDrawer({ drawerOpened, closeDrawer }: Sor
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
-    const oldIndex = playlist.findIndex(t => t.id === active.id);
-    const newIndex = playlist.findIndex(t => t.id === over.id);
+    const oldIndex = playlist.findIndex((t: { id: any; }) => t.id === active.id);
+    const newIndex = playlist.findIndex((t: { id: any; }) => t.id === over.id);
     dispatch(reorderPlaylist({ from: oldIndex, to: newIndex }));
   };
 
@@ -51,7 +51,7 @@ export default function SortableSessionDrawer({ drawerOpened, closeDrawer }: Sor
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}
         modifiers={[restrictToFirstScrollableAncestor, restrictToVerticalAxis]}>
         <SortableContext
-          items={playlist.map(track => track.id)}
+          items={playlist.map((track: { id: any; }) => track.id)}
           strategy={verticalListSortingStrategy}
         >
           <Box
@@ -62,7 +62,7 @@ export default function SortableSessionDrawer({ drawerOpened, closeDrawer }: Sor
               WebkitOverflowScrolling: 'touch',
             }}
           >
-            {playlist.map((track, index) => (
+            {playlist.map((track: { id: any; type: any; }, index: any) => (
               <SortableSongBar key={track.id}
                 id={track.id}
                 song={track}

@@ -162,6 +162,7 @@ export async function formatSingleSongResponse(response: any): Promise<Record<st
       subtitle: unescapeHTML(response.subtitle?.toString() ?? ''),
       title: unescapeHTML(response.title?.toString() ?? ''),
       artist: unescapeHTML(artistNames.join(', ')),
+      artistMap: artistNames,
       album_artist: music,
       image: getImageUrl(response.image?.toString() ?? ''),
       perma_url: response.perma_url,
@@ -540,3 +541,4 @@ export function getImageUrl(imageUrl?: string, quality: 'high' | 'medium' | 'low
       return trimmedUrl.replace(/50x50|150x150/g, '500x500');
   }
 }
+

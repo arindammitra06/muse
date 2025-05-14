@@ -13,6 +13,7 @@ import { title } from 'process';
 import { AppTitles } from '@/components/Common/custom-title';
 import { addSearchedString, removeSearchedString, setSearchQuery } from '@/store/slices/search-params.slice';
 
+
 export default function SearchPage() {
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
@@ -46,7 +47,7 @@ export default function SearchPage() {
 
 
   return (
-    <Box p="0">
+    <Box p="0" pb={50}>
 
       <Stack gap="xs" mb={200} >
         
@@ -86,7 +87,7 @@ export default function SearchPage() {
             direction="row"
             wrap="wrap"
           >
-            {searchedStrings.map((str, idx) => (
+            {searchedStrings.map((str:string, idx:number) => (
               <Pill onClick={()=>handlePillClick(str)} style={{cursor:'pointer'}}
                 onRemove={()=>dispatch(removeSearchedString(str))}
                  withRemoveButton key={idx} size='md' >{str}</Pill>
@@ -108,7 +109,7 @@ export default function SearchPage() {
             direction="row"
             wrap="wrap"
           >
-            {topSearches.map((str, idx) => (
+            {topSearches.map((str:any, idx:number) => (
               <Pill onClick={()=>handlePillClick(str.title)} style={{cursor:'pointer'}} key={idx} size='md' >{str.title}</Pill>
             ))}
           </Flex>

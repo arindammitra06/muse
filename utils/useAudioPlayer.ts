@@ -6,6 +6,7 @@ import {
   play as playS,
   pause as pauseS,
 } from '@/store/slices/player.slice';
+import { getPreferredStreamingQualityUrl } from './generic.utils';
 
 export function useAudioPlayer() {
   const dispatch = useAppDispatch();
@@ -15,7 +16,7 @@ export function useAudioPlayer() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isRepeatRef = useRef(false);
-
+  const { streamingQuality } = useAppSelector((s) => s.settings);
   const currentTrack = playlist[currentTrackIndex];
 
   const play = () => {
@@ -43,9 +44,9 @@ export function useAudioPlayer() {
     if (!currentTrack?.url) return;
 
     if (!audioRef.current) {
-      audioRef.current = new Audio(currentTrack.url);
+      audioRef.current = new Audio(getPreferredStreamingQualityUrl(currentTrack.url, streamingQuality));
     } else {
-      audioRef.current.src = currentTrack.url;
+      audioRef.current.src = getPreferredStreamingQualityUrl(currentTrack.url, streamingQuality);
     }
 
     const audio = audioRef.current;

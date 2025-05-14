@@ -28,7 +28,7 @@ const appReducer = combineReducers({
   playlist: playlistReducer,
   search: searchReducer,
   settings: persistedSettingsReducer,
-  searchParams:searchParamsReducer
+  searchParams:searchParamsReducer,
 });
 
 const rootReducer = (state: any, action: any) => {

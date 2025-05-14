@@ -227,6 +227,7 @@ export const fetchAlbums = createAsyncThunk(
     }
   });
 
+  
 
 const apiSlice = createSlice({
   name: "api",

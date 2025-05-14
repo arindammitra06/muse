@@ -2,12 +2,12 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { nextTrack, play, pause, previousTrack, toggleRepeat, toggleShuffle, } from '@/store/slices/player.slice';
 import { formatTime } from '@/utils/formatTime';
 import { useAudioPlayer } from '@/utils/useAudioPlayer';
-import { Box, Group, Image, Text, Slider, ActionIcon, Card, Flex, useMantineTheme, Modal, Center, Stack, Button, Drawer, rem, Loader } from '@mantine/core';
+import { Box, Group, Image, Text, Slider, ActionIcon, Card, Flex, useMantineTheme, Modal, Center, Stack, Button, Drawer, Loader, Overlay } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import musicPlaceholder from '../../assets/images/music_placeholder.png';
 import Marquee from "react-fast-marquee";
 
-import { IconArrowsShuffle, IconChevronDown, IconPlayerPauseFilled, IconPlayerPlayFilled, IconPlayerSkipBackFilled, IconPlayerSkipForwardFilled, IconRepeat, IconRepeatOnce } from '@tabler/icons-react';
+import { IconArrowsShuffle, IconChevronDown, IconNotes, IconPlayerPauseFilled, IconPlayerPlayFilled, IconPlayerSkipBackFilled, IconPlayerSkipForwardFilled, IconRepeat, IconRepeatOnce } from '@tabler/icons-react';
 import { SkeletonSongBar } from '../SongBar/SongBar';
 import { NowPlayingOverlay } from './NowPlayingOverlay';
 import { DownloadButton } from '../DownloadButton/DownloadButton';
@@ -15,7 +15,12 @@ import { FavoriteButton } from '../FavoriteButton/FavoriteButton';
 import { PlaylistMenuOptions } from '../PlaylistMenu/PlaylistMenuOptions';
 import BottomStickyItem from './BottomStickyItem';
 import SortableSessionDrawer from '../SongBar/SortablePlaylist';
-
+import { useEffect, useState } from 'react';
+import { Lyrics } from '@/utils/lyrics';
+import { ProgressiveLyrics } from '../Common/ProgressiveLyrics';
+import toast from 'react-hot-toast';
+import '@gfazioli/mantine-flip/styles.layer.css';
+import { LineSyncedLyrics } from './SyncedLyrics';
 export function NowPlayingBar() {
   const [opened, { open, close }] = useDisclosure(false);
   const [
@@ -23,15 +28,65 @@ export function NowPlayingBar() {
     { open: openDrawer, close: closeDrawer },
   ] = useDisclosure(false);
 
-
   const { currentTrack, isPlaying, seek, duration, seekTo } = useAudioPlayer();
+  //Unncomment if you have musixmatch API key
+  //useSyncedLyrics(seek);
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
   const { isLoading, isRepeat, isShuffle, currentTrackIndex } = useAppSelector((s) => s.player);
   const playlist = useAppSelector((state) => state.player.playlist);
   const hasPrevious = currentTrackIndex > 0;
   const hasNext = currentTrackIndex < playlist.length - 1;
-  let exactNextTrack  = hasNext ? playlist[currentTrackIndex+1] : undefined;
+  let exactNextTrack = hasNext ? playlist[currentTrackIndex + 1] : undefined;
+  const [flipped, setFlipped] = useState(false);
+  const [lyricsFetched, setFetchedLyrics] = useState<any[]>([]);
+  const [lyricsType, setLyricsType] = useState<string>('');
+
+  //Uncomment if you have musixmatch API key.. I didnt get one approved
+  // useEffect(() => {
+  //   if (currentTrack) {
+  //     dispatch(
+  //       fetchLyrics({ title: currentTrack.title!, artist: currentTrack.artist! })
+  //     );
+  //   }
+  // }, [currentTrack]);
+  
+  useEffect(() => {
+    setFlipped(false);
+    setLyricsType('');
+  }, [currentTrack]);
+
+  function flipOrUnflipLyrics(): void {
+    if(!flipped){
+      getLyricsNow();
+    }else{
+      setFlipped(false);
+    }
+  }
+
+  async function getLyricsNow() {
+    if (currentTrack) {
+
+      let songFoundPlaying = playlist[currentTrackIndex];
+      await Lyrics.getLyrics({
+        id: songFoundPlaying.id, saavnHas: false,
+        title: songFoundPlaying.title!,
+        artist: String(songFoundPlaying.artist)
+      }).then((res: any) => {
+        if (res !== null && res !== undefined && res.lyrics !== null && res.lyrics !== undefined && res.lyrics.length > 0) {
+          setFetchedLyrics(res.lyrics);
+          setLyricsType(res.type);
+          setFlipped(true);
+        } else {
+          setFlipped(false);
+          setLyricsType('');
+          toast.error('Lyrics unavailable')
+        }
+      });
+
+    }
+  }
+
 
   const renderRepeatIcon = () => {
     if (isRepeat) return <IconRepeatOnce color={theme.colors[theme.primaryColor][5]} size="1.4rem" stroke={1.5} />;
@@ -50,6 +105,8 @@ export function NowPlayingBar() {
     dispatch(nextTrack());
     dispatch(play())
   }
+  
+
   return (
     <>
       <Modal.Root
@@ -72,6 +129,11 @@ export function NowPlayingBar() {
                 </ActionIcon>
 
                 <Group gap="xs">
+
+                  <ActionIcon variant={flipped? "filled":"subtle"} color={ 'gray'} onClick={(e) => flipOrUnflipLyrics()}>
+                    <IconNotes size={20} />
+                  </ActionIcon>
+
                   <FavoriteButton song={currentTrack} />
                   <DownloadButton song={currentTrack} />
 
@@ -92,13 +154,40 @@ export function NowPlayingBar() {
               {opened && (
                 <Center>
                   <Stack align="center" gap="4" w="100%" px="md" py="sm">
-                    <Image
-                      src={currentTrack?.image || musicPlaceholder.src}
-                      w={350}
-                      h={350}
-                      radius="md"
-                      fit="cover"
-                    />
+                    {/* Uncomment if you have musixmatch API key */}
+                    {/* <NowPlayingLyrics /> */}
+
+                    <Box pos="relative" w="40vh" h="40vh" style={{ overflow: "hidden", borderRadius: '0.5rem' }}>
+                      <Image
+                        src={currentTrack?.image || musicPlaceholder.src}
+                        w={'40vh'}
+                        radius="md"
+                        fit="cover"
+                      />
+                      {flipped && (
+                        <Overlay
+                          backgroundOpacity={0.6}
+                          blur={4}
+                          center
+                          zIndex={2}
+                          style={{
+                            padding: '1rem',
+                            textAlign: 'center',
+                            color: 'white',
+                          }}
+                        >
+                          
+                          {
+                          lyricsType==='LINE_SYNCED' ? 
+                          <LineSyncedLyrics lines={lyricsFetched} currentTime={seek} />
+                          :<ProgressiveLyrics
+                            lines={lyricsFetched}
+                            duration={duration}
+                            currentTime={seek}
+                          />}
+                        </Overlay>
+                        )}
+                    </Box>
 
                     {currentTrack !== null && currentTrack.title !== undefined &&
                       currentTrack.title !== null && currentTrack.title !== undefined && currentTrack.title.length > 20
@@ -170,9 +259,9 @@ export function NowPlayingBar() {
                       </ActionIcon>
                     </Group>
 
-                    <Button mt={20} variant="transparent" size='md' onClick={openDrawer} > Up Next</Button>
+                    <Button mt={5} variant="transparent" size='md' onClick={openDrawer} > Up Next</Button>
 
-                  {exactNextTrack && <BottomStickyItem exactNextTrack={exactNextTrack}/>}
+                    {exactNextTrack && <BottomStickyItem exactNextTrack={exactNextTrack} />}
 
                     <Drawer
                       opened={drawerOpened}
@@ -190,7 +279,7 @@ export function NowPlayingBar() {
                       >
                         <Stack p={0}>
                           {playlist !== null && playlist !== undefined && playlist.length > 0 ?
-                            <SortableSessionDrawer  drawerOpened={drawerOpened} closeDrawer={closeDrawer} />
+                            <SortableSessionDrawer drawerOpened={drawerOpened} closeDrawer={closeDrawer} />
                             :
                             <SkeletonSongBar count={8} />
                           }
@@ -260,3 +349,4 @@ export function NowPlayingBar() {
     </>
   );
 }
+

@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { Menu, ActionIcon, Drawer, Image, Text, Group, rem, Paper, Stack, useMantineTheme } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useClipboard, useDisclosure } from "@mantine/hooks";
 import { IconDotsVertical, IconPlaylist, IconAlbum, IconUser, IconShare, IconHeart, IconPlayCard, IconPlayerPause, IconPlayerPlay, IconPlayerTrackNext, IconClearAll, IconTrash, IconPlus } from "@tabler/icons-react";
 import { useState } from "react";
 import musicPlaceholder from '../../assets/images/music_placeholder.png';
@@ -31,7 +31,28 @@ export const PlaylistMenuOptions = ({ album, song, type, isForAlbums = false, is
     const dispatch = useAppDispatch();
     const theme = useMantineTheme();
     const router = useRouter();
+    const clipboard = useClipboard({ timeout: 2000 });
 
+    const handleShare = async () => {
+        let url = '';
+
+        if (isForAlbums && album) {
+            url = window.location.href;
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: album.title,
+                        url,
+                    });
+                } catch (err) {
+                    console.error('Share failed:', err);
+                }
+            } else {
+                clipboard.copy(url); // fallback
+            }
+        }
+
+    };
 
     function onClickAddTo(id: string): void {
         dispatch(addSongToPlaylist({ playlistId: id, song: song }));
@@ -43,7 +64,7 @@ export const PlaylistMenuOptions = ({ album, song, type, isForAlbums = false, is
         toast.success(album.type + ' added as playlist')
     }
 
-    
+
 
     async function onClickAddMultipleTracksNext(albumData: any): Promise<void> {
         toast.success('Adding tracks in background')
@@ -97,7 +118,7 @@ export const PlaylistMenuOptions = ({ album, song, type, isForAlbums = false, is
     }
 
     function seeAlbumPage(album_id: any): void {
-        if (album_id !== null && album_id !== undefined ) {
+        if (album_id !== null && album_id !== undefined) {
             router.push(`/album/${album_id}`);
         }
     }
@@ -150,14 +171,14 @@ export const PlaylistMenuOptions = ({ album, song, type, isForAlbums = false, is
                                 textOverflow: 'ellipsis',
                                 maxWidth: 220, // adjust as needed
                             }}
-                            onClick={() => seeArtistPage(artist)} 
+                            onClick={() => seeArtistPage(artist)}
                             leftSection={<IconUser size={14} />}>
                             View {artist.name}
                         </Menu.Item>)}
 
 
 
-                    {type === 'song' && <Menu.Item leftSection={<IconShare size={14} />}>
+                    {type !== 'song' && <Menu.Item onClick={() => handleShare()} leftSection={<IconShare size={14} />}>
                         Share
                     </Menu.Item>}
                 </Menu.Dropdown>
@@ -189,7 +210,7 @@ export const PlaylistMenuOptions = ({ album, song, type, isForAlbums = false, is
                         </Group>
                     </Paper>
 
-                    {playlists.map((playlist) => (
+                    {playlists.map((playlist: any) => (
                         <Paper key={playlist.id} shadow="xs" p="5" withBorder onClick={() => onClickAddTo(playlist.id)}>
                             <Group justify="space-between" wrap="nowrap">
                                 {/* Playlist Image and Name */}
@@ -241,19 +262,19 @@ export const PlaylistMenuOptions = ({ album, song, type, isForAlbums = false, is
                 }}
                 onClick={() => seeAlbumPage(song!.more_info!.album_id)}
                 leftSection={<IconAlbum size={14} />}>
-                View Album - {song!.more_info!.album}
-            </Menu.Item>
+            View Album - {song!.more_info!.album}
+        </Menu.Item>
             : type === 'song' && song?.album !== null && song?.album !== undefined
-            && song?.album_id !== null && song?.album_id !== undefined ? <Menu.Item
-            style={{
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                maxWidth: 220, // adjust as needed
-            }}
-            onClick={() => seeAlbumPage(song!.album_id)}
-            leftSection={<IconAlbum size={14} />}>
-            View Album - {song!.album}
-        </Menu.Item> : null;
+                && song?.album_id !== null && song?.album_id !== undefined ? <Menu.Item
+                    style={{
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        maxWidth: 220, // adjust as needed
+                    }}
+                    onClick={() => seeAlbumPage(song!.album_id)}
+                    leftSection={<IconAlbum size={14} />}>
+                View Album - {song!.album}
+            </Menu.Item> : null;
     }
 }

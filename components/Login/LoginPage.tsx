@@ -21,7 +21,7 @@ export default function SignInPage() {
         <Container size="xs" style={{ minHeight: '90vh',paddingTop: '5vh' }}>
             <Text size="32px" fw={900} c={theme.primaryColor} mb={'20vh'}>Open. Stream. Repeat.</Text>
             <Text size="48px" fw={900} c={theme.colors.secondary[5]}>Your Music...</Text>
-            <Text size="48px" fw={900} c="white">Your Server...</Text>
+            <Text size="48px" fw={900} >Your Server...</Text>
 
             <Space h="xl" />
             <TextInput
@@ -41,7 +41,7 @@ export default function SignInPage() {
                 >
                     Get Started
                 </Button>
-                <Divider my="0" label="or use google to save playlists" labelPosition="center" />
+                <Divider variant="dashed" w={'100%'} my="0" label="or use google to save playlists" labelPosition="center" />
 
                 <GoogleButton onClick={login} radius="md">Sign-in with Google</GoogleButton>
             </Group>

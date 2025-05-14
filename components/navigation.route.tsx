@@ -1,5 +1,5 @@
 'use client'
-import { AppShell, ActionIcon, Box, TextInput, Transition, useMantineTheme, Paper, Flex, Text, Skeleton, Stack, Avatar, Group, Menu, UnstyledButton, Space } from '@mantine/core';
+import { AppShell, ActionIcon, Box, TextInput, Transition, useMantineTheme, Paper, Flex, Text, Skeleton, Stack, Avatar, Group, Menu, UnstyledButton, Space, ScrollArea } from '@mantine/core';
 import { ReactNode, useEffect, useState } from 'react';
 import { AppLogo } from './Common/custom-logo.component';
 import { IconChevronLeft, IconLogin, IconLogout, IconSearch, IconUserQuestion, IconX } from '@tabler/icons-react';
@@ -160,24 +160,26 @@ export default function Navigation({ children }: NavigationProps) {
         <NavbarMinimal toggle={toggle} />
       </AppShell.Navbar>)}
 
-      <AppShell.Main>
-        {pathname === '/' && user && !isSticky && (
-          <Paper radius={'xl'} shadow="md" p={0} m={'xs'} style={{ boxShadow: '0 4px 12px rgba(93, 92, 92, 0.3)' }}>
-            <TextInput
-              readOnly
-              onClick={() => router.push(`/search`)}
-              placeholder="Songs, albums or artists"
-              leftSection={<IconSearch size={20} color={theme.colors[theme.primaryColor][5]} />}
-              size="md"
-              variant="filled"
-              radius="xl"
-              mx={0}
-            /></Paper>
-        )}
+      <AppShell.Main >
+        <Box style={{ minHeight: '100vh' , padding:'0px'}}>
+          {pathname === '/' && user && !isSticky && (
+            <Paper radius={'xl'} shadow="md" p={0} m={'xs'} style={{ boxShadow: '0 4px 12px rgba(93, 92, 92, 0.3)' }}>
+              <TextInput
+                readOnly
+                onClick={() => router.push(`/search`)}
+                placeholder="Songs, albums or artists"
+                leftSection={<IconSearch size={20} color={theme.colors[theme.primaryColor][5]} />}
+                size="md"
+                variant="filled"
+                radius="xl"
+                mx={0}
+              /></Paper>
+          )}
 
-        {children}
-
+          {children}
+        </Box>
       </AppShell.Main>
+
       <AppShell.Footer ml={{ base: 0, sm: '50px' }} style={{ padding: '0px', borderTop: '0px' }}>
         {user && <Stack gap="0" m={0}>
           {playlist !== null && playlist !== undefined && playlist.length > 0 && <NowPlayingBar />}

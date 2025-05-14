@@ -159,6 +159,12 @@ const playerSlice = createSlice({
 
       state.playlist = updated;
     },
+    clearNowPlayinglist: (state) => {
+      state.playlist = [];
+      state.currentTrackIndex = 0;
+      state.isPlaying = false;
+      state.isLoading = false;
+    },
     setPlaylistAndPlay: (state, action: PayloadAction<Track[]>) => {
       const newTracks = action.payload;
       let tracksWithUrl = [];
@@ -176,7 +182,7 @@ const playerSlice = createSlice({
 });
 
 export const {
-  playTrack, play, setVolume, addTrackAfterCurrent, removeTrackFromPlaylist,
+  playTrack, play, setVolume, addTrackAfterCurrent, removeTrackFromPlaylist,clearNowPlayinglist,
   toggleMute, pause, nextTrack, previousTrack, setCurrentTrackIndex,addMultiTracksAfterCurrent,
   toggleRepeat, toggleShuffle, setPlaying, reorderPlaylist, setPlaylistAndPlay, setSeekPosition
 } = playerSlice.actions;
