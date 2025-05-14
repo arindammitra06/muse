@@ -75,134 +75,64 @@ export function AlbumCard({ id, image, title, subtitle, type, song, year, perma_
 
 
 
-  return (
-    <Stack gap={0} style={{ width: '100%', maxWidth: rem(200) }} onClick={handleClick}>
-      <Card
-        radius={type === 'radio_station' ? '100px' : type === 'show' ? '100px' : 'md'}
-        p={0}
-        ml={10}
-        withBorder
-        shadow='sm'
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        style={{
-          position: 'relative',
-          width: '100%',
-          aspectRatio: '1 / 1',
-          overflow: 'hidden',
-          cursor: 'pointer',
-          transition: 'transform 200ms ease, box-shadow 200ms ease',
-          transform: hovered && isDesktop ? 'scale(1.02)' : 'scale(1)',
-          boxShadow: hovered && isDesktop ? theme.shadows.md : theme.shadows.sm,
-          zIndex: hovered ? 10 : 1, // optional: elevate above others
-        }}
-      >
-        <Image
-          src={image}
-          alt={title}
-          height="100%"
-          width="100%"
-          fit="cover"
-          style={{ filter: type === 'artist' ? 'grayscale(100%)' : 'none' }}
-        />
+  return (<Stack gap={0} style={{ width: '100%', maxWidth: rem(200) }} onClick={handleClick}>
+    <Card
+      radius={type === 'radio_station' ? '100px' : type === 'show' ? '100px' : 'md'}
+      p={0}
+      ml={10}
+      withBorder
+      shadow='sm'
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position: 'relative',
+        width: '100%',
+        aspectRatio: '1 / 1',
+        overflow: 'hidden',
+        cursor: 'pointer',
+        transition: 'transform 200ms ease, box-shadow 200ms ease',
+        transform: hovered && isDesktop ? 'scale(1.02)' : 'scale(1)',
+        boxShadow: hovered && isDesktop ? theme.shadows.md : theme.shadows.sm,
+        zIndex: hovered ? 10 : 1, // optional: elevate above others
+      }}
+    >
+      <Image
+        src={image}
+        alt={title}
+        height="100%"
+        width="100%"
+        fit="cover"
+        style={{ filter: type === 'artist' ? 'grayscale(100%)' : 'none' }}
+      />
+      {type !== null && type !== undefined && type === 'song' &&
+        <Center
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            height: '100%',
+            width: '100%',
+            zIndex: 2,
+          }}
+        >
+          <ActionIcon
+            variant="filled"
+            size="xl"
+            radius="xl"
+            onClick={() => playSongAndAddToPlaylist(song)}
+          >
+            <IconPlayerPlayFilled size="1.8rem" color="white" />
+          </ActionIcon>
+        </Center>}
+    </Card>
 
-
-
-        {hovered && isDesktop ? (
-          <>
-            {type !== null && type !== undefined && type === 'song' && <Overlay
-              color="black"
-              opacity={0.6}
-              zIndex={1}
-              style={{ transition: 'opacity 200ms ease' }}
-            />}
-
-            <Group
-              flex="right"
-              style={{
-                position: 'absolute',
-                top: rem(10),
-                right: rem(10),
-                zIndex: 2,
-              }}
-              gap="xs"
-            >
-              {type !== null && type !== undefined && type === 'song' && <FavoriteButton song={song} />}
-              <ActionIcon variant="light" color="white" radius="xl">
-                <IconShare size="1.2rem" />
-              </ActionIcon>
-            </Group>
-
-            {type !== null && type !== undefined && type === 'song' &&
-              <Center
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  height: '100%',
-                  width: '100%',
-                  zIndex: 2,
-                }}
-              >
-                <ActionIcon
-                  variant="filled"
-                  size="xl"
-                  radius="xl"
-                  onClick={() => playSongAndAddToPlaylist(song)}
-                >
-                  <IconPlayerPlayFilled size="1.5rem" color="white" />
-                </ActionIcon>
-              </Center>}
-          </>
-        ) :
-          !isDesktop ? <>
-            <Group
-              flex="right"
-              style={{
-                position: 'absolute',
-                top: rem(10),
-                right: rem(10),
-                zIndex: 2,
-              }}
-              gap="xs"
-            >
-              {type !== null && type !== undefined && type === 'song' && <FavoriteButton song={song} />}
-
-              <ActionIcon variant="light" color="white" radius="xl">
-                <IconShare size="1.2rem" />
-              </ActionIcon>
-            </Group>
-
-            {type !== null && type !== undefined && type === 'song' &&
-              <Center
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  height: '100%',
-                  width: '100%',
-                  zIndex: 2,
-                }}
-              >
-                <ActionIcon
-                  variant="filled"
-                  size="xl"
-                  radius="xl"
-                  onClick={() => playSongAndAddToPlaylist(song)}
-                >
-                  <IconPlayerPlayFilled size="1.8rem" color="white" />
-                </ActionIcon>
-              </Center>}
-          </> : <></>}
-      </Card>
-
-      {/* Title and subtitle below the card */}
-      <Text tt="capitalize" size="sm" fw={600} ta={'center'} lineClamp={1} mt={5} mx={10}>
-        {title}
-      </Text>
-      <Text tt="capitalize" size="xs" c="dimmed" ta={'center'} lineClamp={1} m={0} mx={10}>
-        {subtitle}
-      </Text>
-    </Stack>
+    {/* Title and subtitle below the card */}
+    <Text tt="capitalize" size="sm" fw={600} ta={'center'} lineClamp={1} mt={5} mx={10}>
+      {title}
+    </Text>
+    <Text tt="capitalize" size="xs" c="dimmed" ta={'center'} lineClamp={1} m={0} mx={10}>
+      {subtitle}
+    </Text>
+  </Stack>
   );
 }

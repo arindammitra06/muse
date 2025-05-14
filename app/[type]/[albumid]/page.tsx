@@ -105,7 +105,7 @@ export default function AlbumDetailsPage({
 
 
   return (
-    <Box p="sm" style={{ minHeight: '100vh', }}>
+    <Box p="sm" style={{ minHeight: '100vh', }} mb={150}>
 
 
 

@@ -17,7 +17,8 @@ const settingsPersistConfig = {
   whitelist: ['isDarkTheme', 'storeSession', 'selectedLanguages', 'streamingQuality', 'downloadQuality'], // skip static `languages`
 };
 const persistedSettingsReducer = persistReducer(settingsPersistConfig, settingsReducer);
-const rootReducer = combineReducers({
+
+const appReducer = combineReducers({
   // Add your reducers here
   user: userReducer,
   api: apiReducer,
@@ -29,5 +30,13 @@ const rootReducer = combineReducers({
   settings: persistedSettingsReducer,
   searchParams:searchParamsReducer
 });
+
+const rootReducer = (state: any, action: any) => {
+  if (action.type === 'global/reset') {
+    state = undefined; // resets entire Redux store
+  }
+  return appReducer(state, action);
+};
+
 
 export default rootReducer;

@@ -75,6 +75,9 @@ export function getPreferredStreamingQualityUrl(url: string, streamingQuality: s
     }
 }
 
+export function countNonPlaylistItems(items: any[]): number {
+  return items.filter(item => item.type !== 'playlist').length;
+}
 
 export async function formatSongsResponse(
   responseList: any[],
@@ -473,9 +476,17 @@ export function getSubTitle(item: any): string {
     case 'playlist':
       return `Playlist • ${getSubtitleOrDefault()}`;
 
-    case 'song':
-      return `Single • ${item.artist ? unescapeHTML(item.artist) : ''}`;
-
+    case 'song':{
+      const artists = item.more_info?.artistMap?.artists?.map((a: { name: any; }) => a.name);
+      
+      if (artists?.length) {
+        return `Single • ${unescapeHTML(artists.join(', '))}`;
+      
+      } else if (item.subtitle?.trim()) {
+        
+        return `Single • ${item.subtitle}`;
+      }
+    }
     case 'mix':
       return `Mix • ${getSubtitleOrDefault()}`;
 

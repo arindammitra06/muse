@@ -80,6 +80,9 @@ const playlistSlice = createSlice({
         favorites.tracks.push(action.payload);
       }
     },
+    setUserPlaylists(state, action: PayloadAction<Playlist[]>) {
+      state.userPlaylist = action.payload;
+    }
   },
 });
 
@@ -87,6 +90,6 @@ export const { createPlaylist,
   deletePlaylist,
   copyPlaylist,
   addSongToPlaylist,
-  removeSongFromPlaylist,
+  removeSongFromPlaylist,setUserPlaylists,
   clearPlaylist,toggleFavorite, updatePlaylistOrder } = playlistSlice.actions;
 export const playlistReducer = playlistSlice.reducer;

@@ -106,6 +106,17 @@ const playerSlice = createSlice({
     setCurrentTrackIndex(state, action: PayloadAction<number>) {
       state.currentTrackIndex = action.payload;
     },
+    addMultiTracksAfterCurrent: (state, action: PayloadAction<Track[]>) => {
+      const insertIndex = state.currentTrackIndex + 1;
+      const newTracks = action.payload;
+    
+      // Remove existing instances of the tracks to avoid duplicates
+      const newTrackIds = new Set(newTracks.map(track => track.id));
+      state.playlist = state.playlist.filter(track => !newTrackIds.has(track.id));
+    
+      // Insert tracks after the current one
+      state.playlist.splice(insertIndex, 0, ...newTracks);
+    },
     addTrackAfterCurrent: (state, action: PayloadAction<Track>) => {
       const insertIndex = state.currentTrackIndex + 1;
       const trackId = action.payload.id;
@@ -166,7 +177,7 @@ const playerSlice = createSlice({
 
 export const {
   playTrack, play, setVolume, addTrackAfterCurrent, removeTrackFromPlaylist,
-  toggleMute, pause, nextTrack, previousTrack, setCurrentTrackIndex,
+  toggleMute, pause, nextTrack, previousTrack, setCurrentTrackIndex,addMultiTracksAfterCurrent,
   toggleRepeat, toggleShuffle, setPlaying, reorderPlaylist, setPlaylistAndPlay, setSeekPosition
 } = playerSlice.actions;
 

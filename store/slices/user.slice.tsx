@@ -1,5 +1,5 @@
 import { AppUser } from "@/model/user.model";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import axios from "axios";
 
@@ -33,26 +33,15 @@ const userSlice = createSlice({
   name: "user",
   initialState: USER_INITIAL_STATE,
   reducers: {
-      
+    setCurrentUser(state, action: PayloadAction<AppUser|null>) {
+      state.currentUser = action.payload;
     },
-  extraReducers: (builder) => {
-      // builder
-      //   .addCase(fetchAllUsers.pending, (state) => {
-      //     state.isLoading = true;
-      //     state.error = null;
-      //   })
-      //   .addCase(fetchAllUsers.fulfilled, (state, action) => {
-      //     state.isLoading = false;
-      //     state.allUsers = action.payload.data;
-      //   })
-      //   .addCase(fetchAllUsers.rejected, (state, action) => {
-      //     state.isLoading = false;
-      //     state.error = action.error.message != null ? action.error.message : "";
-      //   })
-        
-      },
+    logoutSlice(state) {
+      state.currentUser = null;
+    },
+    },
 });
 
 
-
+export const { setCurrentUser, logoutSlice } = userSlice.actions;
 export const userReducer = userSlice.reducer;

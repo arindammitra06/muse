@@ -1,14 +1,16 @@
 'use client'
-import { AppShell, ActionIcon, Box, TextInput, Transition, useMantineTheme, Paper, Flex, Burger, Skeleton, Stack } from '@mantine/core';
+import { AppShell, ActionIcon, Box, TextInput, Transition, useMantineTheme, Paper, Flex, Text, Skeleton, Stack, Avatar, Group, Menu, UnstyledButton, Space } from '@mantine/core';
 import { ReactNode, useEffect, useState } from 'react';
 import { AppLogo } from './Common/custom-logo.component';
-import { IconSearch, IconX } from '@tabler/icons-react';
+import { IconChevronLeft, IconLogin, IconLogout, IconSearch, IconUserQuestion, IconX } from '@tabler/icons-react';
 import { NowPlayingBar } from './NowPlaying/NowPlayingBar';
 import { usePathname, useRouter } from 'next/navigation';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { NavbarMinimal } from './Navbar/NavbarMinimal';
 import { FadingWeightLogo } from './Common/FadingWeightLogo';
 import { BottomNavigation } from './BottomNavigation/BottomNavigation';
+import { useAppSelector } from '@/store/hooks';
+import { useAuth } from '@/utils/useAuth';
 export interface NavigationProps {
   children: ReactNode;
 };
@@ -20,8 +22,11 @@ export default function Navigation({ children }: NavigationProps) {
   const router = useRouter();
   const [opened, { toggle }] = useDisclosure();
   const isDesktop = useMediaQuery(`(min-width: ${theme.breakpoints.sm})`);
-
-
+  const playlist = useAppSelector((state) => state.player.playlist);
+  const user = useAppSelector((state) => state.user.currentUser);
+  const { logout } = useAuth();
+  
+  
   const handleBack = () => {
     router.back();
   };
@@ -41,6 +46,7 @@ export default function Navigation({ children }: NavigationProps) {
 
 
 
+
   return (
     <AppShell
       header={{ height: 60 }}
@@ -56,10 +62,22 @@ export default function Navigation({ children }: NavigationProps) {
           h="100%"
           px="xs"
         >
+          <ActionIcon variant="light"
+            mt={5}
+            mr={5}
+            style={{ visibility: pathname === '/' ? 'hidden' : 'visible' }}
+            color="gray" size="lg"
+            radius="lg" mx={'0'}
+            onClick={() => handleBack()}>
+            <IconChevronLeft size={'2rem'} stroke={2} />
+          </ActionIcon>
+
+
           <Flex justify="flex-start" align="flex-start" p={0}>
             <FadingWeightLogo text="muse" />
           </Flex>
-          <Flex justify="flex-end" align="flex-end" w="100%">
+
+          {user && <Flex justify="flex-end" align="flex-end" w="100%">
             <Transition mounted={isSticky}
               transition="slide-up"
               duration={150}
@@ -83,20 +101,59 @@ export default function Navigation({ children }: NavigationProps) {
                 </Box> : <></>
               )}
             </Transition>
-            {pathname !== '/' && <ActionIcon variant="light" color="gray" size="lg" radius="lg" onClick={() => handleBack()}>
-              <IconX size={'1.5rem'} stroke={2.5} />
-            </ActionIcon>}
-          </Flex>
+
+          </Flex>}
+
+          <Menu
+            width={100}
+            position="bottom-end"
+            transitionProps={{ transition: 'pop-top-right' }}
+            withinPortal
+            offset={2}
+            withArrow
+            arrowPosition="center"
+
+          >
+
+            <Menu.Target>
+              <UnstyledButton style={{ paddingRight: '0px', paddingLeft: '6px' }}>
+                <Group >
+                  {user !== null && user !== undefined
+                    && user.photo !== null && user.photo !== undefined && user.photo !== "" ?
+                    <Avatar variant="outline" radius="xl" size={'md'} src={user.photo} />
+                    :
+                    user !== null && user !== undefined && user.name !== null && user.name !== null && user.name !== '' ?
+                      <Avatar alt={'user profile'} style={{ padding: '0px' }} radius="xl" size={'md'} variant="filled">
+                        {user.name.substring(0, 2)}
+                      </Avatar>
+                      :
+                      <></>
+                  }
+                </Group>
+              </UnstyledButton>
+            </Menu.Target>
+            <Menu.Dropdown >
+
+
+
+              {user !== null && user !== undefined && user.name !== null && user.name !== undefined &&
+                <Menu.Item onClick={() => logout()}>Logout</Menu.Item>
+
+              }
+            </Menu.Dropdown>
+          </Menu>
+
+
         </Flex>
 
       </AppShell.Header>
 
-      {isDesktop && (<AppShell.Navbar p="0" w={50}>
+      {isDesktop && user && (<AppShell.Navbar p="0" w={50}>
         <NavbarMinimal toggle={toggle} />
       </AppShell.Navbar>)}
 
       <AppShell.Main>
-        {pathname === '/' && !isSticky && (
+        {pathname === '/' && user && !isSticky && (
           <Paper radius={'xl'} shadow="md" p={0} m={'xs'} style={{ boxShadow: '0 4px 12px rgba(93, 92, 92, 0.3)' }}>
             <TextInput
               readOnly
@@ -114,10 +171,10 @@ export default function Navigation({ children }: NavigationProps) {
 
       </AppShell.Main>
       <AppShell.Footer ml={{ base: 0, sm: '50px' }} style={{ padding: '0px', borderTop: '0px' }}>
-        <Stack gap="0" m={0}>
-          <NowPlayingBar />
+        {user && <Stack gap="0" m={0}>
+          {playlist!==null && playlist!==undefined && playlist.length>0 && <NowPlayingBar />}
           {!isDesktop && <BottomNavigation />}
-        </Stack>
+        </Stack>}
       </AppShell.Footer>
     </AppShell>
   );
