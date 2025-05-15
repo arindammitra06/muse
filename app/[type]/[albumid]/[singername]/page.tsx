@@ -3,17 +3,18 @@
 import AlbumList from '@/components/AlbumList/albumlist';
 import { nprogress } from '@mantine/nprogress';
 import { useEffect } from 'react';
-import { Box, Button, Group, Overlay, Space, Stack, Title, useMantineTheme } from '@mantine/core';
+import { Box, Button, Group, Overlay, Space, Stack, Title, useMantineTheme, Text, ActionIcon } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchArtistSongs } from '@/store/slices/jio.slice';
 import React from 'react';
-import { DownloadButton } from '@/components/DownloadButton/DownloadButton';
 import { SkeletonCarousel, SkeletonSongBar, SongBar } from '@/components/SongBar/SongBar';
 import '@mantine/carousel/styles.css';
-import { IconPlayerPlay } from '@tabler/icons-react';
+import { IconDownload, IconPlayerPlay } from '@tabler/icons-react';
 import { AppTitles } from '@/components/Common/custom-title';
 import { setPageTitle } from '@/store/slices/pageTitleSlice';
 import { capitalizeFirst } from '@/utils/generic.utils';
+import { modals } from '@mantine/modals';
+import usePlayDownload from '@/utils/playDownloadHooks';
 
 export default function ArtistDetailsPage({
   params,
@@ -25,15 +26,30 @@ export default function ArtistDetailsPage({
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
   const artistData = useAppSelector((state) => state.api.artistData);
-
+  
+  const { fetchAllSongsFromPlayNow , fetchAndDownloadMultipleFiles} = usePlayDownload();
 
   useEffect(() => {
     dispatch(setPageTitle(capitalizeFirst(type)));
-    
+
     fetchCall();
   }, [type, albumid, singername]);
 
- 
+  const openConfirmodal = () =>
+    modals.openConfirmModal({
+      title: 'Download all tracks?',
+      centered: true,
+      children: (
+        <Text size="sm">
+          Are you sure you want to download all tracks?
+        </Text>
+      ),
+      labels: { confirm: 'Yes', cancel: "No" },
+      onCancel: () => console.log('Cancel'),
+      onConfirm: () => fetchAndDownloadMultipleFiles(artistData['Top Songs'], type),
+    });
+
+  
 
   function fetchCall() {
     nprogress.reset();
@@ -73,21 +89,36 @@ export default function ArtistDetailsPage({
 
 
 
-          <Group
-            gap="xs"
-            style={{ position: 'absolute', bottom: 20, left: 20, zIndex: 2 }}
+          <Group justify="space-between"
+            wrap="nowrap"
+            p={'xs'}
+            style={{width:'100%', flex: 1, minWidth: 0, position: 'absolute', bottom: 0, left: 0, zIndex: 2 }}
           >
-            <Title order={2}>{artistData['name']}</Title>
-            <Group>
+            <Group wrap="nowrap" style={{ flex: 1, minWidth: 0 }} gap={'xs'}>
+              <Title order={2}>{artistData['name']}</Title>
+            </Group>
+
+            <Group gap="sm" wrap="nowrap">
               <Button
                 size="md"
                 rightSection={<IconPlayerPlay size={16} />}
                 radius="md"
-                color={theme.primaryColor}
-              >
-                Play All
-              </Button>
-              <DownloadButton song={undefined} />
+                onClick={() => fetchAllSongsFromPlayNow(artistData['Top Songs'])}
+                disabled={artistData !== null && artistData !== undefined &&
+                  artistData['Top Songs'] !== null && artistData['Top Songs'] !== undefined && artistData['Top Songs'].length > 0 ? false : true}
+                color={theme.primaryColor}>Play All</Button>
+
+              <ActionIcon 
+                variant="filled"
+                size={'xl'}
+                radius="md" 
+                aria-label="Download All"
+                disabled={artistData !== null && artistData !== undefined &&
+                  artistData['Top Songs'] !== null && artistData['Top Songs'] !== undefined && artistData['Top Songs'].length > 0 ? false : true}
+                onClick={() => openConfirmodal()}
+                >
+                <IconDownload size={22} stroke={2} />
+              </ActionIcon>
             </Group>
           </Group>
         </Box>
@@ -100,7 +131,7 @@ export default function ArtistDetailsPage({
 
             {artistData['Top Songs'] !== null && artistData['Top Songs'] !== undefined && artistData['Top Songs'].length > 0
               && artistData['Top Songs'].map((song: any, idx: number) => (
-                <SongBar key={idx} id={song.id}  song={song} type={song.type}
+                <SongBar key={idx} id={song.id} song={song} type={song.type}
                   isPlaying={false} currentPlayingTrack={undefined} onClickOverride={undefined} />
               ))
             }

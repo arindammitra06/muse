@@ -11,6 +11,8 @@ import { addMultiTracksAfterCurrent, addTrackAfterCurrent, removeTrackFromPlayli
 import { formatSongsResponse, getLastSectionOfUrl } from "@/utils/generic.utils";
 import { getSongFromToken } from "@/store/slices/jio.slice";
 import { useRouter } from "next/navigation";
+import { modals } from "@mantine/modals";
+import { CreatePlaylistForm } from "@/app/playlists/page";
 
 interface PlaylistMenuOptionsProps {
     album: any | undefined;
@@ -33,7 +35,7 @@ export const PlaylistMenuOptions = ({ album, song, type, isForAlbums = false, is
     const router = useRouter();
     const clipboard = useClipboard({ timeout: 2000 });
 
-    
+
     const handleShare = async () => {
         let url = '';
 
@@ -111,6 +113,14 @@ export const PlaylistMenuOptions = ({ album, song, type, isForAlbums = false, is
 
         toast.success(song.title + ' removed from ' + albumType)
     }
+    function showCreatePlaylistModal() {
+        modals.open({
+          title: 'Add Playlist Name',
+          centered: true,
+          children: <CreatePlaylistForm />,
+        });
+      }
+      
     function seeArtistPage(artist: any): void {
         if (artist !== null && artist !== undefined && artist.type === 'artist') {
             let token = getLastSectionOfUrl(artist.perma_url);
@@ -127,8 +137,8 @@ export const PlaylistMenuOptions = ({ album, song, type, isForAlbums = false, is
     return (
         <div>
             <Menu shadow="md" width={220}>
-                <Menu.Target>
-                    <ActionIcon variant={isForAlbums ? "light" : "subtle"} radius={'xl'}
+                <Menu.Target >
+                    <ActionIcon variant={isForAlbums ? "light" : "subtle"} radius={'xl'} pt={6}
                         color={isForAlbums ? theme.primaryColor : "gray"} onClick={(e) => e.stopPropagation()}>
                         <IconDotsVertical size={20} />
                     </ActionIcon>
@@ -200,13 +210,13 @@ export const PlaylistMenuOptions = ({ album, song, type, isForAlbums = false, is
                 <Stack align="stretch"
                     justify="center"
                     gap="xs">
-                    <Paper shadow="xs" p="8" withBorder>
+                    <Paper shadow="xs" p="8" withBorder onClick={()=>showCreatePlaylistModal()}>
                         <Group justify="space-between">
                             <Group p={0}>
-                                <ActionIcon variant="light" size={'xl'}><IconPlus size={20} /></ActionIcon>
+                                <ActionIcon variant="light" size={'xl'}>
+                                    <IconPlus size={20} />
+                                </ActionIcon>
                                 <Text fw={600}>Create New Playlist</Text>
-                            </Group>
-                            <Group>
                             </Group>
                         </Group>
                     </Paper>

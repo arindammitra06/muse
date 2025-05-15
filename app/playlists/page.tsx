@@ -95,16 +95,14 @@ export default function PlaylistManager() {
           size="xs"
           rightSection={<IconPlus size={16} />}
           radius="md"
-          color={theme.colors.secondary[5]}
           onClick={() => showCreatePlaylistModal()}>
           Create Playlist
         </Button>
       </Group>
 
-      <Stack mt="xl" gap="sm">
+      <Stack mt="sm" gap="sm">
         {favorites && (
-          <Paper shadow="xs" p="5" withBorder onClick={() => openPlaylist('favorites')}
-            bg={isDarkTheme ? theme.colors.secondary[0] : theme.colors.secondary[9]}>
+          <Paper shadow="xs" p="5" withBorder onClick={() => openPlaylist('favorites')}>
             <Group justify="space-between">
               <Group p={0}>
                 <Image src={musicPlaceholder.src} radius="md" w={50} h={50} />
@@ -190,7 +188,7 @@ export default function PlaylistManager() {
   );
 }
 
-function CreatePlaylistForm() {
+export function CreatePlaylistForm() {
   const [playlistName, setPlaylistName] = useState('');
   const dispatch = useAppDispatch();
 

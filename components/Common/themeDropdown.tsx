@@ -1,43 +1,13 @@
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { setCurrentTheme } from "@/store/slices/theme.slice";
-import { staticThemes } from "@/theme";
-import { useMantineTheme, Menu, ActionIcon, useStyles, Tooltip, Card, Group, SimpleGrid, ColorSwatch, CheckIcon } from "@mantine/core";
+import { setPrimaryColor } from "@/store/slices/theme.slice";
+import { RootState } from "@/store/store";
+import { generateMantineColorSwatch } from "@/utils/generic.utils";
+import { useMantineTheme, Menu, ActionIcon, useStyles, Tooltip, Card, Group, SimpleGrid, ColorSwatch, CheckIcon, ColorPicker, HoverCard } from "@mantine/core";
 import { IconPalette, IconPaletteFilled } from "@tabler/icons-react";
-import { FC, forwardRef } from "react";
+import { FC, forwardRef, MouseEvent } from "react";
+import { useSelector } from "react-redux";
 
 
-
-
-
-export type ThemeCardProps = {
-
-    label: string,
-
-    value: string,
-
-    description: string,
-
-    image: string,
-
-    themeObj: any,
-
-};
-
-
-
-
-const SelectItem = forwardRef<HTMLDivElement, ThemeCardProps>(
-
-    ({ label, value, image, description, themeObj, ...others }: ThemeCardProps, ref) => (
-
-        <ThemeCard
-            label={label} value={value}
-            themeObj={themeObj}
-            image={""} description={""} />
-
-    )
-
-);
 
 
 
@@ -45,41 +15,41 @@ export function ThemeDropdown() {
 
     const theme = useMantineTheme();
     const dispatch = useAppDispatch();
-    const themeSelected = useAppSelector((state) => state.theme);
+    const primaryColor = useSelector((state: RootState) => state.theme.primaryColor);
 
-    function setThemeAndWait(themeObj: any): void {
-        dispatch(setCurrentTheme({ theme: themeObj }));
-
+    
+    function setColorSelection(color: any): void {
+        if (/^#([0-9A-F]{3}){1,2}$/i.test(color)) {
+            dispatch(setPrimaryColor(color));
+          } else {
+            alert('Please select a valid hex color');
+        }
     }
 
-
+    
 
     return (
+        <Group justify="center">
+            <HoverCard width={280} shadow="md">
+                <HoverCard.Target>
+                    <ActionIcon
+                        variant="default"
+                        size="md"
+                        aria-label="Toggle Colors" >
+                        <IconPalette stroke={1.5} />
+                    </ActionIcon>
+                </HoverCard.Target>
+                <HoverCard.Dropdown>
+                    <ColorPicker
+                        format="hex"
+                        value={primaryColor}
+                        onChange={(color) => setColorSelection(color)}
+                        swatches={['#272640', '#868e96', '#fa5252', '#e64980', '#be4bdb', '#7950f2', '#4c6ef5', '#228be6', '#15aabf', '#12b886', '#40c057', '#82c91e', '#fab005', '#fd7e14',]}
+                    />
+                </HoverCard.Dropdown>
+            </HoverCard>
+        </Group>
 
-        <Menu shadow="md" >
-            <Menu.Target>
-                <ActionIcon
-                    variant="default"
-                    size="md"
-                    aria-label="Toggle theme" >
-                    <IconPalette stroke={1.5} />
-                </ActionIcon>
-            </Menu.Target>
-            <Menu.Dropdown data-mantine-focus-auto="false">
-                {staticThemes.map((eachTheme: any, index: number) => (
-                    <Menu.Item key={index}
-                        onClick={() => setThemeAndWait(eachTheme.theme)}
-                        leftSection={<SimpleGrid cols={2}>
-                            <ColorSwatch color={eachTheme.theme.colors[eachTheme.theme.primaryColor][5]} >P</ColorSwatch>
-                            <ColorSwatch color={eachTheme.theme.colors.secondary[7]} >S</ColorSwatch>
-                        </SimpleGrid>} >
-                        {eachTheme.label}
-                    </Menu.Item>
-                ))}
-
-            </Menu.Dropdown>
-
-        </Menu>
 
 
 
@@ -88,34 +58,3 @@ export function ThemeDropdown() {
 }
 
 
-
-export const ThemeCard: FC<ThemeCardProps> = ({ label, image, value, description, themeObj }) => {
-
-    const dispatch = useAppDispatch();
-
-
-    function setThemeAndWait(themeObj: any): void {
-        dispatch(setCurrentTheme({ theme: themeObj }));
-
-    }
-
-
-
-    return (
-
-        <Tooltip label={label}>
-            <div onClick={() => setThemeAndWait(themeObj)} style={{
-                width: '50px',
-                height: '20px',
-                border: `0.1px solid ${'#212121'}`,
-                marginBottom: '10px',
-                borderRadius: '2px',
-                backgroundColor: themeObj.primaryColor
-            }}>
-
-            </div>
-        </Tooltip>
-
-    )
-
-};

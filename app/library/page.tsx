@@ -2,7 +2,7 @@
 
 import { Box, Stack, useMantineTheme, Text, Paper, Group, ActionIcon, Button, Drawer, Flex, rem, SimpleGrid, Title } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { IconHeart, IconChevronRight, IconHistory, IconDownload, IconPlaylist, IconPlayerPlay, IconX } from '@tabler/icons-react';
+import { IconHeart, IconChevronRight, IconHistory, IconDownload, IconPlaylist, IconPlayerPlay, IconX, IconRefresh } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { AppTitles } from '@/components/Common/custom-title';
 import { useDisclosure } from '@mantine/hooks';
@@ -18,12 +18,16 @@ import SortableSessionDrawer from '@/components/SongBar/SortablePlaylist';
 import { setPageTitle } from '@/store/slices/pageTitleSlice';
 import { capitalizeFirst } from '@/utils/generic.utils';
 import { useEffect } from 'react';
+import { syncPlaylistWithFirestore } from '@/utils/playlistHooks';
+import { modals } from '@mantine/modals';
 
 export default function Library() {
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
   const router = useRouter();
   const { playlist, currentTrackIndex, isPlaying } = useAppSelector(s => s.player);
+  const currentUser = useAppSelector((state) => state.user.currentUser);
+  const userPlaylist = useAppSelector((s) => s.playlist.userPlaylist);
 
   useEffect(() => {
     dispatch(setPageTitle(capitalizeFirst('library')));
@@ -42,11 +46,34 @@ export default function Library() {
     openDrawer();
   };
 
+  const saveToCloudModal = () =>
+    modals.openConfirmModal({
+      title: 'Sync playlists to cloud?',
+      centered: true,
+      children: (
+        <Text size="sm">
+          Are you sure you want to sync playlists to cloud?
+        </Text>
+      ),
+      labels: { confirm: 'Sync', cancel: "Discard" },
+      confirmProps: { color: 'green' },
+      onCancel: () => console.log('Cancel'),
+      onConfirm: async () => {
+        await syncPlaylistWithFirestore(currentUser!.uid, userPlaylist)
+      },
+    });
 
   return (
     <Box p="xs">
       <Group justify="space-between">
-        <AppTitles title={'Library'} />
+        <AppTitles title={'My Music'} />
+        <Button
+          size="xs"
+          rightSection={<IconRefresh size={16} />}
+          radius="md"
+          onClick={() => saveToCloudModal()}>
+          Sync Playlists
+        </Button>
       </Group>
       <Drawer
         opened={drawerOpened}

@@ -28,6 +28,6 @@ export const FavoriteButton = ({ song , borderColor}: FavoriteButtonProps) => {
 
     return (<ActionIcon variant="subtle" color={isFavorited ? 'red' : 
                                          borderColor!==null && borderColor!==undefined?  borderColor : 'gray'} onClick={(e) => favoriteTheSong(e)}>
-                {isFavorited ? <IconHeartFilled size={20} /> : <IconHeart size={20} />}
+                {isFavorited ? <IconHeartFilled size={20}/> : <IconHeart size={20} />}
             </ActionIcon>)
 }

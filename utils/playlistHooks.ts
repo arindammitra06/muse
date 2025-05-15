@@ -21,13 +21,32 @@ export async function fetchPlaylistFromFirestore(userId: string) {
     return [];
   }
 }
-export async function savePlaylistToFirestore(userId: string, playlist: any[]) {
+
+  export async function syncPlaylistWithFirestore(userId: string, localPlaylist: any[]) {
     if (!userId) return;
   
     try {
       const ref = doc(db, 'playlists', userId);
-      await setDoc(ref, { userPlaylist: playlist }, { merge: true });
+      const snapshot = await getDoc(ref);
+  
+      const remotePlaylist: any[] = snapshot.exists() ? snapshot.data().userPlaylist || [] : [];
+  
+      // Merge local and remote playlists (avoid duplicates)
+      const mergedPlaylist = [...remotePlaylist];
+  
+      localPlaylist.forEach((localTrack) => {
+        const exists = remotePlaylist.some((remoteTrack) => remoteTrack.id === localTrack.id);
+        if (!exists) {
+          mergedPlaylist.push(localTrack);
+        }
+      });
+  
+      // Save the merged playlist back to Firestore
+      await setDoc(ref, { userPlaylist: mergedPlaylist }, { merge: true });
+  
+      return mergedPlaylist;
     } catch (error) {
-      console.error('Error saving playlist:', error);
+      console.error('Error syncing playlist:', error);
+      return null;
     }
   }

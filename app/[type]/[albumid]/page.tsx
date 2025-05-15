@@ -14,6 +14,7 @@ import { modals } from '@mantine/modals';
 import toast from 'react-hot-toast';
 import { PlaylistMenuOptions } from '@/components/PlaylistMenu/PlaylistMenuOptions';
 import { setPageTitle } from '@/store/slices/pageTitleSlice';
+import usePlayDownload from '@/utils/playDownloadHooks';
 
 
 export default function AlbumDetailsPage({
@@ -25,7 +26,7 @@ export default function AlbumDetailsPage({
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
   const [albumData, setAlbumData] = useState<any>(null);
-  const { downloadQuality } = useAppSelector((s) => s.settings);
+  const { fetchAllSongsFromPlayNow,fetchAndDownloadMultipleFiles } = usePlayDownload();
 
   
 
@@ -35,30 +36,7 @@ export default function AlbumDetailsPage({
   }, [type, albumid]);
 
 
-  async function fetchAndDownloadAllFiles(albumData: any, downloadQuality: string) {
-    toast.success('Starting download in background')
-
-    if (albumData !== null && albumData !== undefined && albumData.length > 0) {
-      for (let i = 0; i < albumData.length; i++) {
-        if (albumData[i] !== null && albumData[i] !== undefined && albumData[i].perma_url !== null && albumData[i].perma_url !== undefined) {
-          let token = getLastSectionOfUrl(albumData[i].perma_url);
-          if (token !== null && token !== undefined && token !== '') {
-            await dispatch(getSongFromToken({ token: token, type: albumData[i].type })).then(async (res: any) => {
-              if (res.payload !== null && res.payload !== undefined) {
-                let songsList = res.payload['songs'];
-
-                if (songsList !== null && songsList !== undefined && songsList.length > 0) {
-                  const songsFetched = await formatSongsResponse(songsList, type);
-                  const newUrl = getPreferredStreamingQualityUrl(songsFetched[0].url!, downloadQuality)
-                  downloadFile(newUrl, songsFetched[0].title);
-                }
-              }
-            });
-          }
-        }
-      }
-    }
-  }
+ 
 
   const openConfirmodal = () =>
     modals.openConfirmModal({
@@ -71,7 +49,7 @@ export default function AlbumDetailsPage({
       ),
       labels: { confirm: 'Yes', cancel: "No" },
       onCancel: () => console.log('Cancel'),
-      onConfirm: () => fetchAndDownloadAllFiles(albumData.list, downloadQuality),
+      onConfirm: () => fetchAndDownloadMultipleFiles(albumData.list, type),
     });
 
   function fetchCall() {
@@ -80,13 +58,6 @@ export default function AlbumDetailsPage({
 
     if (type === 'playlist') {
       dispatch(fetchPlaylistSongs({ albumId: albumid }))
-        .then((res: any) => {
-          nprogress.complete();
-          setAlbumData(res.payload);
-        });
-
-    } if (type === 'artist') {
-      dispatch(fetchFeaturedRadio({ names: ['Hansraj Raghuwanshi'], stationType: type, language: 'hindi' }))
         .then((res: any) => {
           nprogress.complete();
           setAlbumData(res.payload);
@@ -132,6 +103,9 @@ export default function AlbumDetailsPage({
                 size="xs"
                 rightSection={<IconPlayerPlay size={16} />}
                 radius="md"
+                onClick={()=>fetchAllSongsFromPlayNow(albumData.list)}
+                disabled={albumData !== null && albumData !== undefined &&
+                  albumData.list !== null && albumData.list !== undefined && albumData.list.length > 0 ? false : true}
                 color={theme.primaryColor}
               >
                 Play All

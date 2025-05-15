@@ -27,7 +27,7 @@ export const LineSyncedLyrics = ({ lines, currentTime }: ProgressiveLyricsProps)
   }, [currentTime, lines, currentLineIndex]);
 
   return (
-    <ScrollArea h="40vh" p="md">
+    <ScrollArea h="40vh" p="xs">
       <Stack gap="xs" align="center">
         {lines.map((line, index) => (
           <div

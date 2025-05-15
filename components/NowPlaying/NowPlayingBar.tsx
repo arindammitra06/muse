@@ -7,7 +7,7 @@ import { useDisclosure } from '@mantine/hooks';
 import musicPlaceholder from '../../assets/images/music_placeholder.png';
 import Marquee from "react-fast-marquee";
 
-import { IconArrowsShuffle, IconChevronDown, IconNotes, IconPlayerPauseFilled, IconPlayerPlayFilled, IconPlayerSkipBackFilled, IconPlayerSkipForwardFilled, IconRepeat, IconRepeatOnce } from '@tabler/icons-react';
+import { IconArrowsShuffle, IconChevronDown, IconNotes, IconPlayerPauseFilled, IconPlayerPlayFilled, IconPlayerSkipBackFilled, IconPlayerSkipForwardFilled, IconPointFilled, IconRepeat, IconRepeatOnce } from '@tabler/icons-react';
 import { SkeletonSongBar } from '../SongBar/SongBar';
 import { NowPlayingOverlay } from './NowPlayingOverlay';
 import { DownloadButton } from '../DownloadButton/DownloadButton';
@@ -107,7 +107,7 @@ export function NowPlayingBar() {
   const getHeader = <Flex align="center" justify="space-between" mb="sm" style={{ flex: 1, minWidth: 0 }} px={'xs'}>
 
     <ActionIcon size={'xl'} variant="subtle" color="gray" onClick={() => close()} ml={5}>
-      <IconChevronDown size={'1.5rem'} />
+      <IconChevronDown size={20} />
     </ActionIcon>
 
     <Group gap="xs">
@@ -147,12 +147,12 @@ export function NowPlayingBar() {
           fit="cover" />
         {flipped && (
           <Overlay
-            backgroundOpacity={0.6}
+            backgroundOpacity={0.5}
             blur={4}
             center
             zIndex={2}
             style={{
-              padding: '1rem',
+              padding: '0.5rem',
               textAlign: 'center',
               color: 'white',
             }}
@@ -194,6 +194,7 @@ export function NowPlayingBar() {
           min={0}
           onChange={seekTo}
           label={(value) => formatTime(value)}
+          thumbSize={20}
           max={duration}
           size="sm"
           radius={'xl'}
@@ -317,7 +318,7 @@ export function NowPlayingBar() {
           color={theme.primaryColor}
           defaultValue={0}
         />
-        <Flex justify="space-between" align="center" px={'md'} py={4} style={{ flex: 1, minWidth: 0 }}>
+        <Flex justify="space-between" align="center" px={'md'} py={8} style={{ flex: 1, minWidth: 0 }}>
           <Group wrap="nowrap" style={{ flex: 1, minWidth: 0 }} gap={'xs'}>
             <Image
               src={currentTrack?.image || musicPlaceholder.src}
@@ -343,11 +344,12 @@ export function NowPlayingBar() {
             <FavoriteButton song={currentTrack} />
             <ActionIcon variant="subtle" px={0}
               size="md" radius="lg" onClick={(e) => doNoExpandAndPlay(e)}>
-              {isLoading ? <Loader size={'2rem'} /> : isPlaying ? <IconPlayerPauseFilled size={'2rem'} stroke={1.5} /> : <IconPlayerPlayFilled size={'2rem'} stroke={1.5} />}
+              {isLoading ?
+                <Loader size={20} /> : isPlaying ? <IconPlayerPauseFilled size={20} stroke={1.5} /> : <IconPlayerPlayFilled size={20} stroke={1.5} />}
             </ActionIcon>
 
-            <ActionIcon variant="subtle" p={'2'} size="md" mr={10} radius="lg" onClick={(e) => doNoExpandAndNext(e)} disabled={!hasNext}>
-              <IconPlayerSkipForwardFilled size={'2rem'} stroke={1.5} />
+            <ActionIcon variant="subtle" size="md" mr={10} radius="lg" onClick={(e) => doNoExpandAndNext(e)} disabled={!hasNext}>
+              <IconPlayerSkipForwardFilled size={20} stroke={1.5} />
             </ActionIcon>
           </Group>
         </Flex>

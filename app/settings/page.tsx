@@ -12,7 +12,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { languages } from '@/utils/generic.utils';
 import { RootState } from '@/store/store';
 import { AppTitles } from '@/components/Common/custom-title';
-import { savePlaylistToFirestore } from '@/utils/playlistHooks';
+import {  syncPlaylistWithFirestore } from '@/utils/playlistHooks';
 import { clearNowPlayinglist } from '@/store/slices/player.slice';
 import { setPageTitle } from '@/store/slices/pageTitleSlice';
 import { useEffect } from 'react';
@@ -64,7 +64,7 @@ export default function SettingsPage() {
       confirmProps: { color: 'green' },
       onCancel: () => console.log('Cancel'),
       onConfirm: async () => {
-        await savePlaylistToFirestore(currentUser!.uid, userPlaylist)
+        await syncPlaylistWithFirestore(currentUser!.uid, userPlaylist)
       },
     });
 

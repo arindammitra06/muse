@@ -7,7 +7,10 @@ interface AppTitles {
 export const AppTitles: FC<AppTitles> = ({ title }) => {
     const theme = useMantineTheme();
     
-    return (<Title order={4} c={theme.primaryColor} mx={'sm'} my={'xs'} style={{fontFamily:'var(--font-ui)'}}>
+    return (<Title order={3} 
+            c={theme.primaryColor} 
+            mx={'sm'} my={'xs'} 
+            style={{fontFamily:'var(--font-ui)'}}>
                 {title}
             </Title>)
 };

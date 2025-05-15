@@ -24,7 +24,7 @@ export const ProgressiveLyrics = ({ lines, duration, currentTime }: ProgressiveL
   }, [currentTime, secondsPerLine, totalLines]);
 
   return (
-    <ScrollArea h="40vh" p="md">
+    <ScrollArea h="40vh" p="xs">
       <Stack gap="xs" align="center">
         {lines.map((line, index) => {
 

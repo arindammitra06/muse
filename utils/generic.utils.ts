@@ -12,6 +12,8 @@ export const topSearches ='__call=content.getTopSearches';
 export const albumResults= '__call=search.getAlbumResults';
 export const artistResults= '__call=search.getArtistResults';
 export const playlistResults= '__call=search.getPlaylistResults';
+import chroma from 'chroma-js';
+import { MantineColorsTuple } from '@mantine/core';
 
 import CryptoJS from 'crypto-js';
 
@@ -544,5 +546,12 @@ export function getImageUrl(imageUrl?: string, quality: 'high' | 'medium' | 'low
     default:
       return trimmedUrl.replace(/50x50|150x150/g, '500x500');
   }
+}
+
+export function generateMantineColorSwatch(baseColor: string): MantineColorsTuple {
+  // Generate 10 shades from light (index 0) to dark (index 9)
+  const scale = chroma.scale(['#ffffff', baseColor, '#000000']).mode('lab').colors(10);
+
+  return scale as unknown as MantineColorsTuple;
 }
 

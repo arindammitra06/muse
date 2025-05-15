@@ -54,7 +54,8 @@ export function BottomNavigation() {
         <Paper
             shadow="md"
             radius={0}
-            p="4"
+            px="lg"
+            py={'2'}
             withBorder
         >
             <Group justify="space-between">

@@ -3,15 +3,11 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { updatePlaylistOrder } from "@/store/slices/playlist.slice";
 import { useSensors, useSensor, PointerSensor, DndContext, closestCenter } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { Box, Title, Drawer, rem, ActionIcon, Group, Text, SimpleGrid, Button, useMantineTheme, Flex, ScrollArea } from "@mantine/core";
+import { Box, Title, Drawer, rem, ActionIcon, Group, Text, SimpleGrid, Button, useMantineTheme, Flex } from "@mantine/core";
 import { IconX, IconPlayerPlay } from "@tabler/icons-react";
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
+import usePlayDownload from "@/utils/playDownloadHooks";
 
-import { useDispatch } from "react-redux";
-import { setPlaylistAndPlay } from "@/store/slices/player.slice";
-import { formatSongsResponse, getLastSectionOfUrl, getPreferredStreamingQualityUrl } from "@/utils/generic.utils";
-import { getSongFromToken } from "@/store/slices/jio.slice";
-import toast from "react-hot-toast";
 interface SortablePlaylistDrawerProps {
     playlistId: string;
     drawerOpened: boolean;
@@ -23,10 +19,9 @@ export default function SortablePlaylistDrawer({ playlistId, drawerOpened, close
     const userplaylist = useAppSelector((state) =>
         state.playlist.userPlaylist.find((p) => p.id === playlistId)
     );
-    const { downloadQuality } = useAppSelector((s) => s.settings);
     const { playlist, currentTrackIndex, isPlaying } = useAppSelector(s => s.player);
     const theme = useMantineTheme();
-
+    const { fetchAllSongsFromPlayNow } = usePlayDownload();
     const sensors = useSensors(useSensor(PointerSensor));
 
     if (!userplaylist) return <div>Playlist not found</div>;
@@ -43,38 +38,7 @@ export default function SortablePlaylistDrawer({ playlistId, drawerOpened, close
     };
 
 
-    async  function fetchAllSongsFromAlbumAndAdd(albumData: any[]) {
-        toast.success('Please wait. Adding songs in queue');
-        const fetchedAlbumList: any[] = [];
-      
-        if (Array.isArray(albumData) && albumData.length > 0) {
-          for (const album of albumData) {
-            if (album?.perma_url) {
-              const token = getLastSectionOfUrl(album.perma_url);
-              if (token) {
-                try {
-                  const res: any = await dispatch(
-                    getSongFromToken({ token: token, type: album.type })
-                  );
-      
-                  const songsList = res?.payload?.songs;
-                  if (Array.isArray(songsList) && songsList.length > 0) {
-                    const songsFetched = await formatSongsResponse(songsList, songsList[0].type);
-                    if (songsFetched.length > 0) {
-                      fetchedAlbumList.push(songsFetched[0]);
-                    }
-                  }
-                } catch (error) {
-                  console.error('Error fetching song from token:', error);
-                }
-              }
-            }
-          }
-        }
-      
-        dispatch(setPlaylistAndPlay(fetchedAlbumList));
-      }
-
+    
 
     return (
         <Drawer
@@ -120,7 +84,7 @@ export default function SortablePlaylistDrawer({ playlistId, drawerOpened, close
                 </Group>
                 <Flex justify="flex-end" align="flex-end" w="100%" mb={10}>
                 <Button
-                    onClick={() =>fetchAllSongsFromAlbumAndAdd(userplaylist.tracks) }
+                    onClick={() =>fetchAllSongsFromPlayNow(userplaylist.tracks) }
                     size="xs"
                     rightSection={<IconPlayerPlay size={16} />}
                     radius="md"

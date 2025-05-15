@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { logoutSlice, setCurrentUser } from '@/store/slices/user.slice';
 import { resetAll } from '@/store/actions';
 import { useRouter } from 'next/navigation';
-import { fetchPlaylistFromFirestore, savePlaylistToFirestore } from './playlistHooks';
+import { fetchPlaylistFromFirestore, syncPlaylistWithFirestore } from './playlistHooks';
 import { setUserPlaylists } from '@/store/slices/playlist.slice';
 import { hideGlobalLoader, showGlobalLoader } from './useLoader';
 
@@ -72,7 +72,7 @@ export function useAuth() {
     try {
       if (currentUser) {
         showGlobalLoader('Logging out...');
-        await savePlaylistToFirestore(currentUser.uid, userPlaylist);
+        await syncPlaylistWithFirestore(currentUser.uid, userPlaylist);
         await signOut(auth);
         dispatch(resetAll()); 
         dispatch(logoutSlice());
