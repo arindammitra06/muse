@@ -65,6 +65,10 @@ export function decode(input: string): string {
   
 }
 
+export function capitalizeFirst(str: string): string {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
 export function getPreferredStreamingQualityUrl(url: string, streamingQuality: string): string {
     if(url!==null && url!==undefined){
       const preferredQuality = streamingQuality ?? '96 kbps'

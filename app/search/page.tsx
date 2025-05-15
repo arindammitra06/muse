@@ -12,6 +12,8 @@ import { nprogress } from '@mantine/nprogress';
 import { title } from 'process';
 import { AppTitles } from '@/components/Common/custom-title';
 import { addSearchedString, removeSearchedString, setSearchQuery } from '@/store/slices/search-params.slice';
+import { setPageTitle } from '@/store/slices/pageTitleSlice';
+import { capitalizeFirst } from '@/utils/generic.utils';
 
 
 export default function SearchPage() {
@@ -22,7 +24,9 @@ export default function SearchPage() {
   const {searchedStrings, queryString } = useAppSelector((state) => state.searchParams);
 
 
+
     useEffect(() => {
+      dispatch(setPageTitle(capitalizeFirst('search')));
       nprogress.reset();
       nprogress.start();
       dispatch(getTopSearches())

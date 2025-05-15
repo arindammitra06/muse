@@ -10,11 +10,12 @@ import { gaanaReducer } from './slices/gaana.slice';
 import { searchParamsReducer } from './slices/search-params.slice';
 import storage from 'redux-persist/lib/storage';
 import { persistReducer } from 'redux-persist';
+import { pageTitleReducer } from './slices/pageTitleSlice';
 
 const settingsPersistConfig = {
   key: 'settings',
   storage,
-  whitelist: ['isDarkTheme', 'storeSession', 'selectedLanguages', 'streamingQuality', 'downloadQuality'], // skip static `languages`
+  whitelist: ['isDarkTheme', 'allowSwipeGesture', 'selectedLanguages', 'streamingQuality', 'downloadQuality'], // skip static `languages`
 };
 const persistedSettingsReducer = persistReducer(settingsPersistConfig, settingsReducer);
 
@@ -29,6 +30,7 @@ const appReducer = combineReducers({
   search: searchReducer,
   settings: persistedSettingsReducer,
   searchParams:searchParamsReducer,
+  pageTitle:pageTitleReducer
 });
 
 const rootReducer = (state: any, action: any) => {

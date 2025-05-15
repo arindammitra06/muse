@@ -23,11 +23,8 @@ import '@gfazioli/mantine-flip/styles.layer.css';
 import { LineSyncedLyrics } from './SyncedLyrics';
 export function NowPlayingBar() {
   const [opened, { open, close }] = useDisclosure(false);
-  const [
-    drawerOpened,
-    { open: openDrawer, close: closeDrawer },
-  ] = useDisclosure(false);
-
+  const [drawerOpened, { open: openDrawer, close: closeDrawer },] = useDisclosure(false);
+  const allowSwipeGesture = (useAppSelector((state) => state.settings.allowSwipeGesture) ?? false) as boolean;
   const { currentTrack, isPlaying, seek, duration, seekTo } = useAudioPlayer();
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
@@ -48,16 +45,17 @@ export function NowPlayingBar() {
   //     );
   //   }
   // }, [currentTrack]);
-  
+
+
   useEffect(() => {
     setFlipped(false);
     setLyricsType('');
   }, [currentTrack]);
 
   function flipOrUnflipLyrics(): void {
-    if(!flipped){
+    if (!flipped) {
       getLyricsNow();
-    }else{
+    } else {
       setFlipped(false);
     }
   }
@@ -103,7 +101,173 @@ export function NowPlayingBar() {
     dispatch(nextTrack());
     dispatch(play())
   }
-  
+
+
+  //Get Now Playing Bar Header..
+  const getHeader = <Flex align="center" justify="space-between" mb="sm" style={{ flex: 1, minWidth: 0 }} px={'xs'}>
+
+    <ActionIcon size={'xl'} variant="subtle" color="gray" onClick={() => close()} ml={5}>
+      <IconChevronDown size={'1.5rem'} />
+    </ActionIcon>
+
+    <Group gap="xs">
+
+      <ActionIcon variant={flipped ? "filled" : "subtle"} color={'gray'} onClick={(e) => flipOrUnflipLyrics()}>
+        <IconNotes size={20} />
+      </ActionIcon>
+
+      <FavoriteButton song={currentTrack} />
+      <DownloadButton song={currentTrack} />
+
+      {currentTrack !== null && currentTrack !== undefined && currentTrack.type === 'song'
+        && <Box onClick={(e) => e.stopPropagation()}>
+          <PlaylistMenuOptions
+            song={currentTrack}
+            type={currentTrack.type}
+            album={undefined}
+            isForAlbums={false}
+            isPlayingSongBar={false}
+            albumType={''}
+            playlistId={''} />
+        </Box>}
+    </Group>
+  </Flex>;
+
+  //Get FullScreen Body
+  const getFullScreenPage = <Center>
+    <Stack align="center" gap="4" w="100%" px="md" py="sm">
+      {/* Uncomment if you have musixmatch API key */}
+      {/* <NowPlayingLyrics /> */}
+
+      <Box pos="relative" w="40vh" h="40vh" style={{ overflow: "hidden", borderRadius: '0.5rem' }}>
+        <Image
+          src={currentTrack?.image || musicPlaceholder.src}
+          w={'40vh'}
+          radius="md"
+          fit="cover" />
+        {flipped && (
+          <Overlay
+            backgroundOpacity={0.6}
+            blur={4}
+            center
+            zIndex={2}
+            style={{
+              padding: '1rem',
+              textAlign: 'center',
+              color: 'white',
+            }}
+          >
+
+            {lyricsType === 'LINE_SYNCED' ?
+              <LineSyncedLyrics lines={lyricsFetched} currentTime={seek} />
+              : <ProgressiveLyrics
+                lines={lyricsFetched}
+                duration={duration}
+                currentTime={seek} />}
+          </Overlay>
+        )}
+      </Box>
+
+      {currentTrack !== null && currentTrack.title !== undefined &&
+        currentTrack.title !== null && currentTrack.title !== undefined && currentTrack.title.length > 20
+        ? <Marquee pauseOnHover delay={3} speed={15}>
+          <Text my={'xl'} fw={700} size="32px" ta={'center'} style={{ whiteSpace: 'nowrap' }}>
+            {currentTrack.title}
+          </Text>
+        </Marquee>
+        :
+        <Text my={'xl'} fw={700} size="32px" ta={'center'} style={{ whiteSpace: 'nowrap' }}>
+          {currentTrack.title}
+        </Text>}
+
+      {/* Subtitle */}
+      <Marquee pauseOnHover delay={3} speed={15}>
+        <Text ta="center" c="dimmed" size="md" truncate w="100%">
+          {currentTrack.subtitle !== null && currentTrack.subtitle !== undefined && currentTrack.subtitle !== ''
+            ? `${currentTrack.subtitle} • ${currentTrack.year}` : `${currentTrack.artist} • ${currentTrack.genre} • ${currentTrack.year}`}
+        </Text></Marquee>
+
+      {/* Seekbar */}
+      <Box w="100%" mt="sm">
+        <Slider
+          value={seek}
+          min={0}
+          onChange={seekTo}
+          label={(value) => formatTime(value)}
+          max={duration}
+          size="sm"
+          radius={'xl'}
+          color={theme.primaryColor} />
+        <Group justify="space-between" mt={4}>
+          <Text size="xs">{formatTime(seek)}</Text>
+          <Text size="xs">{formatTime(duration)}</Text>
+        </Group>
+      </Box>
+
+      {/* Controls */}
+      <Group justify="center" mt="md" gap="md">
+        <ActionIcon variant="subtle" size="xl" radius="lg" onClick={() => dispatch(toggleShuffle())}>
+          <IconArrowsShuffle color={isShuffle ? theme.colors[theme.primaryColor][5] : 'gray'} size="1.4rem" stroke={1.5} />
+        </ActionIcon>
+
+        <ActionIcon disabled={!hasPrevious} c={hasPrevious ? theme.primaryColor : 'gray'} variant="subtle" size="xl" radius="lg" onClick={() => dispatch(previousTrack())}>
+          <IconPlayerSkipBackFilled size="1.8rem" stroke={1.5} />
+        </ActionIcon>
+
+        <ActionIcon
+          variant="light"
+          size="4rem"
+          radius="lg"
+          onClick={() => dispatch(isPlaying ? pause() : play())}
+        >
+          {isPlaying ? (
+            <IconPlayerPauseFilled size="3.6rem" stroke={1.5} />
+          ) : (
+            <IconPlayerPlayFilled size="3.6rem" stroke={1.5} />
+          )}
+        </ActionIcon>
+
+        <ActionIcon variant="subtle" size="xl" c={hasNext ? theme.primaryColor : 'gray'} radius="lg" onClick={() => dispatch(nextTrack())} disabled={!hasNext}>
+          <IconPlayerSkipForwardFilled size="1.8rem" stroke={1.5} />
+        </ActionIcon>
+
+        <ActionIcon variant="subtle" size="xl" radius="lg" onClick={() => dispatch(toggleRepeat())}>
+          {renderRepeatIcon()}
+        </ActionIcon>
+      </Group>
+
+      <Button mt={5} variant="transparent" size='md' onClick={openDrawer}> Up Next</Button>
+
+      {exactNextTrack && <BottomStickyItem exactNextTrack={exactNextTrack} />}
+
+      <Drawer
+        opened={drawerOpened}
+        onClose={closeDrawer}
+        position="bottom"
+        size="90%"
+        withCloseButton
+        padding="xs"
+        radius="md"
+      >
+        <div
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          <Stack p={0}>
+            {playlist !== null && playlist !== undefined && playlist.length > 0 ?
+              <SortableSessionDrawer drawerOpened={drawerOpened} closeDrawer={closeDrawer} />
+              :
+              <SkeletonSongBar count={8} />}
+          </Stack>
+        </div>
+      </Drawer>
+    </Stack>
+
+
+  </Center>;
+
+
 
   return (
     <>
@@ -118,178 +282,23 @@ export function NowPlayingBar() {
         <Modal.Content>
 
           <Modal.Body>
-            <NowPlayingOverlay opened={opened} onClose={close} closeDrawer={closeDrawer} >
+            {allowSwipeGesture ?
+              <NowPlayingOverlay opened={opened} onClose={close} closeDrawer={closeDrawer} >
+                {getHeader}
 
-              <Flex align="end" justify="space-between" mb="sm" style={{ flex: 1, minWidth: 0 }} px={'xs'}>
+                {opened && (
+                  getFullScreenPage
+                )}
+              </NowPlayingOverlay>
+              :
+              <>
+                {getHeader}
 
-                <ActionIcon size={'xl'} variant="subtle" color="gray" onClick={() => close()} ml={5}>
-                  <IconChevronDown size={'1.5rem'} />
-                </ActionIcon>
-
-                <Group gap="xs">
-
-                  <ActionIcon variant={flipped? "filled":"subtle"} color={ 'gray'} onClick={(e) => flipOrUnflipLyrics()}>
-                    <IconNotes size={20} />
-                  </ActionIcon>
-
-                  <FavoriteButton song={currentTrack} />
-                  <DownloadButton song={currentTrack} />
-
-                  {currentTrack !== null && currentTrack !== undefined && currentTrack.type === 'song'
-                    && <Box onClick={(e) => e.stopPropagation()}>
-                      <PlaylistMenuOptions
-                        song={currentTrack}
-                        type={currentTrack.type}
-                        album={undefined}
-                        isForAlbums={false}
-                        isPlayingSongBar={false}
-                        albumType={''}
-                        playlistId={''} />
-                    </Box>}
-                </Group>
-              </Flex>
-
-              {opened && (
-                <Center>
-                  <Stack align="center" gap="4" w="100%" px="md" py="sm">
-                    {/* Uncomment if you have musixmatch API key */}
-                    {/* <NowPlayingLyrics /> */}
-
-                    <Box pos="relative" w="40vh" h="40vh" style={{ overflow: "hidden", borderRadius: '0.5rem' }}>
-                      <Image
-                        src={currentTrack?.image || musicPlaceholder.src}
-                        w={'40vh'}
-                        radius="md"
-                        fit="cover"
-                      />
-                      {flipped && (
-                        <Overlay
-                          backgroundOpacity={0.6}
-                          blur={4}
-                          center
-                          zIndex={2}
-                          style={{
-                            padding: '1rem',
-                            textAlign: 'center',
-                            color: 'white',
-                          }}
-                        >
-                          
-                          {
-                          lyricsType==='LINE_SYNCED' ? 
-                          <LineSyncedLyrics lines={lyricsFetched} currentTime={seek} />
-                          :<ProgressiveLyrics
-                            lines={lyricsFetched}
-                            duration={duration}
-                            currentTime={seek}
-                          />}
-                        </Overlay>
-                        )}
-                    </Box>
-
-                    {currentTrack !== null && currentTrack.title !== undefined &&
-                      currentTrack.title !== null && currentTrack.title !== undefined && currentTrack.title.length > 20
-                      ? <Marquee pauseOnHover delay={3} speed={15}>
-                        <Text my={'xl'} fw={700} size="32px" ta={'center'} style={{ whiteSpace: 'nowrap' }}>
-                          {currentTrack.title}
-                        </Text>
-                      </Marquee>
-                      :
-                      <Text my={'xl'} fw={700} size="32px" ta={'center'} style={{ whiteSpace: 'nowrap' }}>
-                        {currentTrack.title}
-                      </Text>
-                    }
-
-                    {/* Subtitle */}
-                    <Marquee pauseOnHover delay={3} speed={15}>
-                      <Text ta="center" c="dimmed" size="md" truncate w="100%">
-                        {currentTrack.subtitle !== null && currentTrack.subtitle !== undefined && currentTrack.subtitle !== ''
-                          ? `${currentTrack.subtitle} • ${currentTrack.year}` : `${currentTrack.artist} • ${currentTrack.genre} • ${currentTrack.year}`}
-                      </Text></Marquee>
-
-                    {/* Seekbar */}
-                    <Box w="100%" mt="sm">
-                      <Slider
-                        value={seek}
-                        min={0}
-                        onChange={seekTo}
-                        label={(value) => formatTime(value)}
-                        max={duration}
-                        size="sm"
-                        radius={'xl'}
-                        color={theme.primaryColor}
-                      />
-                      <Group justify="space-between" mt={4}>
-                        <Text size="xs">{formatTime(seek)}</Text>
-                        <Text size="xs">{formatTime(duration)}</Text>
-                      </Group>
-                    </Box>
-
-                    {/* Controls */}
-                    <Group justify="center" mt="md" gap="md">
-                      <ActionIcon variant="subtle" size="xl" radius="lg" onClick={() => dispatch(toggleShuffle())}>
-                        <IconArrowsShuffle color={isShuffle ? theme.colors[theme.primaryColor][5] : 'gray'} size="1.4rem" stroke={1.5} />
-                      </ActionIcon>
-
-                      <ActionIcon disabled={!hasPrevious} c={hasPrevious ? theme.primaryColor : 'gray'} variant="subtle" size="xl" radius="lg" onClick={() => dispatch(previousTrack())}>
-                        <IconPlayerSkipBackFilled size="1.8rem" stroke={1.5} />
-                      </ActionIcon>
-
-                      <ActionIcon
-                        variant="light"
-                        size="4rem"
-                        radius="lg"
-                        onClick={() => dispatch(isPlaying ? pause() : play())}
-                      >
-                        {isPlaying ? (
-                          <IconPlayerPauseFilled size="3.6rem" stroke={1.5} />
-                        ) : (
-                          <IconPlayerPlayFilled size="3.6rem" stroke={1.5} />
-                        )}
-                      </ActionIcon>
-
-                      <ActionIcon variant="subtle" size="xl" c={hasNext ? theme.primaryColor : 'gray'} radius="lg" onClick={() => dispatch(nextTrack())} disabled={!hasNext}>
-                        <IconPlayerSkipForwardFilled size="1.8rem" stroke={1.5} />
-                      </ActionIcon>
-
-                      <ActionIcon variant="subtle" size="xl" radius="lg" onClick={() => dispatch(toggleRepeat())}>
-                        {renderRepeatIcon()}
-                      </ActionIcon>
-                    </Group>
-
-                    <Button mt={5} variant="transparent" size='md' onClick={openDrawer} > Up Next</Button>
-
-                    {exactNextTrack && <BottomStickyItem exactNextTrack={exactNextTrack} />}
-
-                    <Drawer
-                      opened={drawerOpened}
-                      onClose={closeDrawer}
-                      position="bottom"
-                      size="90%"
-                      withCloseButton
-                      padding="xs"
-                      radius="md"
-                    >
-                      <div
-                        onClick={(e) => e.stopPropagation()}
-                        onMouseDown={(e) => e.stopPropagation()}
-                        onPointerDown={(e) => e.stopPropagation()}
-                      >
-                        <Stack p={0}>
-                          {playlist !== null && playlist !== undefined && playlist.length > 0 ?
-                            <SortableSessionDrawer drawerOpened={drawerOpened} closeDrawer={closeDrawer} />
-                            :
-                            <SkeletonSongBar count={8} />
-                          }
-                        </Stack>
-                      </div>
-                    </Drawer>
-                  </Stack>
-
-
-                </Center>
-              )}
-            </NowPlayingOverlay>
+                {opened && (
+                  getFullScreenPage
+                )}
+              </>
+            }
           </Modal.Body>
         </Modal.Content>
       </Modal.Root>

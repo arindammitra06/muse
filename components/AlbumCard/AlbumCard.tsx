@@ -7,8 +7,9 @@ import {
   Stack,
   Center,
   useMantineTheme,
+  Group,
 } from '@mantine/core';
-import { IconPlayerPlayFilled } from '@tabler/icons-react';
+import { IconPlayerPlayFilled, IconShare } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch } from '@/store/hooks';
@@ -16,6 +17,7 @@ import { playTrack, } from '@/store/slices/player.slice';
 import { getSongFromToken } from '@/store/slices/jio.slice';
 import { getLastSectionOfUrl, formatSongsResponse } from '@/utils/generic.utils';
 import { useMediaQuery } from '@mantine/hooks';
+import { FavoriteButton } from '../FavoriteButton/FavoriteButton';
 
 interface AlbumCardProps {
   id: string;
@@ -36,7 +38,7 @@ export function AlbumCard({ id, image, title, subtitle, type, song, year, perma_
   const isDesktop = useMediaQuery(`(min-width: ${theme.breakpoints.sm})`);
 
   function playSongAndAddToPlaylist(song: any): void {
-    
+
     if (type !== null && type !== undefined && song !== null && song !== undefined && song.perma_url !== null && song.perma_url !== undefined) {
       let token = getLastSectionOfUrl(song.perma_url);
 
@@ -48,7 +50,7 @@ export function AlbumCard({ id, image, title, subtitle, type, song, year, perma_
             let songsList = res.payload['songs'];
             if (songsList !== null && songsList !== undefined && songsList.length > 0) {
               const songs = await formatSongsResponse(songsList, type);
-              
+
               dispatch(playTrack(songs[0]));
               //dispatch(playPause())
             }
@@ -103,25 +105,42 @@ export function AlbumCard({ id, image, title, subtitle, type, song, year, perma_
         style={{ filter: type === 'artist' ? 'grayscale(100%)' : 'none' }}
       />
       {type !== null && type !== undefined && type === 'song' &&
-        <Center
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            height: '100%',
-            width: '100%',
-            zIndex: 2,
-          }}
-        >
-          <ActionIcon
-            variant="filled"
-            size="xl"
-            radius="xl"
-            onClick={() => playSongAndAddToPlaylist(song)}
+
+        <>
+          
+          <Center
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              height: '100%',
+              width: '100%',
+              zIndex: 2,
+            }}
           >
-            <IconPlayerPlayFilled size="1.8rem" color="white" />
-          </ActionIcon>
-        </Center>}
+            <ActionIcon
+              variant="filled"
+              size="xl"
+              radius="xl"
+              onClick={() => playSongAndAddToPlaylist(song)}
+            >
+              <IconPlayerPlayFilled size="1.8rem" color="white" />
+            </ActionIcon>
+          </Center>
+          <Group
+            flex="right"
+            style={{
+              position: 'absolute',
+              top: rem(2),
+              right: rem(2),
+              zIndex: 2,
+            }}
+            gap="xs"
+          >
+            {type !== null && type !== undefined && type === 'song' && <FavoriteButton song={song} borderColor='white'/>}
+          </Group>
+        </>
+      }
     </Card>
 
     {/* Title and subtitle below the card */}

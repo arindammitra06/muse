@@ -9,10 +9,11 @@ import { IconAdjustments, IconDownload, IconPlayerPlay } from '@tabler/icons-rea
 import { SkeletonSongBar, SongBar } from '@/components/SongBar/SongBar';
 import { DownloadButton } from '@/components/DownloadButton/DownloadButton';
 import { downloadAllFiles, downloadFile } from '@/utils/fileutil';
-import { formatSongsResponse, getLastSectionOfUrl, getPreferredStreamingQualityUrl } from '@/utils/generic.utils';
+import { capitalizeFirst, formatSongsResponse, getLastSectionOfUrl, getPreferredStreamingQualityUrl } from '@/utils/generic.utils';
 import { modals } from '@mantine/modals';
 import toast from 'react-hot-toast';
 import { PlaylistMenuOptions } from '@/components/PlaylistMenu/PlaylistMenuOptions';
+import { setPageTitle } from '@/store/slices/pageTitleSlice';
 
 
 export default function AlbumDetailsPage({
@@ -26,9 +27,10 @@ export default function AlbumDetailsPage({
   const [albumData, setAlbumData] = useState<any>(null);
   const { downloadQuality } = useAppSelector((s) => s.settings);
 
-
+  
 
   useEffect(() => {
+    dispatch(setPageTitle(capitalizeFirst(type)));
     fetchCall();
   }, [type, albumid]);
 

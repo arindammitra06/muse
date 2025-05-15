@@ -11,6 +11,8 @@ import { FadingWeightLogo } from './Common/FadingWeightLogo';
 import { BottomNavigation } from './BottomNavigation/BottomNavigation';
 import { useAppSelector } from '@/store/hooks';
 import { useAuth } from '@/utils/useAuth';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
 export interface NavigationProps {
   children: ReactNode;
 };
@@ -25,6 +27,7 @@ export default function Navigation({ children }: NavigationProps) {
   const playlist = useAppSelector((state) => state.player.playlist);
   const user = useAppSelector((state) => state.user.currentUser);
   const { logout } = useAuth();
+  const pageTitle = useSelector((state: RootState) => state.pageTitle.title);
 
 
   const handleBack = () => {
@@ -60,7 +63,7 @@ export default function Navigation({ children }: NavigationProps) {
           justify="space-between"
           align="center"
           h="100%"
-          px="xs"
+          px="sm"
         >
           <Flex
             justify="left"
@@ -68,20 +71,20 @@ export default function Navigation({ children }: NavigationProps) {
             h="100%"
             px="0"
           >
-            <ActionIcon variant="light"
-              mt={5}
-              mr={5}
-              style={{ visibility: pathname === '/' ? 'hidden' : 'visible' }}
+            {pathname !== '/' && <ActionIcon variant="transparent"
               color="gray" size="lg"
-              radius="lg" mx={'0'}
+              radius="lg" mx={'0'} px={0}
               onClick={() => handleBack()}>
               <IconChevronLeft size={'2rem'} stroke={2} />
             </ActionIcon>
+            }
 
-
-            <Flex justify="flex-start" align="flex-start" p={0}>
+            {pathname === '/' ? <Flex justify="flex-start" align="flex-start" p={0}>
               <FadingWeightLogo text="muse" />
-            </Flex>
+            </Flex> :
+              <Flex justify="flex-start" align="flex-start" p={0}>
+                <FadingWeightLogo text={pageTitle}/>
+              </Flex>}
           </Flex>
 
 
@@ -161,7 +164,7 @@ export default function Navigation({ children }: NavigationProps) {
       </AppShell.Navbar>)}
 
       <AppShell.Main >
-        <Box style={{ minHeight: '100vh' , padding:'0px'}}>
+        <Box style={{ minHeight: '100vh', padding: '0px' }}>
           {pathname === '/' && user && !isSticky && (
             <Paper radius={'xl'} shadow="md" p={0} m={'xs'} style={{ boxShadow: '0 4px 12px rgba(93, 92, 92, 0.3)' }}>
               <TextInput

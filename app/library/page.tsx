@@ -15,6 +15,9 @@ import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-ki
 import { reorderPlaylist } from '@/store/slices/player.slice';
 import { SkeletonSongBar } from '@/components/SongBar/SongBar';
 import SortableSessionDrawer from '@/components/SongBar/SortablePlaylist';
+import { setPageTitle } from '@/store/slices/pageTitleSlice';
+import { capitalizeFirst } from '@/utils/generic.utils';
+import { useEffect } from 'react';
 
 export default function Library() {
   const dispatch = useAppDispatch();
@@ -22,6 +25,10 @@ export default function Library() {
   const router = useRouter();
   const { playlist, currentTrackIndex, isPlaying } = useAppSelector(s => s.player);
 
+  useEffect(() => {
+    dispatch(setPageTitle(capitalizeFirst('library')));
+
+  }, [dispatch]);
 
 
 
@@ -76,7 +83,7 @@ export default function Library() {
           </Group>
         </Paper>
 
-        
+
 
         <Paper shadow="xs" p="5" withBorder onClick={() => router.push("/playlists")}>
           <Group justify="space-between">

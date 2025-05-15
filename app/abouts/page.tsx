@@ -1,20 +1,32 @@
 'use client'
 import { AppLogo } from '@/components/Common/custom-logo.component';
 import { FadingWeightLogo } from '@/components/Common/FadingWeightLogo';
+import { useAppDispatch } from '@/store/hooks';
+import { setPageTitle } from '@/store/slices/pageTitleSlice';
+import { capitalizeFirst } from '@/utils/generic.utils';
 import { Container, Title, Text, Grid, Card, Image, Stack, Button, Group, Badge, Anchor, Box } from '@mantine/core';
 import { IconBrandGithub, IconStar } from '@tabler/icons-react';
+import { useEffect } from 'react';
 
 export default function AboutPage() {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(setPageTitle(capitalizeFirst('abouts')));
+
+  }, [dispatch]);
+
+
   return (
     <Container size="lg" py="xl" pb={150}>
       <Grid gutter="xl" align="center">
-        
+
         <Grid.Col span={{ base: 12, md: 7 }}>
           <Stack gap="sm">
-            <Title order={2}>About ... <FadingWeightLogo text={'muse'}/></Title>
+            <Title order={2}>About ... <FadingWeightLogo text={'muse'} /></Title>
             <Text size="lg" c="dimmed">
-            A modern, open-source music player built with React, focused on seamless mobile playback and inspired by the Flutter-based BlackHole app. 
-            Designed for personal use, it offers a responsive, immersive experience across devices. Contributions are welcome!
+              A modern, open-source music player built with React, focused on seamless mobile playback and inspired by the Flutter-based BlackHole app.
+              Designed for personal use, it offers a responsive, immersive experience across devices. Contributions are welcome!
             </Text>
             <Group mt="md">
               <Badge color="indigo" variant="light">React</Badge>
@@ -25,13 +37,13 @@ export default function AboutPage() {
               <Badge color="red" variant="light">ChatGPT</Badge>
             </Group>
             <Card shadow="md" mt="xl" p="lg" radius="md" withBorder>
-                <Title order={4}>Terms of usage</Title>
-                <Text mt="xs">
-                We do not support or promote piracy in any form. This project is created strictly for educational and personal use. It serves as a learning tool for developers interested in building music applications with modern web technologies. 
+              <Title order={4}>Terms of usage</Title>
+              <Text mt="xs">
+                We do not support or promote piracy in any form. This project is created strictly for educational and personal use. It serves as a learning tool for developers interested in building music applications with modern web technologies.
                 Please respect artists and copyright laws by streaming music only through legal and authorized sources.
-                </Text>
+              </Text>
             </Card>
-            
+
             <Button
               component="a"
               href="https://github.com/arindammitra06/muse"
@@ -44,18 +56,18 @@ export default function AboutPage() {
               View on GitHub
             </Button>
             <Box mt="lg" ta="center">
-          <Anchor href="https://github.com/arindammitra06/muse" target="_blank" underline="never">
-            <Button
-              leftSection={<IconStar size={20} />}
-              variant="gradient"
-              gradient={{ from: 'yellow', to: 'orange', deg: 105 }}
-              size="md"
-              radius="xl"
-            >
-              Like this project? Star it on GitHub ⭐
-            </Button>
-          </Anchor>
-        </Box>
+              <Anchor href="https://github.com/arindammitra06/muse" target="_blank" underline="never">
+                <Button
+                  leftSection={<IconStar size={20} />}
+                  variant="gradient"
+                  gradient={{ from: 'yellow', to: 'orange', deg: 105 }}
+                  size="md"
+                  radius="xl"
+                >
+                  Like this project? Star it on GitHub ⭐
+                </Button>
+              </Anchor>
+            </Box>
           </Stack>
         </Grid.Col>
       </Grid>

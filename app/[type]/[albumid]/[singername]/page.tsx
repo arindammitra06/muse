@@ -12,6 +12,8 @@ import { SkeletonCarousel, SkeletonSongBar, SongBar } from '@/components/SongBar
 import '@mantine/carousel/styles.css';
 import { IconPlayerPlay } from '@tabler/icons-react';
 import { AppTitles } from '@/components/Common/custom-title';
+import { setPageTitle } from '@/store/slices/pageTitleSlice';
+import { capitalizeFirst } from '@/utils/generic.utils';
 
 export default function ArtistDetailsPage({
   params,
@@ -26,11 +28,12 @@ export default function ArtistDetailsPage({
 
 
   useEffect(() => {
+    dispatch(setPageTitle(capitalizeFirst(type)));
+    
     fetchCall();
   }, [type, albumid, singername]);
 
-
-
+ 
 
   function fetchCall() {
     nprogress.reset();

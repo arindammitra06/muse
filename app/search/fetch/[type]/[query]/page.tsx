@@ -7,6 +7,8 @@ import { useAppDispatch } from '@/store/hooks';
 import { fetchAlbums } from '@/store/slices/jio.slice';
 import { SearchResultSongBar } from '@/components/SearchedAlbumList/SearchResultSongBar';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { setPageTitle } from '@/store/slices/pageTitleSlice';
+import { capitalizeFirst } from '@/utils/generic.utils';
 
 export default function AlbumSearchPage({ params }: { params: { type: string; query: string } }) {
   const { type, query } = params;
@@ -17,7 +19,7 @@ export default function AlbumSearchPage({ params }: { params: { type: string; qu
 
 
   useEffect(() => {
-    // Reset when query or type changes
+    dispatch(setPageTitle(capitalizeFirst(type)));
     setAlbums([]);
     setPage(1);
     setHasMore(true);

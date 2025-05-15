@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import SettingsList from '@/components/SettingsList/SettingsList';
 import { ThemeDropdown } from '@/components/Common/themeDropdown';
 import { IconSun, IconMoon, IconLanguage, IconBrandYoutube, IconCheck, IconDownload } from '@tabler/icons-react';
-import { setDarkTheme, setDownloadQuality, setSelectedLanguages, setStoreSession, setStreamingQuality } from '@/store/slices/settings.slice';
+import { setDarkTheme, setDownloadQuality, setSelectedLanguages, setStreamingQuality, setSwipeGesture } from '@/store/slices/settings.slice';
 import { useRouter } from 'next/navigation';
 import { modals } from '@mantine/modals';
 import { useDisclosure } from '@mantine/hooks';
@@ -14,15 +14,23 @@ import { RootState } from '@/store/store';
 import { AppTitles } from '@/components/Common/custom-title';
 import { savePlaylistToFirestore } from '@/utils/playlistHooks';
 import { clearNowPlayinglist } from '@/store/slices/player.slice';
+import { setPageTitle } from '@/store/slices/pageTitleSlice';
+import { useEffect } from 'react';
 
 
 export default function SettingsPage() {
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
-  const { isDarkTheme, streamingQuality, downloadQuality, storeSession } = useAppSelector((state) => state.settings);
+  const { isDarkTheme, streamingQuality, downloadQuality } = useAppSelector((state) => state.settings);
+  const { allowSwipeGesture } = useAppSelector((state) => state.settings) ?? false;
   const currentUser = useAppSelector((state) => state.user.currentUser);
   const userPlaylist = useAppSelector((s) => s.playlist.userPlaylist);
   const router = useRouter();
+
+  useEffect(() => {
+    dispatch(setPageTitle('Settings'));
+  },
+    [dispatch]);
 
   const goToUrl = (url: string) => {
     router.push(url);
@@ -43,127 +51,131 @@ export default function SettingsPage() {
       onConfirm: () => dispatch(clearNowPlayinglist()),
     });
 
-    const saveToCloudModal = () =>
-      modals.openConfirmModal({
-        title: 'Sync playlists to cloud?',
-        centered: true,
-        children: (
-          <Text size="sm">
-            Are you sure you want to sync playlists to cloud?
-          </Text>
-        ),
-        labels: { confirm: 'Clear', cancel: "Discard" },
-        confirmProps: { color: 'red' },
-        onCancel: () => console.log('Cancel'),
-        onConfirm: async () => {
-          await savePlaylistToFirestore(currentUser!.uid, userPlaylist)
-        },
-      });
+  const saveToCloudModal = () =>
+    modals.openConfirmModal({
+      title: 'Sync playlists to cloud?',
+      centered: true,
+      children: (
+        <Text size="sm">
+          Are you sure you want to sync playlists to cloud?
+        </Text>
+      ),
+      labels: { confirm: 'Sync', cancel: "Discard" },
+      confirmProps: { color: 'green' },
+      onCancel: () => console.log('Cancel'),
+      onConfirm: async () => {
+        await savePlaylistToFirestore(currentUser!.uid, userPlaylist)
+      },
+    });
 
   return (
     <Box p="0">
       <Stack gap="8" mt={10}>
-          <Paper
-            mx={'xs'}
-            withBorder
-            shadow="sm"
-          >
-            <AppTitles title={'Theme'} />
-            <SettingsList title={'Dark Mode'} subtitle='Select muse theme'
-              rightElement={<ThemeCheckboxPage />} onClick={undefined} />
+        <Paper
+          mx={'xs'}
+          withBorder
+          shadow="sm"
+        >
+          <AppTitles title={'Theme'} />
+          <SettingsList title={'Dark Mode'} subtitle='Select muse theme'
+            rightElement={<ThemeCheckboxPage />} onClick={undefined} />
 
-            <SettingsList title={'Primary Color'} subtitle='Main accent color in theme'
-              rightElement={<ThemeDropdown />} onClick={undefined} />
-          </Paper>
+          <SettingsList title={'Primary Color'} subtitle='Main accent color in theme'
+            rightElement={<ThemeDropdown />} onClick={undefined} />
+        </Paper>
 
-          <Paper
-            mx={'xs'}
-            withBorder
-            shadow="sm"
-          >
-            <AppTitles title={'Music & Playback'} />
-            <SettingsList title={'Music Language'} subtitle='My preferred language for music'
-              rightElement={<LanguageSelectorModal />} onClick={undefined} />
+        <Paper
+          mx={'xs'}
+          withBorder
+          shadow="sm"
+        >
+          <AppTitles title={'Music & Playback'} />
+          <SettingsList title={'Music Language'} subtitle='My preferred language for music'
+            rightElement={<LanguageSelectorModal />} onClick={undefined} />
 
-            <SettingsList title={'Streaming Quality'} subtitle='Higher quality uses more data'
-              rightElement={<>
-                <Menu shadow="md" width={200}>
-                  <Menu.Target>
-                    <ActionIcon
-                      variant="default"
-                      size="md"
-                      aria-label="Select Quality">
-                      <IconBrandYoutube stroke={1.5}></IconBrandYoutube>
-                    </ActionIcon>
-                  </Menu.Target>
+          <SettingsList title={'Streaming Quality'} subtitle='Higher quality uses more data'
+            rightElement={<>
+              <Menu shadow="md" width={200}>
+                <Menu.Target>
+                  <ActionIcon
+                    variant="default"
+                    size="md"
+                    aria-label="Select Quality">
+                    <IconBrandYoutube stroke={1.5}></IconBrandYoutube>
+                  </ActionIcon>
+                </Menu.Target>
 
-                  <Menu.Dropdown>
-                    {['96 kbps', '160 kbps', '320 kbps'].map((val, index) => {
-                      return (<Menu.Item
-                        key={index}
-                        rightSection={val === streamingQuality ? <IconCheck size={14} /> : null}
-                        onClick={() => dispatch(setStreamingQuality(val))}>
-                        {val}
-                      </Menu.Item>)
-                    })}
+                <Menu.Dropdown>
+                  {['96 kbps', '160 kbps', '320 kbps'].map((val, index) => {
+                    return (<Menu.Item
+                      key={index}
+                      rightSection={val === streamingQuality ? <IconCheck size={14} /> : null}
+                      onClick={() => dispatch(setStreamingQuality(val))}>
+                      {val}
+                    </Menu.Item>)
+                  })}
 
-                  </Menu.Dropdown>
-                </Menu></>} onClick={undefined} />
-
-
-            <SettingsList title={'Download Quality'} subtitle='Higher quality uses more disk space'
-              rightElement={<>
-                <Menu shadow="md" width={200}>
-                  <Menu.Target>
-                    <ActionIcon
-                      variant="default"
-                      size="md"
-                      aria-label="Select Quality">
-                      <IconDownload stroke={1.5}></IconDownload>
-                    </ActionIcon>
-                  </Menu.Target>
-
-                  <Menu.Dropdown>
-                    {['96 kbps', '160 kbps', '320 kbps'].map((val, index) => {
-                      return (<Menu.Item
-                        key={index}
-                        rightSection={val === downloadQuality ? <IconCheck size={14} /> : null}
-                        onClick={() => dispatch(setDownloadQuality(val))}>
-                        {val}
-                      </Menu.Item>)
-                    })}
-
-                  </Menu.Dropdown>
-                </Menu></>} onClick={undefined} />
+                </Menu.Dropdown>
+              </Menu></>} onClick={undefined} />
 
 
-          </Paper>
+          <SettingsList title={'Download Quality'} subtitle='Higher quality uses more disk space'
+            rightElement={<>
+              <Menu shadow="md" width={200}>
+                <Menu.Target>
+                  <ActionIcon
+                    variant="default"
+                    size="md"
+                    aria-label="Select Quality">
+                    <IconDownload stroke={1.5}></IconDownload>
+                  </ActionIcon>
+                </Menu.Target>
 
-          <Paper
-            mx={'xs'}
-            withBorder
-            shadow="sm"
-          >
-            <AppTitles title={'Backup & Clear'} />
+                <Menu.Dropdown>
+                  {['96 kbps', '160 kbps', '320 kbps'].map((val, index) => {
+                    return (<Menu.Item
+                      key={index}
+                      rightSection={val === downloadQuality ? <IconCheck size={14} /> : null}
+                      onClick={() => dispatch(setDownloadQuality(val))}>
+                      {val}
+                    </Menu.Item>)
+                  })}
 
-            <SettingsList title={'Clear current session'} subtitle='Clears currently playing songs'
-              rightElement={<></>} onClick={() => openClearCacheModal()} />
+                </Menu.Dropdown>
+              </Menu></>} onClick={undefined} />
 
-            <SettingsList title={'Sync playlist to cloud'} subtitle='Saves favorites, custom playlists to firebase cloud'
-              rightElement={<></>} onClick={() => saveToCloudModal()} />
 
-          </Paper>
+        </Paper>
 
-          <Paper
-            mx={'xs'}
-            withBorder
-            shadow="sm"
-          >
-            <AppTitles title={'Others'} />
-            <SettingsList title={'Swipe Gesture'} subtitle='Allow swipe down gesture for Now Playing Bar'  rightElement={<ThemeCheckboxPage />} onClick={undefined} />
-            <SettingsList title={'More Info'} subtitle='' rightElement={<></>} onClick={() => goToUrl('/abouts')} />
-          </Paper>
-        </Stack>
+        <Paper
+          mx={'xs'}
+          withBorder
+          shadow="sm"
+        >
+          <AppTitles title={'Backup & Clear'} />
+
+          <SettingsList title={'Clear current session'} subtitle='Clears currently playing songs'
+            rightElement={<></>} onClick={() => openClearCacheModal()} />
+
+          <SettingsList title={'Sync playlist to cloud'} subtitle='Saves favorites, custom playlists to firebase cloud'
+            rightElement={<></>} onClick={() => saveToCloudModal()} />
+
+        </Paper>
+
+        <Paper
+          mx={'xs'}
+          withBorder
+          shadow="sm"
+        >
+          <AppTitles title={'Others'} />
+          <SettingsList title={'Swipe Gesture'} subtitle='Turn off swipe gesture for Now Playing Bar if broken'
+            rightElement={<Checkbox
+              checked={allowSwipeGesture===undefined? true : allowSwipeGesture}
+              onChange={(event) => dispatch(setSwipeGesture(event.currentTarget.checked))}
+            />} onClick={undefined} />
+          <SettingsList title={'More Info'} subtitle='' rightElement={<></>} onClick={() => goToUrl('/abouts')} />
+        </Paper>
+      </Stack>
     </Box>
   );
 }

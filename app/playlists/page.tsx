@@ -12,6 +12,8 @@ import musicPlaceholder from '../../assets/images/music_placeholder.png';
 import { AppTitles } from '@/components/Common/custom-title';
 import { useDisclosure } from '@mantine/hooks';
 import SortablePlaylistDrawer from '@/components/SortablePlaylistViewer/SortablePlaylistViewer';
+import { setPageTitle } from '@/store/slices/pageTitleSlice';
+import { capitalizeFirst } from '@/utils/generic.utils';
 
 export default function PlaylistManager() {
   const dispatch = useAppDispatch();
@@ -22,12 +24,18 @@ export default function PlaylistManager() {
   const otherPlaylists = playlists.filter((p) => p.id !== 'favorites');
   const favorites = playlists.find((p) => p.id === 'favorites');
   const [
-      drawerOpened,
-      { open: openDrawer, close: closeDrawer },
-    ] = useDisclosure(false);
-  
-  
+    drawerOpened,
+    { open: openDrawer, close: closeDrawer },
+  ] = useDisclosure(false);
+
+
   const [playlistId, setPlaylistId] = useState<string | null>(null);
+
+  useEffect(() => {
+    dispatch(setPageTitle(capitalizeFirst('playlist')));
+
+  }, [dispatch]);
+
 
   const openPlaylist = (id: string) => {
     setPlaylistId(id);
@@ -80,7 +88,7 @@ export default function PlaylistManager() {
           closeDrawer={() => closeDrawer()}
         />
       )}
-      
+
       <Group justify="space-between">
         <AppTitles title={'My Playlists'} />
         <Button
@@ -95,8 +103,8 @@ export default function PlaylistManager() {
 
       <Stack mt="xl" gap="sm">
         {favorites && (
-          <Paper shadow="xs" p="5" withBorder onClick={()=>openPlaylist('favorites')}
-          bg={isDarkTheme ? theme.colors.secondary[0]: theme.colors.secondary[9]}>
+          <Paper shadow="xs" p="5" withBorder onClick={() => openPlaylist('favorites')}
+            bg={isDarkTheme ? theme.colors.secondary[0] : theme.colors.secondary[9]}>
             <Group justify="space-between">
               <Group p={0}>
                 <Image src={musicPlaceholder.src} radius="md" w={50} h={50} />
@@ -121,61 +129,61 @@ export default function PlaylistManager() {
         )}
 
         {otherPlaylists.map((playlist) => (
-          <Paper key={playlist.id} shadow="xs" p="5" withBorder onClick={()=>openPlaylist(playlist.id)}>
-          <Group justify="space-between" wrap="nowrap">
-            {/* Playlist Image and Name */}
-            <Group p={0} wrap="nowrap" style={{ minWidth: 0 }}>
-              <Image
-                src={
-                  playlist?.image ?? musicPlaceholder.src
-                }
-                radius="md"
-                w={50}
-                h={50}
-              />
-              <Text
-                fw={600}
-                style={{
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  maxWidth: 180, // adjust based on your layout
-                }}
-              >
-                {playlist.name}
-              </Text>
+          <Paper key={playlist.id} shadow="xs" p="5" withBorder onClick={() => openPlaylist(playlist.id)}>
+            <Group justify="space-between" wrap="nowrap">
+              {/* Playlist Image and Name */}
+              <Group p={0} wrap="nowrap" style={{ minWidth: 0 }}>
+                <Image
+                  src={
+                    playlist?.image ?? musicPlaceholder.src
+                  }
+                  radius="md"
+                  w={50}
+                  h={50}
+                />
+                <Text
+                  fw={600}
+                  style={{
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    maxWidth: 180, // adjust based on your layout
+                  }}
+                >
+                  {playlist.name}
+                </Text>
+              </Group>
+
+              {/* Tracks count and menu */}
+              <Group wrap="nowrap">
+                <Text size="sm" fw={500} c="dimmed" style={{ whiteSpace: 'nowrap' }}>
+                  {playlist.tracks.length} Tracks
+                </Text>
+                <Menu shadow="md">
+                  <Menu.Target>
+                    <ActionIcon variant="transparent" color="gray">
+                      <IconDotsVertical />
+                    </ActionIcon>
+                  </Menu.Target>
+                  <Menu.Dropdown>
+                    <Menu.Item
+                      onClick={() => openClearModal(playlist.id, playlist.name)}
+                      leftSection={<IconClearAll size={14} />}
+                    >
+                      Clear Tracks
+                    </Menu.Item>
+                    <Menu.Item
+                      color="red"
+                      onClick={() => openDeleteModal(playlist.id, playlist.name)}
+                      leftSection={<IconTrash size={14} />}
+                    >
+                      Delete
+                    </Menu.Item>
+                  </Menu.Dropdown>
+                </Menu>
+              </Group>
             </Group>
-        
-            {/* Tracks count and menu */}
-            <Group wrap="nowrap">
-              <Text size="sm" fw={500} c="dimmed" style={{ whiteSpace: 'nowrap' }}>
-                {playlist.tracks.length} Tracks
-              </Text>
-              <Menu shadow="md">
-                <Menu.Target>
-                  <ActionIcon variant="transparent" color="gray">
-                    <IconDotsVertical />
-                  </ActionIcon>
-                </Menu.Target>
-                <Menu.Dropdown>
-                  <Menu.Item
-                    onClick={() => openClearModal(playlist.id, playlist.name)}
-                    leftSection={<IconClearAll size={14} />}
-                  >
-                    Clear Tracks
-                  </Menu.Item>
-                  <Menu.Item
-                    color="red"
-                    onClick={() => openDeleteModal(playlist.id, playlist.name)}
-                    leftSection={<IconTrash size={14} />}
-                  >
-                    Delete
-                  </Menu.Item>
-                </Menu.Dropdown>
-              </Menu>
-            </Group>
-          </Group>
-        </Paper>
+          </Paper>
         ))}
       </Stack>
     </Box>

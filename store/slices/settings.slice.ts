@@ -4,9 +4,9 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type SettingsState = {
   readonly isDarkTheme: boolean;
+  readonly allowSwipeGesture: boolean;
   readonly streamingQuality: string;
   readonly downloadQuality: string;
-  readonly storeSession: boolean;
   readonly languages: string[];
   readonly selectedLanguages: string[];
 };
@@ -17,7 +17,7 @@ export const SETTING_INITIAL_STATE: SettingsState = {
   selectedLanguages: ['Hindi', 'Bengali'],
   streamingQuality: '96 kbps',
   downloadQuality: '320 kbps',
-  storeSession: true
+  allowSwipeGesture: false
 };
 
 
@@ -30,9 +30,6 @@ const settingsSlice = createSlice({
       const isDarkTheme = action.payload;
       state.isDarkTheme = isDarkTheme;
     },
-    setStoreSession: (state, action: PayloadAction<boolean>) => {
-      state.storeSession = action.payload;
-    },
     setSelectedLanguages: (state, action: PayloadAction<string[]>) => {
       state.selectedLanguages = action.payload;
     },
@@ -41,6 +38,9 @@ const settingsSlice = createSlice({
     },
     setDownloadQuality: (state, action: PayloadAction<string>) => {
       state.downloadQuality = action.payload;
+    },
+    setSwipeGesture: (state, action: PayloadAction<boolean>) => {
+      state.allowSwipeGesture = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -53,5 +53,5 @@ const settingsSlice = createSlice({
 });
 
 
-export const {setDarkTheme, setStoreSession, setSelectedLanguages,setStreamingQuality, setDownloadQuality} = settingsSlice.actions;
+export const {setDarkTheme, setSwipeGesture, setSelectedLanguages,setStreamingQuality, setDownloadQuality} = settingsSlice.actions;
 export const settingsReducer = settingsSlice.reducer;

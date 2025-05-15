@@ -7,9 +7,10 @@ import { MouseEvent } from "react";
 
 interface FavoriteButtonProps {
     song: any;
+    borderColor?:string;
 }
 
-export const FavoriteButton = ({ song }: FavoriteButtonProps) => {
+export const FavoriteButton = ({ song , borderColor}: FavoriteButtonProps) => {
     const dispatch = useAppDispatch();
     const favorites = useAppSelector((s) => s.playlist.userPlaylist.find((p) => p.id === 'favorites'));
     const isFavorited = favorites?.tracks.some((s) => {
@@ -26,7 +27,7 @@ export const FavoriteButton = ({ song }: FavoriteButtonProps) => {
         dispatch(toggleFavorite(song))
     }
 
-    return (<ActionIcon variant="subtle" color={isFavorited ? 'red' : 'gray'} onClick={(e) => favoriteTheSong(e)}>
+    return (<ActionIcon variant="subtle" color={isFavorited ? 'red' : borderColor!==null || borderColor!==undefined?  borderColor : 'gray'} onClick={(e) => favoriteTheSong(e)}>
                 {isFavorited ? <IconHeartFilled size={20} /> : <IconHeart size={20} />}
             </ActionIcon>)
 }
