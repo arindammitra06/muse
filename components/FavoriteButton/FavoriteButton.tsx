@@ -21,13 +21,13 @@ export const FavoriteButton = ({ song , borderColor}: FavoriteButtonProps) => {
         }
     });
 
-
     function favoriteTheSong(e: any): void {
         e.stopPropagation();
         dispatch(toggleFavorite(song))
     }
 
-    return (<ActionIcon variant="subtle" color={isFavorited ? 'red' : borderColor!==null || borderColor!==undefined?  borderColor : 'gray'} onClick={(e) => favoriteTheSong(e)}>
+    return (<ActionIcon variant="subtle" color={isFavorited ? 'red' : 
+                                         borderColor!==null && borderColor!==undefined?  borderColor : 'gray'} onClick={(e) => favoriteTheSong(e)}>
                 {isFavorited ? <IconHeartFilled size={20} /> : <IconHeart size={20} />}
             </ActionIcon>)
 }

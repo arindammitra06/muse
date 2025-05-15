@@ -2,7 +2,7 @@
 import '@mantine/core/styles.css';
 
 import React from 'react';
-import { ColorSchemeScript, mantineHtmlProps } from '@mantine/core';
+import { ColorSchemeScript, mantineHtmlProps, } from '@mantine/core';
 import RootApp from '@/components/Root/root.route';
 import { Inter,  } from 'next/font/google';
 
@@ -15,12 +15,14 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-ui' });
 // };
 
 export default function RootLayout({ children }: { children: any }) {
+  
   return (
     <html lang="en" {...mantineHtmlProps} className={`${inter.variable}`}>
       <head>
         <ColorSchemeScript />
         <link rel="manifest" href="/manifest.json" />
         <link rel="shortcut icon" href="/favicon.svg" />
+        
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Skeleton, Title, Group, Box, ScrollArea, useMantineTheme } from '@mantine/core';
+import { Skeleton, Title, Group, Box, ScrollArea, useMantineTheme, Space } from '@mantine/core';
 import { AppTitles } from '../Common/custom-title';
+
 
 const HomePageSkeleton = () => {
     const theme = useMantineTheme();
@@ -23,7 +24,7 @@ const HomePageSkeleton = () => {
                     {renderCardSkeleton(10)}
                 </Group>
             </ScrollArea>
-
+            <Space h={30}/>
             {/* Top Charts */}
             <AppTitles title={'Top Charts'}/>
             <ScrollArea type="never" scrollbars="x"  offsetScrollbars style={{paddingLeft: '12px'}}>
@@ -31,7 +32,7 @@ const HomePageSkeleton = () => {
                     {renderCardSkeleton(10)}
                 </Group>
             </ScrollArea>
-
+            <Space h={30}/>
             {/* New Releases */}
             <AppTitles title={'New Releases'}/>
             <ScrollArea type="never" scrollbars="x" offsetScrollbars style={{paddingLeft: '12px'}}>
@@ -39,6 +40,7 @@ const HomePageSkeleton = () => {
                     {renderCardSkeleton(10)}
                 </Group>
             </ScrollArea>
+            <Space h={30}/>
         </div>
     );
 };

@@ -1,4 +1,4 @@
-import { SimpleGrid, Flex, Title, useMantineTheme, rem } from "@mantine/core";
+import { SimpleGrid, Flex, Title, useMantineTheme, rem, Space } from "@mantine/core";
 import { AlbumCard } from "../AlbumCard/AlbumCard";
 import React from "react";
 import { Carousel } from "@mantine/carousel";
@@ -55,5 +55,6 @@ export default function AlbumList({ name, subtitle, list }: AlbumListProps) {
                 }
             </Carousel>
         </div>
+        <Space h={30}/>
     </SimpleGrid>);
 }

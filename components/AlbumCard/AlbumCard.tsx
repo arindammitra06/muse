@@ -77,7 +77,7 @@ export function AlbumCard({ id, image, title, subtitle, type, song, year, perma_
 
   return (<Stack gap={0} style={{ width: '100%', maxWidth: rem(200) }} onClick={handleClick}>
     <Card
-      radius={type === 'radio_station' ? '100px' : type === 'show' ? '100px' : 'md'}
+      radius={type === 'radio_station' || type === 'artist' ? '100px' : type === 'show' ? '100px' : 'md'}
       p={0}
       ml={10}
       withBorder
@@ -102,7 +102,6 @@ export function AlbumCard({ id, image, title, subtitle, type, song, year, perma_
         height="100%"
         width="100%"
         fit="cover"
-        style={{ filter: type === 'artist' ? 'grayscale(100%)' : 'none' }}
       />
       {type !== null && type !== undefined && type === 'song' &&
 
@@ -120,6 +119,7 @@ export function AlbumCard({ id, image, title, subtitle, type, song, year, perma_
           >
             <ActionIcon
               variant="filled"
+              color={theme.colors[theme.primaryColor][9]}
               size="xl"
               radius="xl"
               onClick={() => playSongAndAddToPlaylist(song)}

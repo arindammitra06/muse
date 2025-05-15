@@ -135,15 +135,15 @@ export function NowPlayingBar() {
 
   //Get FullScreen Body
   const getFullScreenPage = <Center>
-    <Stack align="center" gap="4" w="100%" px="md" py="sm">
+    <Stack align="center" gap="2" w="100%" px="md" py="sm">
       {/* Uncomment if you have musixmatch API key */}
       {/* <NowPlayingLyrics /> */}
 
-      <Box pos="relative" w="40vh" h="40vh" style={{ overflow: "hidden", borderRadius: '0.5rem' }}>
+      <Box pos="relative" w="40vh" h="40vh" style={{ overflow: "hidden", borderRadius: '1rem' }}>
         <Image
           src={currentTrack?.image || musicPlaceholder.src}
           w={'40vh'}
-          radius="md"
+          radius="lg"
           fit="cover" />
         {flipped && (
           <Overlay
@@ -281,7 +281,7 @@ export function NowPlayingBar() {
         <Modal.Overlay />
         <Modal.Content>
 
-          <Modal.Body>
+          <Modal.Body px={'0'}>
             {allowSwipeGesture ?
               <NowPlayingOverlay opened={opened} onClose={close} closeDrawer={closeDrawer} >
                 {getHeader}

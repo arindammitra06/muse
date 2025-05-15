@@ -69,7 +69,7 @@ export default function SettingsPage() {
     });
 
   return (
-    <Box p="0">
+    <Box p="0" pb={150}>
       <Stack gap="8" mt={10}>
         <Paper
           mx={'xs'}
