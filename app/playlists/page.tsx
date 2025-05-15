@@ -7,13 +7,14 @@ import { useRouter } from 'next/navigation';
 import { modals } from '@mantine/modals';
 import { useEffect, useState } from 'react';
 import { createPlaylist, clearPlaylist, deletePlaylist } from '@/store/slices/playlist.slice';
-import { v4 as uuidv4 } from 'uuid';
+
 import musicPlaceholder from '../../assets/images/music_placeholder.png';
 import { AppTitles } from '@/components/Common/custom-title';
 import { useDisclosure } from '@mantine/hooks';
 import SortablePlaylistDrawer from '@/components/SortablePlaylistViewer/SortablePlaylistViewer';
 import { setPageTitle } from '@/store/slices/pageTitleSlice';
 import { capitalizeFirst } from '@/utils/generic.utils';
+import { CreatePlaylistForm } from '@/components/Common/CreatePlaylistForm';
 
 export default function PlaylistManager() {
   const dispatch = useAppDispatch();
@@ -188,35 +189,4 @@ export default function PlaylistManager() {
   );
 }
 
-export function CreatePlaylistForm() {
-  const [playlistName, setPlaylistName] = useState('');
-  const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    setPlaylistName(''); // resets on mount
-  }, []);
-
-  return (
-    <Stack>
-      <TextInput
-        placeholder="Add Playlist Name"
-        value={playlistName}
-        radius={'sm'}
-        onChange={(e) => setPlaylistName(e.currentTarget.value)}
-        data-autofocus />
-      <Button
-        radius={'md'}
-        fullWidth
-        onClick={() => {
-          if (playlistName.trim()) {
-            dispatch(createPlaylist({ id: uuidv4(), name: playlistName.trim(), image: null }));
-            setPlaylistName('');
-          }
-          modals.closeAll()
-        }
-        } mt="md">
-        Submit
-      </Button>
-    </Stack>
-  );
-}

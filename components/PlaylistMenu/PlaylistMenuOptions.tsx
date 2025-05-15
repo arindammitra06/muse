@@ -12,7 +12,7 @@ import { formatSongsResponse, getLastSectionOfUrl } from "@/utils/generic.utils"
 import { getSongFromToken } from "@/store/slices/jio.slice";
 import { useRouter } from "next/navigation";
 import { modals } from "@mantine/modals";
-import { CreatePlaylistForm } from "@/app/playlists/page";
+import { CreatePlaylistForm } from "../Common/CreatePlaylistForm";
 
 interface PlaylistMenuOptionsProps {
     album: any | undefined;
