@@ -12,13 +12,14 @@ import { useRouter } from 'next/navigation';
 
 interface BottomNavProps {
     icon: typeof IconHome2;
+    iconSelected: typeof IconHome2;
     label: string;
     active?: boolean;
     onClick?: () => void;
     href: string;
 }
 
-function BottomNavLink({ icon: Icon, label, href }: BottomNavProps) {
+function BottomNavLink({ icon: Icon, iconSelected: IconSelected, label, href }: BottomNavProps) {
     const pathname = usePathname();
     const router = useRouter();
     const theme = useMantineTheme();
@@ -35,7 +36,7 @@ function BottomNavLink({ icon: Icon, label, href }: BottomNavProps) {
                 style={{ cursor: 'pointer' }}
             >
                 <ActionIcon variant={isActive ? 'light' : 'subtle'} size="xl" mx={'sm'} radius={'md'} >
-                    <Icon size={30} stroke={2} />
+                   { isActive ? <IconSelected size={30} stroke={2} /> : <Icon size={30} stroke={2} />}
                 </ActionIcon>
                 <Text size="xs" fw={600} c={isActive ? theme.primaryColor : 'dimmed'}>
                     {label}
@@ -64,7 +65,8 @@ export function BottomNavigation() {
                         href={link.href}
                         key={link.label}
                         icon={link.icon}
-                        label={link.label} />
+                        label={link.label}
+                        iconSelected={link.iconSelected} />
                 ))
                 }
             </Group>

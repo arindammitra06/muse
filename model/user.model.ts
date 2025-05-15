@@ -1,6 +1,6 @@
 
 export type AppUser= {
-    uid: string;
+    uid?: string;
     name:string;
     photo?: string;
     email?: string;

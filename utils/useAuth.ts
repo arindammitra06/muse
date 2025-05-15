@@ -11,6 +11,7 @@ import { fetchPlaylistFromFirestore, syncPlaylistWithFirestore } from './playlis
 import { setUserPlaylists } from '@/store/slices/playlist.slice';
 import { hideGlobalLoader, showGlobalLoader } from './useLoader';
 
+
 export function useAuth() {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
@@ -19,27 +20,31 @@ export function useAuth() {
   const currentUser = useAppSelector((state) => state.user.currentUser);
   const userPlaylist = useAppSelector((s) => s.playlist.userPlaylist);
 
-  
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      
-      if(user!==null && user!==undefined){
-        dispatch(
-          setCurrentUser({
-            uid:user?.uid ,
-            name: user?.displayName!,
-            email: user?.email!,
-            photo: user?.photoURL!,
-            isGoogleLoggedIn: true,
-            language:[]
-          })
-        )
-      }else{
+
+      if (user !== null && user !== undefined) {
+        //just for firebase
+        if (user?.uid !== null && user?.uid !== undefined) {
+          dispatch(
+            setCurrentUser({
+              uid: user?.uid,
+              name: user?.displayName!,
+              email: user?.email!,
+              photo: user?.photoURL!,
+              isGoogleLoggedIn: true,
+              language: []
+            })
+          )
+        }
+
+      } else {
         dispatch(
           setCurrentUser(null)
         )
       }
-      
+
       setLoading(false);
     });
 
@@ -51,17 +56,32 @@ export function useAuth() {
     try {
       const result = await signInWithPopup(auth, provider);
       dispatch(setCurrentUser({
-          uid:result?.user?.uid || '',
-          name: result?.user?.displayName || '',
-          email: result?.user?.email || '',
-          photo: result?.user?.photoURL || '',
-          isGoogleLoggedIn: true,
-          language:[]
-        })
+        uid: result?.user?.uid || '',
+        name: result?.user?.displayName || '',
+        email: result?.user?.email || '',
+        photo: result?.user?.photoURL || '',
+        isGoogleLoggedIn: true,
+        language: []
+      })
       );
-      const playlist =  await fetchPlaylistFromFirestore(result?.user?.uid );
+      const playlist = await fetchPlaylistFromFirestore(result?.user?.uid);
       dispatch(setUserPlaylists(playlist));
-      
+
+    } catch (err: any) {
+      console.error('Login error:', err);
+      setError(err);
+    }
+  };
+
+  const getStarted = async (name:string) => {
+    setError(null);
+    try {
+      dispatch(setCurrentUser({
+        name: name,
+        isGoogleLoggedIn: false,
+        language: []
+      })
+      );
     } catch (err: any) {
       console.error('Login error:', err);
       setError(err);
@@ -72,9 +92,9 @@ export function useAuth() {
     try {
       if (currentUser) {
         showGlobalLoader('Logging out...');
-        await syncPlaylistWithFirestore(currentUser.uid, userPlaylist);
-        await signOut(auth);
-        dispatch(resetAll()); 
+        currentUser.uid ?? await syncPlaylistWithFirestore(currentUser.uid!, userPlaylist);
+        currentUser.uid ?? await signOut(auth);
+        dispatch(resetAll());
         dispatch(logoutSlice());
         router.push('/')
         hideGlobalLoader();
@@ -85,5 +105,5 @@ export function useAuth() {
     }
   };
 
-  return {  loading, error, login, logout };
+  return { loading, error, getStarted, login, logout };
 }

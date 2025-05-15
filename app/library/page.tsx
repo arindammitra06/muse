@@ -20,6 +20,7 @@ import { capitalizeFirst } from '@/utils/generic.utils';
 import { useEffect } from 'react';
 import { syncPlaylistWithFirestore } from '@/utils/playlistHooks';
 import { modals } from '@mantine/modals';
+import toast from 'react-hot-toast';
 
 export default function Library() {
   const dispatch = useAppDispatch();
@@ -59,7 +60,7 @@ export default function Library() {
       confirmProps: { color: 'green' },
       onCancel: () => console.log('Cancel'),
       onConfirm: async () => {
-        await syncPlaylistWithFirestore(currentUser!.uid, userPlaylist)
+        await syncPlaylistWithFirestore(currentUser?.uid!, userPlaylist)
       },
     });
 
@@ -71,7 +72,8 @@ export default function Library() {
           size="xs"
           rightSection={<IconRefresh size={16} />}
           radius="md"
-          onClick={() => saveToCloudModal()}>
+          disabled={currentUser?.uid! ? false : true}
+          onClick={() => currentUser?.uid ? saveToCloudModal() : toast.error('Signin with google to allow sync')}>
           Sync Playlists
         </Button>
       </Group>

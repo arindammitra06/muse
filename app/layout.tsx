@@ -4,10 +4,15 @@ import '@mantine/core/styles.css';
 import React from 'react';
 import { ColorSchemeScript, mantineHtmlProps, } from '@mantine/core';
 import RootApp from '@/components/Root/root.route';
-import { Inter,  } from 'next/font/google';
+import { Exo_2, Inter, } from 'next/font/google';
 
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-ui' });
+const inter = Exo_2({
+  subsets: ['latin'],
+  weight: ['100', '200','300', '400', '500','600', '700','800','900'],
+  variable: '--font-ui',
+  display: 'swap',
+});
 
 // export const metadata = {
 //   title: 'Mantine Next.js template',
@@ -15,14 +20,14 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-ui' });
 // };
 
 export default function RootLayout({ children }: { children: any }) {
-  
+
   return (
     <html lang="en" {...mantineHtmlProps} className={`${inter.variable}`}>
       <head>
         <ColorSchemeScript />
         <link rel="manifest" href="/manifest.json" />
         <link rel="shortcut icon" href="/favicon.svg" />
-        
+
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"

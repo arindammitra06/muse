@@ -17,16 +17,16 @@ export function ThemeDropdown() {
     const dispatch = useAppDispatch();
     const primaryColor = useSelector((state: RootState) => state.theme.primaryColor);
 
-    
+
     function setColorSelection(color: any): void {
         if (/^#([0-9A-F]{3}){1,2}$/i.test(color)) {
             dispatch(setPrimaryColor(color));
-          } else {
+        } else {
             alert('Please select a valid hex color');
         }
     }
 
-    
+
 
     return (
         <Group justify="center">
@@ -41,10 +41,15 @@ export function ThemeDropdown() {
                 </HoverCard.Target>
                 <HoverCard.Dropdown>
                     <ColorPicker
+                        swatchesPerRow={8}
                         format="hex"
                         value={primaryColor}
                         onChange={(color) => setColorSelection(color)}
-                        swatches={['#272640', '#868e96', '#fa5252', '#e64980', '#be4bdb', '#7950f2', '#4c6ef5', '#228be6', '#15aabf', '#12b886', '#40c057', '#82c91e', '#fab005', '#fd7e14',]}
+                        swatches={['#fa5252', '#e64980', '#be4bdb', '#9b5de5', '#7950f2',
+                            '#3a0ca3', '#228be6', '#15aabf', '#12b886', '#40c057',
+                            "#780000", "#1121f", "#f73c87", "#003049", "#669bbc",
+                            "#7c6a0a", "#babd8d", "#ffdac6", "#ff9770", "#eb6424",
+                            '#d7263d', '#ffd60a', '#1b998b', '#c5d86d']}
                     />
                 </HoverCard.Dropdown>
             </HoverCard>

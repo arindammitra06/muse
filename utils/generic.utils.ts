@@ -547,6 +547,17 @@ export function getImageUrl(imageUrl?: string, quality: 'high' | 'medium' | 'low
       return trimmedUrl.replace(/50x50|150x150/g, '500x500');
   }
 }
+export function isValidName(name: string): boolean {
+  const trimmed = name.trim();
+
+  // Reject empty, too short, or too long names
+  if (trimmed.length < 2 || trimmed.length > 50) return false;
+
+  // Allow only letters, spaces, apostrophes and hyphens
+  const nameRegex = /^[A-Za-z\s'-]+$/;
+
+  return nameRegex.test(trimmed);
+}
 
 export function generateMantineColorSwatch(baseColor: string): MantineColorsTuple {
   // Generate 10 shades from light (index 0) to dark (index 9)

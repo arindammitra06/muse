@@ -16,6 +16,7 @@ import {  syncPlaylistWithFirestore } from '@/utils/playlistHooks';
 import { clearNowPlayinglist } from '@/store/slices/player.slice';
 import { setPageTitle } from '@/store/slices/pageTitleSlice';
 import { useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 
 export default function SettingsPage() {
@@ -64,7 +65,7 @@ export default function SettingsPage() {
       confirmProps: { color: 'green' },
       onCancel: () => console.log('Cancel'),
       onConfirm: async () => {
-        await syncPlaylistWithFirestore(currentUser!.uid, userPlaylist)
+        await syncPlaylistWithFirestore(currentUser?.uid!, userPlaylist)
       },
     });
 
@@ -158,7 +159,7 @@ export default function SettingsPage() {
             rightElement={<></>} onClick={() => openClearCacheModal()} />
 
           <SettingsList title={'Sync playlist to cloud'} subtitle='Saves favorites, custom playlists to firebase cloud'
-            rightElement={<></>} onClick={() => saveToCloudModal()} />
+            rightElement={<></>} onClick={() => currentUser?.uid ? saveToCloudModal() : toast.error('Signin with google to allow sync')}/>
 
         </Paper>
 

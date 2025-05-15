@@ -6,13 +6,19 @@ import {
   IconDownload,
   IconFingerprint,
   IconGauge,
+  IconHome,
   IconHome2,
+  IconHomeFilled,
+  IconLayoutList,
+  IconLayoutListFilled,
   IconLogout,
   IconPlaylist,
   IconSearch,
   IconSettings,
+  IconSettingsFilled,
   IconSwitchHorizontal,
   IconUser,
+  IconZoomFilled,
 } from '@tabler/icons-react';
 import { Center, Stack, Tooltip, UnstyledButton } from '@mantine/core';
 
@@ -25,7 +31,8 @@ import { useAuth } from '@/utils/useAuth';
 import { to } from '@react-spring/web';
 
 interface NavbarLinkProps {
-  icon: typeof IconHome2;
+  icon: any;
+  icon2: any;
   label: string;
   active?: boolean;
   onClick?: () => void;
@@ -33,18 +40,19 @@ interface NavbarLinkProps {
   toggle: () => {};
 }
 
-function NavbarLink({ icon: Icon, label, href, toggle }: NavbarLinkProps) {
+function NavbarLink({ icon: Icon, icon2: IconSelected, label, href, toggle }: NavbarLinkProps) {
   const pathname = usePathname();
   const router = useRouter();
 
   const isActive = pathname === href;
+  
   return (
     <Tooltip label={label} position="right" transitionProps={{ duration: 0 }}>
       <UnstyledButton
         onClick={() => { router.push(href); toggle() }}
         style={(theme) => ({
           borderRadius: theme.radius.sm,
-          color: isActive ? theme.colors[theme.primaryColor][5] : 'gray',
+          color: isActive ? theme.colors[theme.primaryColor][6] : 'gray',
           fontWeight: isActive ? 600 : 400,
           marginBottom: '10px',
           '&:hover': {
@@ -52,17 +60,17 @@ function NavbarLink({ icon: Icon, label, href, toggle }: NavbarLinkProps) {
             color: theme.colors[theme.primaryColor][7],
           },
         })}>
-        <Icon size={30} stroke={2} />
+        {isActive ? <IconSelected size={30} stroke={2} /> : <Icon size={30} stroke={2} />}
       </UnstyledButton>
     </Tooltip>
   );
 }
 
 export const mockdata = [
-  { icon: IconHome2, label: 'Home', href: '/' },
-  { icon: IconSearch, label: 'Search', href: '/search' },
-  { icon: IconPlaylist, label: 'Library', href: '/library' },
-  { icon: IconSettings, label: 'Settings', href: '/settings' },
+  { icon: IconHome, iconSelected: IconHomeFilled, label: 'Home', href: '/' },
+  { icon: IconSearch,iconSelected: IconZoomFilled,  label: 'Search', href: '/search' },
+  { icon: IconLayoutList, iconSelected: IconLayoutListFilled, label: 'Library', href: '/library' },
+  { icon: IconSettings, iconSelected: IconSettingsFilled,  label: 'Settings', href: '/settings' },
 ];
 
 export function NavbarMinimal({ toggle }: any) {
@@ -73,6 +81,7 @@ export function NavbarMinimal({ toggle }: any) {
       href={link.href}
       key={link.label}
       icon={link.icon}
+      icon2={link.iconSelected}
       label={link.label}
       toggle={toggle} />
   ));
