@@ -28,6 +28,7 @@ export default function SettingsList({ title, subtitle, rightElement , onClick}:
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
+                //border: '0.5px solid gray'
               }}
             >
             <Stack gap={0}>

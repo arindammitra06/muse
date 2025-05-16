@@ -2,25 +2,28 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { nextTrack, play, pause, previousTrack, toggleRepeat, toggleShuffle, } from '@/store/slices/player.slice';
 import { formatTime } from '@/utils/formatTime';
 import { useAudioPlayer } from '@/utils/useAudioPlayer';
-import { Box, Group, Image, Text, Slider, ActionIcon, Card, Flex, useMantineTheme, Modal, Center, Stack, Button, Drawer, Loader, Overlay } from '@mantine/core';
+import { Box, Group, Image, Text, Slider, ActionIcon, Card, Flex, useMantineTheme, Modal, Center, Stack, Button, Drawer, Loader, Overlay, Tooltip } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import musicPlaceholder from '../../assets/images/music_placeholder.png';
 import Marquee from "react-fast-marquee";
 
-import { IconArrowsShuffle, IconChevronDown, IconNotes, IconPlayerPauseFilled, IconPlayerPlayFilled, IconPlayerSkipBackFilled, IconPlayerSkipForwardFilled, IconPointFilled, IconRepeat, IconRepeatOnce } from '@tabler/icons-react';
+import { IconArrowsShuffle, IconChevronDown, IconNotes, IconPlayerPauseFilled, IconPlayerPlayFilled, IconPlayerSkipBackFilled, IconPlayerSkipForwardFilled, IconPointFilled, IconRepeat, IconRepeatOnce, IconWifiOff } from '@tabler/icons-react';
 import { SkeletonSongBar } from '../SongBar/SongBar';
 import { NowPlayingOverlay } from './NowPlayingOverlay';
 import { DownloadButton } from '../DownloadButton/DownloadButton';
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton';
 import { PlaylistMenuOptions } from '../PlaylistMenu/PlaylistMenuOptions';
 import BottomStickyItem from './BottomStickyItem';
-import SortableSessionDrawer from '../SongBar/SortablePlaylist';
+import SortableSessionDrawer from '../SongBar/SortableSessionDrawer';
 import { useEffect, useState } from 'react';
 import { Lyrics } from '@/utils/lyrics';
 import { ProgressiveLyrics } from '../Common/ProgressiveLyrics';
 import toast from 'react-hot-toast';
 import '@gfazioli/mantine-flip/styles.layer.css';
 import { LineSyncedLyrics } from './SyncedLyrics';
+import { modals } from '@mantine/modals';
+import { saveOfflineTrack } from '@/store/slices/offlineTracks.slice';
+import SaveOfflineButton from '../SaveOfflineButton/SaveOfflineButton';
 export function NowPlayingBar() {
   const [opened, { open, close }] = useDisclosure(false);
   const [drawerOpened, { open: openDrawer, close: closeDrawer },] = useDisclosure(false);
@@ -59,6 +62,8 @@ export function NowPlayingBar() {
       setFlipped(false);
     }
   }
+
+  
 
   async function getLyricsNow() {
     if (currentTrack) {
@@ -112,12 +117,14 @@ export function NowPlayingBar() {
 
     <Group gap="xs">
 
-      <ActionIcon variant={flipped ? "filled" : "subtle"} color={'gray'} onClick={(e) => flipOrUnflipLyrics()}>
+      <ActionIcon variant={flipped ? "filled" : "subtle"} color={flipped ? theme.colors[theme.primaryColor][6] : 'gray'} onClick={(e) => flipOrUnflipLyrics()}>
         <IconNotes size={20} />
       </ActionIcon>
 
       <FavoriteButton song={currentTrack} />
       <DownloadButton song={currentTrack} />
+      <SaveOfflineButton id={currentTrack?.id!} url={currentTrack?.url!} song={currentTrack} />
+      
 
       {currentTrack !== null && currentTrack !== undefined && currentTrack.type === 'song'
         && <Box onClick={(e) => e.stopPropagation()}>
@@ -237,9 +244,9 @@ export function NowPlayingBar() {
         </ActionIcon>
       </Group>
 
-      <Button mt={5} variant="transparent" size='md' onClick={openDrawer}> Up Next</Button>
+      <Button mt={5} variant="transparent" size='md' onClick={openDrawer}><Text td="underline">Up Next</Text> </Button>
 
-      {exactNextTrack && <BottomStickyItem exactNextTrack={exactNextTrack} />}
+      {exactNextTrack && <BottomStickyItem onClick={openDrawer} exactNextTrack={exactNextTrack} />}
 
       <Drawer
         opened={drawerOpened}

@@ -16,6 +16,8 @@ import chroma from 'chroma-js';
 import { MantineColorsTuple } from '@mantine/core';
 
 import CryptoJS from 'crypto-js';
+import { openDB } from 'idb';
+import { OFFLINE_DB_NAME, STORE_NAME } from '@/store/slices/offlineTracks.slice';
 
 
 export const languages = ['Hindi',
@@ -565,4 +567,3 @@ export function generateMantineColorSwatch(baseColor: string): MantineColorsTupl
 
   return scale as unknown as MantineColorsTuple;
 }
-

@@ -11,6 +11,7 @@ import { searchParamsReducer } from './slices/search-params.slice';
 import storage from 'redux-persist/lib/storage';
 import { persistReducer } from 'redux-persist';
 import { pageTitleReducer } from './slices/pageTitleSlice';
+import { offlineTracksReducer } from './slices/offlineTracks.slice';
 
 const settingsPersistConfig = {
   key: 'settings',
@@ -30,7 +31,8 @@ const appReducer = combineReducers({
   search: searchReducer,
   settings: persistedSettingsReducer,
   searchParams:searchParamsReducer,
-  pageTitle:pageTitleReducer
+  pageTitle:pageTitleReducer,
+  offlineTracks: offlineTracksReducer,
 });
 
 const rootReducer = (state: any, action: any) => {

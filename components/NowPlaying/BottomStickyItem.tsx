@@ -6,11 +6,11 @@ import { IconPlayerPlay, IconPlaylist } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 
 
-function BottomStickyItem({ exactNextTrack }: any) {
+function BottomStickyItem({ exactNextTrack , onClick}: any) {
     const theme = useMantineTheme();
     const router = useRouter();
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', }}>
+        <div style={{ display: 'flex', flexDirection: 'column', }} onClick={()=>onClick()}>
             <div style={{ flex: 1 }}>
                 {/* Other content goes here */}
             </div>

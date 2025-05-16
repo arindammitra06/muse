@@ -17,6 +17,7 @@ import { clearNowPlayinglist } from '@/store/slices/player.slice';
 import { setPageTitle } from '@/store/slices/pageTitleSlice';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { useAuth } from '@/utils/useAuth';
 
 
 export default function SettingsPage() {
@@ -27,7 +28,7 @@ export default function SettingsPage() {
   const currentUser = useAppSelector((state) => state.user.currentUser);
   const userPlaylist = useAppSelector((s) => s.playlist.userPlaylist);
   const router = useRouter();
-
+  const { logout } = useAuth();
   useEffect(() => {
     dispatch(setPageTitle('Settings'));
   },
@@ -175,6 +176,8 @@ export default function SettingsPage() {
               onChange={(event) => dispatch(setSwipeGesture(event.currentTarget.checked))}
             />} onClick={undefined} />
           <SettingsList title={'More Info'} subtitle='' rightElement={<></>} onClick={() => goToUrl('/abouts')} />
+
+          <SettingsList title={'Logout'} subtitle='' rightElement={<></>} onClick={() => logout()} />
         </Paper>
       </Stack>
     </Box>

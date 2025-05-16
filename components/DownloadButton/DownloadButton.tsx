@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { getSongFromToken } from "@/store/slices/jio.slice";
 import { downloadFile } from "@/utils/fileutil";
 import { formatSongsResponse, getLastSectionOfUrl, getPreferredStreamingQualityUrl } from "@/utils/generic.utils";
-import { ActionIcon } from "@mantine/core";
+import { ActionIcon, Tooltip } from "@mantine/core";
 import { IconDownload } from "@tabler/icons-react";
 
 interface DownloadButtonProps {
@@ -47,7 +47,7 @@ export const DownloadButton = ({ song }: DownloadButtonProps) => {
     }
 
 
-    return (<ActionIcon variant="subtle" color="gray" onClick={(e) => downloadTheSong(e)}>
+    return (<Tooltip label={'Download file'} position="right" transitionProps={{ duration: 0 }}><ActionIcon variant="subtle" color="gray" onClick={(e) => downloadTheSong(e)}>
         <IconDownload size={20} />
-    </ActionIcon>)
+    </ActionIcon></Tooltip>)
 }

@@ -6,18 +6,21 @@ import {
   play as playS,
   pause as pauseS,
 } from '@/store/slices/player.slice';
-import { getPreferredStreamingQualityUrl } from './generic.utils';
+import {  getPreferredStreamingQualityUrl } from './generic.utils';
+import { getTrackBlobUrl } from '@/store/slices/offlineTracks.slice';
 
 export function useAudioPlayer() {
   const dispatch = useAppDispatch();
   const { playlist, currentTrackIndex, isPlaying, isRepeat } = useAppSelector((s) => s.player);
+  const { streamingQuality } = useAppSelector((s) => s.settings);
   const [seek, setSeek] = useState(0);
   const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isRepeatRef = useRef(false);
-  const { streamingQuality } = useAppSelector((s) => s.settings);
   const currentTrack = playlist[currentTrackIndex];
+  const { downloaded } = useAppSelector((s) => s.offlineTracks);
+  const isAlreadyDownloaded = downloaded.some((track) => track.id === currentTrack.id); ;
+      
 
   const play = () => {
     audioRef.current?.play();
@@ -34,101 +37,110 @@ export function useAudioPlayer() {
     }
   };
 
-  // Keep repeat value in a ref
+  // Update repeat ref
   useEffect(() => {
     isRepeatRef.current = isRepeat;
   }, [isRepeat]);
 
-  // Initialize or update audio element
+  // Load and switch audio source (online or offline)
   useEffect(() => {
     if (!currentTrack?.url) return;
 
-    if (!audioRef.current) {
-      audioRef.current = new Audio(getPreferredStreamingQualityUrl(currentTrack.url, streamingQuality));
-    } else {
-      audioRef.current.src = getPreferredStreamingQualityUrl(currentTrack.url, streamingQuality);
-    }
+    const loadAudio = async () => {
+      const audio = audioRef.current ?? new Audio();
+      audioRef.current = audio;
 
-    const audio = audioRef.current;
-
-    // Autoplay if required
-    if (isPlaying) audio.play();
-
-    audio.onloadedmetadata = () => {
-      setDuration(audio.duration);
-    };
-
-    audio.ontimeupdate = () => {
-      setSeek(audio.currentTime);
-    };
-
-    audio.onended = () => {
-      if (isRepeatRef.current) {
-        audio.currentTime = 0;
-        audio.play();
+      // Choose source: offline blob or remote URL
+      
+      if (isAlreadyDownloaded) {
+        console.log('Playing Offline')
+        
+        const blobUrl = await getTrackBlobUrl(currentTrack!.id!); // e.g. 'track.mp3' -> blob URL
+        if (blobUrl) {
+          audio.src = blobUrl;
+        } else {
+          console.warn('Offline track not found, skipping');
+          dispatch(nextTrack());
+          return;
+        }
       } else {
-        dispatch(nextTrack());
+        console.log('Not Offline')
+        
+        audio.src = getPreferredStreamingQualityUrl(currentTrack!.url!, streamingQuality);
       }
+
+      // Autoplay if needed
+      if (isPlaying) audio.play();
+
+      // Events
+      audio.onloadedmetadata = () => setDuration(audio.duration);
+      audio.ontimeupdate = () => setSeek(audio.currentTime);
+      audio.onended = () => {
+        if (isRepeatRef.current) {
+          audio.currentTime = 0;
+          audio.play();
+        } else {
+          dispatch(nextTrack());
+        }
+      };
     };
+
+    loadAudio();
 
     return () => {
-      audio.pause();
-      audio.src = '';
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = '';
+      }
     };
-  }, [currentTrack?.url]);
+  }, [currentTrack?.url, isAlreadyDownloaded, streamingQuality]);
 
-  // Sync play/pause from Redux
+  // Sync play/pause state from Redux
   useEffect(() => {
-    if (!audioRef.current) return;
-    if (isPlaying) {
-      audioRef.current.play();
-    } else {
-      audioRef.current.pause();
-    }
+    const audio = audioRef.current;
+    if (!audio) return;
+    isPlaying ? audio.play() : audio.pause();
   }, [isPlaying]);
 
-  // Setup Media Session for lock screen controls
-useEffect(() => {
-  if ('mediaSession' in navigator && currentTrack) {
-    navigator.mediaSession.metadata = new MediaMetadata({
-      title: currentTrack.title,
-      artist: currentTrack.artist,
-      album: currentTrack.album,
-      artwork: currentTrack.image
-        ? [
+  // Media Session integration
+  useEffect(() => {
+    if ('mediaSession' in navigator && currentTrack) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: currentTrack.title,
+        artist: currentTrack.artist,
+        album: currentTrack.album,
+        artwork: currentTrack.image
+          ? [
             { src: currentTrack.image, sizes: '96x96', type: 'image/png' },
             { src: currentTrack.image, sizes: '128x128', type: 'image/png' },
             { src: currentTrack.image, sizes: '192x192', type: 'image/png' },
           ]
-        : [],
-    });
-
-    navigator.mediaSession.setActionHandler('play', () => dispatch(playS()));
-    navigator.mediaSession.setActionHandler('pause', () => dispatch(pauseS()));
-    navigator.mediaSession.setActionHandler('nexttrack', () => dispatch(nextTrack()));
-    navigator.mediaSession.setActionHandler('previoustrack', () => dispatch(previousTrack()));
-    navigator.mediaSession.setActionHandler('stop', () => pause());
-
-    
-    // ✅ Guard against NaN or invalid values
-    if (
-      typeof duration === 'number' &&
-      typeof seek === 'number' &&
-      !isNaN(duration) &&
-      !isNaN(seek) &&
-      duration > 0 &&
-      seek <= duration &&
-      'setPositionState' in navigator.mediaSession
-    ) {
-      navigator.mediaSession.setPositionState({
-        duration,
-        position: seek,
-        playbackRate: 1,
+          : [],
       });
-    }
-  }
-}, [currentTrack, isPlaying, seek, duration, dispatch]);
 
+      navigator.mediaSession.setActionHandler('play', () => dispatch(playS()));
+      navigator.mediaSession.setActionHandler('pause', () => dispatch(pauseS()));
+      navigator.mediaSession.setActionHandler('nexttrack', () => dispatch(nextTrack()));
+      navigator.mediaSession.setActionHandler('previoustrack', () => dispatch(previousTrack()));
+      navigator.mediaSession.setActionHandler('stop', pause);
+
+      if (
+        typeof duration === 'number' &&
+        typeof seek === 'number' &&
+        !isNaN(duration) &&
+        !isNaN(seek) &&
+        duration > 0 &&
+        seek <= duration &&
+        'setPositionState' in navigator.mediaSession
+      ) {
+        navigator.mediaSession.setPositionState({
+          duration,
+          position: seek,
+          playbackRate: 1,
+        });
+      }
+    }
+  }, [currentTrack, isPlaying, seek, duration, dispatch]);
 
   return {
     currentTrack,

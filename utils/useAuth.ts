@@ -73,7 +73,7 @@ export function useAuth() {
     }
   };
 
-  const getStarted = async (name:string) => {
+  const getStarted = async (name: string) => {
     setError(null);
     try {
       dispatch(setCurrentUser({
@@ -92,8 +92,10 @@ export function useAuth() {
     try {
       if (currentUser) {
         showGlobalLoader('Logging out...');
-        currentUser.uid ?? await syncPlaylistWithFirestore(currentUser.uid!, userPlaylist);
-        currentUser.uid ?? await signOut(auth);
+        if (currentUser.uid !== null && currentUser.uid !== undefined) {
+          await syncPlaylistWithFirestore(currentUser.uid!, userPlaylist);
+          await signOut(auth);
+        }
         dispatch(resetAll());
         dispatch(logoutSlice());
         router.push('/')

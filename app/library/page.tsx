@@ -2,7 +2,7 @@
 
 import { Box, Stack, useMantineTheme, Text, Paper, Group, ActionIcon, Button, Drawer, Flex, rem, SimpleGrid, Title } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { IconHeart, IconChevronRight, IconHistory, IconDownload, IconPlaylist, IconPlayerPlay, IconX, IconRefresh } from '@tabler/icons-react';
+import { IconHeart, IconChevronRight, IconHistory, IconDownload, IconPlaylist, IconPlayerPlay, IconX, IconRefresh, IconWifiOff } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { AppTitles } from '@/components/Common/custom-title';
 import { useDisclosure } from '@mantine/hooks';
@@ -14,13 +14,14 @@ import { restrictToVerticalAxis, restrictToParentElement, restrictToFirstScrolla
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { reorderPlaylist } from '@/store/slices/player.slice';
 import { SkeletonSongBar } from '@/components/SongBar/SongBar';
-import SortableSessionDrawer from '@/components/SongBar/SortablePlaylist';
+import SortableSessionDrawer from '@/components/SongBar/SortableSessionDrawer';
 import { setPageTitle } from '@/store/slices/pageTitleSlice';
 import { capitalizeFirst } from '@/utils/generic.utils';
 import { useEffect } from 'react';
 import { syncPlaylistWithFirestore } from '@/utils/playlistHooks';
 import { modals } from '@mantine/modals';
 import toast from 'react-hot-toast';
+import SortableOfflineDrawer from '@/components/SongBar/SortableOfflineDrawer';
 
 export default function Library() {
   const dispatch = useAppDispatch();
@@ -29,6 +30,8 @@ export default function Library() {
   const { playlist, currentTrackIndex, isPlaying } = useAppSelector(s => s.player);
   const currentUser = useAppSelector((state) => state.user.currentUser);
   const userPlaylist = useAppSelector((s) => s.playlist.userPlaylist);
+  const { downloaded } = useAppSelector(s => s.offlineTracks);
+
 
   useEffect(() => {
     dispatch(setPageTitle(capitalizeFirst('library')));
@@ -42,9 +45,17 @@ export default function Library() {
     { open: openDrawer, close: closeDrawer },
   ] = useDisclosure(false);
 
+  const [
+    drawerOfflineOpened,
+    { open: openOfflineDrawer, close: closeOfflineDrawer },
+  ] = useDisclosure(false);
 
   const openSessionPage = () => {
     openDrawer();
+  };
+
+  const openOfflinePage = () => {
+    openOfflineDrawer();
   };
 
   const saveToCloudModal = () =>
@@ -77,6 +88,8 @@ export default function Library() {
           Sync Playlists
         </Button>
       </Group>
+
+
       <Drawer
         opened={drawerOpened}
         onClose={closeDrawer}
@@ -100,6 +113,26 @@ export default function Library() {
           </Stack>
         </div>
       </Drawer>
+
+      <Drawer
+        opened={drawerOfflineOpened}
+        onClose={closeOfflineDrawer}
+        position="bottom"
+        size="90%"
+        withCloseButton
+        padding="xs"
+        radius="md"
+      >
+        <div
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          <Stack p={0}>
+            <SortableOfflineDrawer drawerOpened={drawerOfflineOpened} closeDrawer={closeOfflineDrawer} />
+          </Stack>
+        </div>
+      </Drawer>
       <Stack mt="xs" gap="xs">
 
         <Paper shadow="xs" p="5" withBorder onClick={() => openSessionPage()}>
@@ -112,7 +145,15 @@ export default function Library() {
           </Group>
         </Paper>
 
-
+        <Paper shadow="xs" p="5" withBorder onClick={() => openOfflinePage()}>
+          <Group justify="space-between">
+            <Group p={'sm'}>
+              <IconWifiOff size={'1.5rem'} />
+              <Text fw={600}>Offline</Text>
+            </Group>
+            <IconChevronRight size={'1.5rem'} color='gray' />
+          </Group>
+        </Paper>
 
         <Paper shadow="xs" p="5" withBorder onClick={() => router.push("/playlists")}>
           <Group justify="space-between">

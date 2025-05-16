@@ -2,7 +2,7 @@ import { SortableSongBar } from "@/components/SongBar/SortableSongBar";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useSensors, useSensor, PointerSensor, DndContext, closestCenter, DragOverlay, TouchSensor } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { Box, Drawer, rem, ActionIcon, Group, useMantineTheme } from "@mantine/core";
+import { Box, Drawer, rem, Text, Group, useMantineTheme } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import { restrictToVerticalAxis, restrictToParentElement, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 
@@ -48,7 +48,7 @@ export default function SortableSessionDrawer({ drawerOpened, closeDrawer }: Sor
   return (
 
     <Box p="0">
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}
+       {playlist!==null && playlist!==undefined && playlist.length>0 ?<DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}
         modifiers={[restrictToFirstScrollableAncestor, restrictToVerticalAxis]}>
         <SortableContext
           items={playlist.map((track: { id: any; }) => track.id)}
@@ -76,7 +76,7 @@ export default function SortableSessionDrawer({ drawerOpened, closeDrawer }: Sor
             ))}
           </Box>
         </SortableContext>
-      </DndContext>
+      </DndContext> : <Text ta={'center'} size="sm" fw={500} c="dimmed">No Session Tracks</Text>}
     </Box>
   );
 }
