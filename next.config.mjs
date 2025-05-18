@@ -21,7 +21,7 @@ const config = {
         plugins: [
           {
             handlerDidError: async () => {
-              return caches.match('/_offline');
+               return caches.match('/offline.html');
             },
           },
         ],
