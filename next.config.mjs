@@ -8,11 +8,31 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 const config = {
   reactStrictMode: false,
+  runtimeCaching: [
+    {
+      urlPattern: /^\/$/,
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'start-url',
+        expiration: {
+          maxEntries: 1,
+        },
+        networkTimeoutSeconds: 10,
+        plugins: [
+          {
+            handlerDidError: async () => {
+              return caches.match('/_offline');
+            },
+          },
+        ],
+      },
+    },
+  ],
   pwa: {
     dest: 'public', 
-    disable: process.env.NODE_ENV !== 'production', 
     register: true,
     skipWaiting: true,
+    disable: process.env.NODE_ENV !== 'production', 
   },
   eslint: {
     ignoreDuringBuilds: true,
