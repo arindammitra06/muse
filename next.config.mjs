@@ -1,39 +1,49 @@
-import bundleAnalyzer from '@next/bundle-analyzer';
 import withPWA from 'next-pwa';
-
-const isProd = process.env.NODE_ENV === 'production';
-const withBundleAnalyzer = bundleAnalyzer({
-  enabled: process.env.ANALYZE === 'true',
-});
+import runtimeCaching from 'next-pwa/cache.js';
 
 const config = {
   reactStrictMode: false,
-  runtimeCaching: [
-    {
-      urlPattern: /^\/$/,
-      handler: 'NetworkFirst',
-      options: {
-        cacheName: 'start-url',
-        expiration: {
-          maxEntries: 1,
-        },
-        networkTimeoutSeconds: 10,
-        plugins: [
-          {
-            handlerDidError: async () => {
-               return caches.match('/offline.html');
-            },
-          },
-        ],
-      },
-    },
-  ],
   pwa: {
-    dest: 'public', 
-    sw: 'sw.js',  
+    dest: 'public',
+    sw: 'sw.js',
     register: true,
     skipWaiting: true,
-    disable: process.env.NODE_ENV !== 'production', 
+    disable: process.env.NODE_ENV !== 'production',
+    runtimeCaching: [
+      {
+        urlPattern: /^\/$/,
+        handler: 'NetworkFirst',
+        options: {
+          cacheName: 'start-url',
+          networkTimeoutSeconds: 10,
+          expiration: {
+            maxEntries: 1,
+          },
+        },
+      },
+      {
+        urlPattern: /^https?.*/,
+        handler: 'NetworkFirst',
+        options: {
+          cacheName: 'http-cache',
+          networkTimeoutSeconds: 10,
+          expiration: {
+            maxEntries: 50,
+            maxAgeSeconds: 7 * 24 * 60 * 60, // 1 week
+          },
+        },
+      },
+      {
+        urlPattern: /\/offline\.html$/,
+        handler: 'CacheOnly',
+        options: {
+          cacheName: 'offline-cache',
+        },
+      },
+    ],
+    fallback: {
+      document: '/offline.html',
+    },
   },
   eslint: {
     ignoreDuringBuilds: true,
@@ -41,9 +51,6 @@ const config = {
   experimental: {
     optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
   },
-  bundleAnalyzer: {
-    enabled: isProd,
-  },
 };
 
-export default withBundleAnalyzer(withPWA(config));
+export default withPWA(config);
