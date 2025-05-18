@@ -2,28 +2,37 @@
 
 import AlbumList from '@/components/AlbumList/albumlist';
 import { nprogress } from '@mantine/nprogress';
-import { useEffect } from 'react';
-import { SimpleGrid, useMantineTheme } from '@mantine/core';
+import { useEffect, useState } from 'react';
+import { SimpleGrid, useMantineTheme, Text, Button, Drawer, Stack } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchHomePageData } from '@/store/slices/jio.slice';
 import HomePageSkeleton from '@/components/Skeletons/HomeSkeleton';
 import { fetchGaanaData, fetchGaanaHomepage } from '@/store/slices/gaana.slice';
 import SignInPage from '@/components/Login/LoginPage';
+import { useSelector } from 'react-redux';
+import { useDisclosure } from '@mantine/hooks';
+import SortableOfflineDrawer from '@/components/SongBar/SortableOfflineDrawer';
+import { useNetworkListener } from '@/utils/useNetworkListener';
+import { RootState } from '@/store/store';
 
 export default function HomePage() {
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
   const homedata = useAppSelector((state) => state.api.homedata);
   const user = useAppSelector((state) => state.user.currentUser);
+  useNetworkListener();
+  const isOnline = useAppSelector((state: RootState) => state.network.isOnline);
+  const { downloaded, isSavingOffline } = useAppSelector((s) => s.offlineTracks);
+  const [ drawerOfflineOpened, { open: openOfflineDrawer, close: closeOfflineDrawer }, ] = useDisclosure(false);
+
 
 
   useEffect(() => {
     fetchCall();
-
   }, [user]);
 
 
-  function fetchCall() {
+  async function fetchCall() {
     nprogress.reset();
     nprogress.start();
     dispatch(fetchHomePageData())
@@ -33,9 +42,43 @@ export default function HomePage() {
   }
 
 
+  if (!isOnline) {
+    return (
+      <div style={{ padding: 32 }}>
+        <Drawer
+          opened={drawerOfflineOpened}
+          onClose={closeOfflineDrawer}
+          position="bottom"
+          size="90%"
+          withCloseButton
+          padding="xs"
+          radius="md"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
+          >
+            <Stack p={0}>
+              <SortableOfflineDrawer drawerOpened={drawerOfflineOpened} closeDrawer={closeOfflineDrawer} />
+            </Stack>
+          </div>
+        </Drawer>
+        <Text size="xl" fw={700}>You're offline</Text>
+        <Text mt="sm" c="dimmed">Connect to the internet to see latest playlists or songs.</Text>
+
+        {downloaded.length > 0 && (
+          <Button mt="xl" onClick={() => openOfflineDrawer()}>
+            Go to Offline Playlists
+          </Button>
+        )}
+      </div>
+    );
+  }
 
   return (
     <>
+
       {user !== null && user !== undefined ?
         <SimpleGrid cols={1} spacing="xs" verticalSpacing="xs" mb={150}>
           {

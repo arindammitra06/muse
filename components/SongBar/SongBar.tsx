@@ -1,4 +1,4 @@
-import { useAppDispatch } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { getSongFromToken } from '@/store/slices/jio.slice';
 import { playTrack } from '@/store/slices/player.slice';
 import { getLastSectionOfUrl, formatSongsResponse } from '@/utils/generic.utils';
@@ -11,6 +11,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton';
 import { DownloadButton } from '../DownloadButton/DownloadButton';
 import { PlaylistMenuOptions } from '../PlaylistMenu/PlaylistMenuOptions';
+import { RootState } from '@/store/store';
 
 
 export interface SongBarProps {
@@ -33,6 +34,9 @@ export const SongBar = ({ id, song, type, isPlaying, onClickOverride, currentPla
     const theme = useMantineTheme();
     const [dragging, setDragging] = useState(false);
     const dragTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const isOnline = useAppSelector((state: RootState) => state.network.isOnline);
+
+
     const handlePointerDown = () => {
         // Assume dragging will happen
         setDragging(false);
@@ -53,29 +57,34 @@ export const SongBar = ({ id, song, type, isPlaying, onClickOverride, currentPla
     };
 
     function playSongAndAddToPlaylist(song: any): void {
-        
+
         if (type !== null && type !== undefined && song !== null && song !== undefined && song.perma_url !== null && song.perma_url !== undefined) {
-            let token = getLastSectionOfUrl(song.perma_url);
+            if (isOnline) {
+                let token = getLastSectionOfUrl(song.perma_url);
 
-            if (token !== null && token !== undefined && token !== '') {
-                dispatch(getSongFromToken({ token: token, type: type })).then(async (res: any) => {
-                    if (res.payload !== null && res.payload !== undefined) {
+                if (token !== null && token !== undefined && token !== '') {
+                    dispatch(getSongFromToken({ token: token, type: type })).then(async (res: any) => {
+                        if (res.payload !== null && res.payload !== undefined) {
 
-                        let songsList = res.payload['songs'];
-                        if (songsList !== null && songsList !== undefined && songsList.length > 0) {
-                            const songs = await formatSongsResponse(songsList, type);
-                            
-                            if (currentPlayingTrack !== null && currentPlayingTrack !== undefined
-                                && songs[0] !== null && songs[0] !== undefined && isPlaying && currentPlayingTrack.id === songs[0].id) {
-                                onClickOverride();
-                            } else {
-                                dispatch(playTrack(songs[0]));
+                            let songsList = res.payload['songs'];
+                            if (songsList !== null && songsList !== undefined && songsList.length > 0) {
+                                const songs = await formatSongsResponse(songsList, type);
+
+                                if (currentPlayingTrack !== null && currentPlayingTrack !== undefined
+                                    && songs[0] !== null && songs[0] !== undefined && isPlaying && currentPlayingTrack.id === songs[0].id) {
+                                    onClickOverride();
+                                } else {
+                                    dispatch(playTrack(songs[0]));
+                                }
+
                             }
-
                         }
-                    }
-                });;
+                    });;
+                }
+            }else{
+                  dispatch(playTrack(song));
             }
+
         }
 
     }

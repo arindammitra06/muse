@@ -24,11 +24,11 @@ const getDb = async () => {
 
 export const saveOfflineTrack = createAsyncThunk(
   'offlineTracks/saveOfflineTrack',
-  async ({ song , id , url}: { song: any, id:string, url: string }) => {
+  async ({ song, id, url }: { song: any, id: string, url: string }) => {
     const res = await fetch(url);
     const blob = await res.blob();
     const db = await getDb();
-    await db.put(STORE_NAME, { id , blob });
+    await db.put(STORE_NAME, { id, blob ,song });
     return song;
   }
 );
@@ -42,6 +42,25 @@ export const getTrackBlobUrl = async (id: string): Promise<string | null> => {
   return null;
 };
 
+export const loadOfflineTracksFromIndexedDB = createAsyncThunk<Track[]>(
+  'offlineTracks/loadOfflineTracksFromIndexedDB',
+  async () => {
+    const db = await getDb();
+    const allKeys = await db.getAllKeys(STORE_NAME);
+
+    const downloadedTracks: Track[] = [];
+
+    // for (const id of allKeys) {
+    //   const record = await db.get(STORE_NAME, id);
+    //   console.log(record);
+    //   if (record) {
+    //     downloadedTracks.push(record.song);
+    //   }
+    // }
+
+    return downloadedTracks;
+  }
+);
 interface OfflineTracksState {
   downloaded: Track[];
   isSavingOffline: boolean;
@@ -58,6 +77,9 @@ const offlineTracksSlice = createSlice({
   reducers: {
     removeDownloadedTrack: (state, action: PayloadAction<string>) => {
       state.downloaded = state.downloaded.filter((t) => t.id !== action.payload);
+    },
+    setDownloadedTracks: (state, action: PayloadAction<Track[]>) => {
+      state.downloaded = action.payload;
     },
     updateDownloadedOrder: (state, action: PayloadAction<Track[]>) => {
       state.downloaded = action.payload;
@@ -78,9 +100,12 @@ const offlineTracksSlice = createSlice({
       .addCase(saveOfflineTrack.rejected, (state, action) => {
         state.isSavingOffline = false;
       })
+      .addCase(loadOfflineTracksFromIndexedDB.fulfilled, (state, action) => {
+        state.downloaded = action.payload;
+      })
   },
 });
 
 export const selectOfflineTrackIds = (state: RootState) => state.offlineTracks.downloaded;
-export const { updateDownloadedOrder, removeDownloadedTrack} =   offlineTracksSlice.actions;
+export const { updateDownloadedOrder, removeDownloadedTrack, setDownloadedTracks } = offlineTracksSlice.actions;
 export const offlineTracksReducer = offlineTracksSlice.reducer;

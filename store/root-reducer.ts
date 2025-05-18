@@ -12,6 +12,7 @@ import storage from 'redux-persist/lib/storage';
 import { persistReducer } from 'redux-persist';
 import { pageTitleReducer } from './slices/pageTitleSlice';
 import { offlineTracksReducer } from './slices/offlineTracks.slice';
+import { networkReducer } from './slices/network.slice';
 
 const settingsPersistConfig = {
   key: 'settings',
@@ -29,10 +30,11 @@ const appReducer = combineReducers({
   player: playerReducer,
   playlist: playlistReducer,
   search: searchReducer,
-  settings: persistedSettingsReducer,
+  settings: settingsReducer,
   searchParams:searchParamsReducer,
   pageTitle:pageTitleReducer,
   offlineTracks: offlineTracksReducer,
+  network: networkReducer
 });
 
 const rootReducer = (state: any, action: any) => {
