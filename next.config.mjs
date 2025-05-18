@@ -1,14 +1,27 @@
 import withPWA from 'next-pwa';
 import runtimeCaching from 'next-pwa/cache.js';
+import bundleAnalyzer from '@next/bundle-analyzer';
 
-const config = {
+const isProd = process.env.NODE_ENV === 'production';
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
+
+const nextConfig = {
   reactStrictMode: false,
+  experimental: {
+    optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   pwa: {
     dest: 'public',
     sw: 'sw.js',
     register: true,
     skipWaiting: true,
-    disable: process.env.NODE_ENV !== 'production',
+    disable: !isProd,
     runtimeCaching: [
       {
         urlPattern: /^\/$/,
@@ -45,12 +58,6 @@ const config = {
       document: '/offline.html',
     },
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  experimental: {
-    optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
-  },
 };
 
-export default withPWA(config);
+export default withBundleAnalyzer(withPWA(nextConfig));
