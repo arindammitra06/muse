@@ -16,6 +16,7 @@ import { RootState } from '@/store/store';
 import OfflinePage from './Offline/OfflinePage';
 import { useNetworkListener } from '@/utils/useNetworkListener';
 import SignInPage from './Login/LoginPage';
+import { modals } from '@mantine/modals';
 export interface NavigationProps {
   children: ReactNode;
 };
@@ -34,10 +35,24 @@ export default function Navigation({ children }: NavigationProps) {
   const pageTitle = useSelector((state: RootState) => state.pageTitle.title);
   const currentUser = useAppSelector((state) => state.user.currentUser);
   const isOnline = useAppSelector((state: RootState) => state.network.isOnline);
-  
+
   const handleBack = () => {
     router.back();
   };
+
+  const confirmLogout = () =>
+    modals.openConfirmModal({
+      title: 'Are you sure you want to logout?',
+      centered: true,
+      children: (
+        <Text size="sm">
+          This removes all offline & session playlist tracks
+        </Text>
+      ),
+      labels: { confirm: 'Confirm', cancel: "Discard" },
+      onCancel: () => console.log('Cancel'),
+      onConfirm: () => logout(),
+    });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,7 +68,7 @@ export default function Navigation({ children }: NavigationProps) {
   }, [pathname]);
 
 
-  if(user==undefined || user===null){
+  if (user == undefined || user === null) {
     return <SignInPage />;
   }
 
@@ -91,7 +106,7 @@ export default function Navigation({ children }: NavigationProps) {
               <FadingWeightLogo text="muse" />
             </Flex> :
               <Flex justify="flex-start" align="flex-start" p={0}>
-                <FadingWeightLogo text={pageTitle}/>
+                <FadingWeightLogo text={pageTitle} />
               </Flex>}
           </Flex>
 
@@ -156,7 +171,7 @@ export default function Navigation({ children }: NavigationProps) {
 
 
               {user !== null && user !== undefined && user.name !== null && user.name !== undefined &&
-                <Menu.Item onClick={() => logout()}>Logout</Menu.Item>
+                <Menu.Item onClick={() => confirmLogout()}>Logout</Menu.Item>
 
               }
             </Menu.Dropdown>
@@ -187,7 +202,7 @@ export default function Navigation({ children }: NavigationProps) {
               /></Paper>
           )}
 
-          {isOnline ? children : <OfflinePage/>}
+          {isOnline ? children : <OfflinePage />}
         </Box>
       </AppShell.Main>
 

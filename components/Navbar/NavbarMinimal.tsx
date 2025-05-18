@@ -1,34 +1,24 @@
 'use client';
 import { useState } from 'react';
 import {
-  IconCalendarStats,
-  IconDeviceDesktopAnalytics,
-  IconDownload,
-  IconFingerprint,
-  IconGauge,
   IconHome,
-  IconHome2,
   IconHomeFilled,
   IconLayoutList,
   IconLayoutListFilled,
   IconLogout,
-  IconPlaylist,
   IconSearch,
   IconSettings,
   IconSettingsFilled,
-  IconSwitchHorizontal,
-  IconUser,
   IconZoomFilled,
 } from '@tabler/icons-react';
-import { Center, Stack, Tooltip, UnstyledButton } from '@mantine/core';
+import { Stack, Tooltip, UnstyledButton,Text } from '@mantine/core';
 
 import classes from './NavbarMinimal.module.css';
-import { AppLogo } from '../Common/custom-logo.component';
 
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/utils/useAuth';
-import { to } from '@react-spring/web';
+import { modals } from '@mantine/modals';
 
 interface NavbarLinkProps {
   icon: any;
@@ -86,6 +76,20 @@ export function NavbarMinimal({ toggle }: any) {
       toggle={toggle} />
   ));
 
+   const confirmLogout = () =>
+      modals.openConfirmModal({
+        title: 'Are you sure you want to logout?',
+        centered: true,
+        children: (
+          <Text size="sm">
+            This removes all offline & session playlist tracks
+          </Text>
+        ),
+        labels: { confirm: 'Confirm', cancel: "Discard" },
+        onCancel: () => console.log('Cancel'),
+        onConfirm: () => logout(),
+      });
+
   return (
     <nav className={classes.navbar}>
 
@@ -98,7 +102,7 @@ export function NavbarMinimal({ toggle }: any) {
       <Stack justify="center" gap={0}>
         <Tooltip label={'Logout'} position="right" transitionProps={{ duration: 0 }}>
           <UnstyledButton
-            onClick={() => logout()}
+            onClick={() => confirmLogout()}
             style={(theme) => ({
               borderRadius: theme.radius.sm,
               color:  'gray',
