@@ -127,7 +127,7 @@ export default function ArtistDetailsPage({
 
         artistData !== null && artistData !== undefined ?
           <Stack gap="0" mb={20} >
-            <AppTitles title={'Top Songs'} />
+            <AppTitles title={'Top Songs'} px={0} />
 
             {artistData['Top Songs'] !== null && artistData['Top Songs'] !== undefined && artistData['Top Songs'].length > 0
               && artistData['Top Songs'].map((song: any, idx: number) => (

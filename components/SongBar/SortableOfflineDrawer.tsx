@@ -2,10 +2,12 @@ import { SortableSongBar } from "@/components/SongBar/SortableSongBar";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useSensors, useSensor, PointerSensor, DndContext, closestCenter, TouchSensor } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { Box, useMantineTheme,Text } from "@mantine/core";
+import { Box, useMantineTheme,Text, Button, Flex } from "@mantine/core";
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 
 import { updateDownloadedOrder } from "@/store/slices/offlineTracks.slice";
+import { IconPlayerPlay } from "@tabler/icons-react";
+import usePlayDownload from "@/utils/playDownloadHooks";
 
 interface SortableSessionDrawerProps {
   drawerOpened: boolean;
@@ -19,7 +21,7 @@ export default function SortableOfflineDrawer({ drawerOpened, closeDrawer }: Sor
   const { downloaded } = useAppSelector(s => s.offlineTracks);
   const theme = useMantineTheme();
   const { playlist, currentTrackIndex, isPlaying } = useAppSelector(s => s.player);
-  
+  const { fetchAllSongsFromPlayNow } = usePlayDownload();
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(TouchSensor, {
@@ -54,7 +56,20 @@ export default function SortableOfflineDrawer({ drawerOpened, closeDrawer }: Sor
   return (
 
     <Box p="0">
-      {downloaded!==null && downloaded!==undefined && downloaded.length>0 ? <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}
+      <Flex justify="flex-end" align="flex-end" w="100%" mb={10}>
+                <Button
+                    onClick={() =>fetchAllSongsFromPlayNow(downloaded) }
+                    size="xs"
+                    rightSection={<IconPlayerPlay size={16} />}
+                    radius="md"
+                    disabled={downloaded?.length === 0}
+                    color={theme.primaryColor}
+                >
+                    Play All
+                </Button>
+       </Flex>
+      {downloaded!==null && downloaded!==undefined && downloaded.length>0 ? 
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}
         modifiers={[restrictToFirstScrollableAncestor, restrictToVerticalAxis]}>
         <SortableContext
           items={downloaded.map((track: { id: any; }) => track.id)}

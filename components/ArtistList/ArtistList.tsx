@@ -19,7 +19,7 @@ export default function ArtistList({ name, subtitle, list }: ArtistListProps) {
 
     return (
         <SimpleGrid cols={1} spacing="xs" verticalSpacing="0">
-            <AppTitles title={name}/>
+            <AppTitles title={name} px={'sm'} />
             <div
                 style={{
                     resize: 'horizontal',

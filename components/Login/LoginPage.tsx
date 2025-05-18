@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { GoogleButton } from '../Common/GoogleButton';
 import toast from 'react-hot-toast';
 import { isValidName } from '@/utils/generic.utils';
+import { FadingWeightLogo } from '../Common/FadingWeightLogo';
 
 export default function SignInPage() {
     const router = useRouter();
@@ -37,7 +38,9 @@ export default function SignInPage() {
     }
 
     return (
-        <Container size="xs" style={{ minHeight: '90vh', paddingTop: '5vh' }}>
+        <Container size="xs" style={{ minHeight: '90vh', paddingTop: '0vh' }}>
+            <FadingWeightLogo text="muse" />
+            <Space h="xl" />
             <Text size="32px" fw={900} c={theme.primaryColor} mb={'20vh'}>Open. Stream. Repeat.</Text>
             <Text size="48px" fw={900} c={'#BDBDBD'}>Your Music...</Text>
             <Text size="48px" fw={900} >Your Server...</Text>

@@ -9,15 +9,19 @@ import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { NavbarMinimal } from './Navbar/NavbarMinimal';
 import { FadingWeightLogo } from './Common/FadingWeightLogo';
 import { BottomNavigation } from './BottomNavigation/BottomNavigation';
-import { useAppSelector } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useAuth } from '@/utils/useAuth';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
+import OfflinePage from './Offline/OfflinePage';
+import { useNetworkListener } from '@/utils/useNetworkListener';
+import SignInPage from './Login/LoginPage';
 export interface NavigationProps {
   children: ReactNode;
 };
 
 export default function Navigation({ children }: NavigationProps) {
+  useNetworkListener();
   const pathname = usePathname();
   const [isSticky, setIsSticky] = useState(false);
   const theme = useMantineTheme();
@@ -28,8 +32,9 @@ export default function Navigation({ children }: NavigationProps) {
   const user = useAppSelector((state) => state.user.currentUser);
   const { logout } = useAuth();
   const pageTitle = useSelector((state: RootState) => state.pageTitle.title);
-
-
+  const currentUser = useAppSelector((state) => state.user.currentUser);
+  const isOnline = useAppSelector((state: RootState) => state.network.isOnline);
+  
   const handleBack = () => {
     router.back();
   };
@@ -48,6 +53,9 @@ export default function Navigation({ children }: NavigationProps) {
   }, [pathname]);
 
 
+  if(user==undefined || user===null){
+    return <SignInPage />;
+  }
 
 
   return (
@@ -179,7 +187,7 @@ export default function Navigation({ children }: NavigationProps) {
               /></Paper>
           )}
 
-          {children}
+          {isOnline ? children : <OfflinePage/>}
         </Box>
       </AppShell.Main>
 

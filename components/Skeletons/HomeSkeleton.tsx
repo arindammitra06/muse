@@ -18,7 +18,7 @@ const HomePageSkeleton = () => {
         <div >
             
             {/* Trending Now */}
-            <AppTitles title={'Trending Now'}/>
+            <AppTitles title={'Trending Now'} px={'sm'} />
             <ScrollArea type="never" scrollbars="x" offsetScrollbars style={{paddingLeft: '12px'}}>
                 <Group gap="md" wrap="nowrap">
                     {renderCardSkeleton(10)}
@@ -26,7 +26,7 @@ const HomePageSkeleton = () => {
             </ScrollArea>
             <Space h={30}/>
             {/* Top Charts */}
-            <AppTitles title={'Top Charts'}/>
+            <AppTitles title={'Top Charts'} px={'sm'} />
             <ScrollArea type="never" scrollbars="x"  offsetScrollbars style={{paddingLeft: '12px'}}>
                 <Group gap="md" wrap="nowrap">
                     {renderCardSkeleton(10)}
@@ -34,7 +34,7 @@ const HomePageSkeleton = () => {
             </ScrollArea>
             <Space h={30}/>
             {/* New Releases */}
-            <AppTitles title={'New Releases'}/>
+            <AppTitles title={'New Releases'} px={'sm'} />
             <ScrollArea type="never" scrollbars="x" offsetScrollbars style={{paddingLeft: '12px'}}>
                 <Group gap="md" wrap="nowrap">
                     {renderCardSkeleton(10)}

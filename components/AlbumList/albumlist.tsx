@@ -18,7 +18,7 @@ export default function AlbumList({ name, subtitle, list }: AlbumListProps) {
 
 
     return countNonPlaylistItems(list) > 0 && (<SimpleGrid cols={1} spacing="xs" verticalSpacing="0">
-        <AppTitles title={name} />
+        <AppTitles title={name} px={'sm'} />
         <div
             style={{
                 resize: 'horizontal',

@@ -104,7 +104,7 @@ export default function SearchPage() {
         {topSearches !== null && topSearches !== undefined && topSearches.length > 0
           &&
           <>
-            <AppTitles title={'Trending Search'} />
+            <AppTitles title={'Trending Search'} px={'sm'} />
 
             <Flex
               p={10}

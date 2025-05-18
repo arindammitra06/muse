@@ -78,7 +78,7 @@ export default function SettingsPage() {
           withBorder
           shadow="sm"
         >
-          <AppTitles title={'Theme'} />
+          <AppTitles title={'Theme'} px={'xs'} />
           <SettingsList title={'Dark Mode'} subtitle='Select muse theme'
             rightElement={<ThemeCheckboxPage />} onClick={undefined} />
 
@@ -91,7 +91,7 @@ export default function SettingsPage() {
           withBorder
           shadow="sm"
         >
-          <AppTitles title={'Music & Playback'} />
+          <AppTitles title={'Music & Playback'}px={'xs'}  />
           <SettingsList title={'Music Language'} subtitle='My preferred language for music'
             rightElement={<LanguageSelectorModal />} onClick={undefined} />
 
@@ -154,7 +154,7 @@ export default function SettingsPage() {
           withBorder
           shadow="sm"
         >
-          <AppTitles title={'Backup & Clear'} />
+          <AppTitles title={'Backup & Clear'} px={'xs'} />
 
           <SettingsList title={'Clear current session'} subtitle='Clears currently playing songs'
             rightElement={<></>} onClick={() => openClearCacheModal()} />
@@ -169,7 +169,7 @@ export default function SettingsPage() {
           withBorder
           shadow="sm"
         >
-          <AppTitles title={'Others'} />
+          <AppTitles title={'Others'} px={'xs'} />
           <SettingsList title={'Swipe Gesture'} subtitle='Turn off swipe gesture for Now Playing Bar if broken'
             rightElement={<Checkbox
               checked={allowSwipeGesture===undefined? true : allowSwipeGesture}

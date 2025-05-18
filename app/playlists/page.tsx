@@ -91,7 +91,7 @@ export default function PlaylistManager() {
       )}
 
       <Group justify="space-between">
-        <AppTitles title={'My Playlists'} />
+        <AppTitles title={'My Playlists'} px={0} />
         <Button
           size="xs"
           rightSection={<IconPlus size={16} />}

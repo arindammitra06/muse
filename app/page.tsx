@@ -17,11 +17,9 @@ import { RootState } from '@/store/store';
 import OfflinePage from '@/components/Offline/OfflinePage';
 
 export default function HomePage() {
-  useNetworkListener();
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
   const homedata = useAppSelector((state) => state.api.homedata);
-  const user = useAppSelector((state) => state.user.currentUser);
   const isOnline = useAppSelector((state: RootState) => state.network.isOnline);
   
 
@@ -30,7 +28,7 @@ export default function HomePage() {
     if (isOnline) {
       fetchCall();
     }
-  }, [user, isOnline]);
+  }, [isOnline]);
 
 
   async function fetchCall() {
@@ -43,15 +41,12 @@ export default function HomePage() {
   }
 
 
-  if (!isOnline) {
-    return (<OfflinePage/>);
-  }
+  
 
   return (
     <>
 
-      {user !== null && user !== undefined ?
-        <SimpleGrid cols={1} spacing="xs" verticalSpacing="xs" mb={150}>
+      <SimpleGrid cols={1} spacing="xs" verticalSpacing="xs" mb={150}>
           {
             homedata !== null && homedata !== undefined &&
               homedata.modules !== null && homedata.modules !== undefined ?
@@ -66,12 +61,7 @@ export default function HomePage() {
               :
               <HomePageSkeleton />
           }
-
-
         </SimpleGrid>
-
-        : <SignInPage />
-      }
 
     </>
   );

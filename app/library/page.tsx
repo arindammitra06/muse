@@ -77,8 +77,9 @@ export default function Library() {
 
   return (
     <Box p="xs">
-      <Group justify="space-between">
-        <AppTitles title={'My Music'} />
+      
+      <Group justify="space-between" px={0}>
+        <AppTitles title={'My Music'} px={0} />
         <Button
           size="xs"
           rightSection={<IconRefresh size={16} />}
@@ -88,7 +89,9 @@ export default function Library() {
           Sync Playlists
         </Button>
       </Group>
-
+      <Text size="sm" c="dimmed" >
+        Only user playlists are synced to cloud
+      </Text>
 
       <Drawer
         opened={drawerOpened}
