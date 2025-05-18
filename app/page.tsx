@@ -14,9 +14,10 @@ import { useDisclosure } from '@mantine/hooks';
 import SortableOfflineDrawer from '@/components/SongBar/SortableOfflineDrawer';
 import { useNetworkListener } from '@/utils/useNetworkListener';
 import { RootState } from '@/store/store';
-import OfflinePage from './_offline/page';
+import OfflinePage from '@/components/Offline/OfflinePage';
 
 export default function HomePage() {
+  useNetworkListener();
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
   const homedata = useAppSelector((state) => state.api.homedata);
