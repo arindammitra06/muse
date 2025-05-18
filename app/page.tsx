@@ -16,20 +16,22 @@ import { useNetworkListener } from '@/utils/useNetworkListener';
 import { RootState } from '@/store/store';
 
 export default function HomePage() {
+  useNetworkListener();
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
   const homedata = useAppSelector((state) => state.api.homedata);
   const user = useAppSelector((state) => state.user.currentUser);
-  useNetworkListener();
   const isOnline = useAppSelector((state: RootState) => state.network.isOnline);
   const { downloaded, isSavingOffline } = useAppSelector((s) => s.offlineTracks);
-  const [ drawerOfflineOpened, { open: openOfflineDrawer, close: closeOfflineDrawer }, ] = useDisclosure(false);
+  const [drawerOfflineOpened, { open: openOfflineDrawer, close: closeOfflineDrawer },] = useDisclosure(false);
 
 
 
   useEffect(() => {
-    fetchCall();
-  }, [user]);
+    if (isOnline) {
+      fetchCall();
+    }
+  }, [user, isOnline]);
 
 
   async function fetchCall() {
