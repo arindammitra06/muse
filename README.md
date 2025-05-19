@@ -1,5 +1,5 @@
 ## About
-<img src="https://raw.githubusercontent.com/arindammitra06/muse/refs/heads/main/assets/images/screenshot.png" alt="Screenshot" width="600"/>
+<img src="https://raw.githubusercontent.com/arindammitra06/muse/refs/heads/main/assets/images/screenshot.png" alt="Screenshot" width="100%"/>
 
 A modern, open-source music player built with React, focused on seamless mobile playback and inspired by the Flutter-based BlackHole app.
 
