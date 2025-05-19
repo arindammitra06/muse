@@ -12,6 +12,7 @@ import { FavoriteButton } from '../FavoriteButton/FavoriteButton';
 import { DownloadButton } from '../DownloadButton/DownloadButton';
 import { PlaylistMenuOptions } from '../PlaylistMenu/PlaylistMenuOptions';
 import { RootState } from '@/store/store';
+import SaveOfflineButton from '../SaveOfflineButton/SaveOfflineButton';
 
 
 export interface SongBarProps {
@@ -151,8 +152,9 @@ export const SongBar = ({ id, song, type, isPlaying, onClickOverride, currentPla
             </Group>
 
 
-            <Group gap="xs" wrap="nowrap">
+            <Group gap={2} wrap="nowrap">
                 <FavoriteButton song={song} />
+                {/* <SaveOfflineButton id={song?.id!} url={song?.url!} song={song} /> */}
                 <DownloadButton song={song} />
                 <Box onClick={(e) => e.stopPropagation()}>
                     <PlaylistMenuOptions

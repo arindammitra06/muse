@@ -4,30 +4,43 @@ import Marquee from 'react-fast-marquee';
 import { FavoriteButton } from '../FavoriteButton/FavoriteButton';
 import { IconPlayerPlay, IconPlaylist } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { useAppSelector } from '@/store/hooks';
+import { RootState } from '@/store/store';
 
 
 function BottomStickyItem({ exactNextTrack , onClick}: any) {
     const theme = useMantineTheme();
+    const { isActive, remaining } = useAppSelector((state: RootState) => state.sleepTimer);
     const router = useRouter();
+    
     return (
         <div style={{ display: 'flex', flexDirection: 'column', }} onClick={()=>onClick()}>
             <div style={{ flex: 1 }}>
                 {/* Other content goes here */}
             </div>
 
-            
-                <Group
-                    justify="space-between"
-                    wrap="nowrap"
-                    p={'xs'}
+                <Stack
+                    gap={0}
+                    justify="normal"
+                    p={0}
                     style={{
                         padding: 'xs',
                         position: 'fixed',
                         bottom: 0,
                         left: 0,
                         right: 0, // optional, for background color
-                        boxShadow: '0 -2px 10px rgba(0, 0, 0, 0.1)', // optional, for shadow
                         zIndex: 1000, // optional, to ensure it's on top
+                    }}
+                >
+                    {isActive && 
+                    <Text lineClamp={1} ta={'center'} size='xs' truncate 
+                    c={theme.colors[theme.primaryColor][6]}>Sleeping in {Math.ceil((remaining ?? 0) / 60000)} min</Text>}
+                <Group
+                    justify="space-between"
+                    wrap="nowrap"
+                    p={'xs'}
+                    style={{
+                        boxShadow: '0 -2px 10px rgba(0, 0, 0, 0.1)', 
                     }}
                 >
                     <Group wrap="nowrap" style={{ flex: 1, minWidth: 0 }} gap={'xs'}>
@@ -55,6 +68,7 @@ function BottomStickyItem({ exactNextTrack , onClick}: any) {
                         <Pill c={theme.primaryColor}  size="sm">Up Next</Pill>
                     </Group>
                 </Group>
+                </Stack>
         </div>
     );
 }

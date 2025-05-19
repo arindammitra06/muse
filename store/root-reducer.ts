@@ -13,6 +13,7 @@ import { persistReducer } from 'redux-persist';
 import { pageTitleReducer } from './slices/pageTitleSlice';
 import { offlineTracksReducer } from './slices/offlineTracks.slice';
 import { networkReducer } from './slices/network.slice';
+import { sleepTimerReducer } from './slices/sleepTimer.slice';
 
 const settingsPersistConfig = {
   key: 'settings',
@@ -34,7 +35,8 @@ const appReducer = combineReducers({
   searchParams:searchParamsReducer,
   pageTitle:pageTitleReducer,
   offlineTracks: offlineTracksReducer,
-  network: networkReducer
+  network: networkReducer,
+  sleepTimer: sleepTimerReducer
 });
 
 const rootReducer = (state: any, action: any) => {

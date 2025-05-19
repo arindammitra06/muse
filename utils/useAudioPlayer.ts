@@ -5,8 +5,9 @@ import {
   previousTrack,
   play as playS,
   pause as pauseS,
+  setPlaying,
 } from '@/store/slices/player.slice';
-import {  getPreferredStreamingQualityUrl } from './generic.utils';
+import { getPreferredStreamingQualityUrl } from './generic.utils';
 import { getTrackBlobUrl } from '@/store/slices/offlineTracks.slice';
 
 export function useAudioPlayer() {
@@ -19,8 +20,8 @@ export function useAudioPlayer() {
   const isRepeatRef = useRef(false);
   const currentTrack = playlist[currentTrackIndex];
   const { downloaded } = useAppSelector((s) => s.offlineTracks);
-  const isAlreadyDownloaded = downloaded.some((track) => track.id === currentTrack.id); ;
-      
+  const isAlreadyDownloaded = downloaded.some((track) => track.id === currentTrack.id);;
+
 
   const play = () => {
     audioRef.current?.play();
@@ -51,10 +52,10 @@ export function useAudioPlayer() {
       audioRef.current = audio;
 
       // Choose source: offline blob or remote URL
-      
+
       if (isAlreadyDownloaded) {
         console.log('Playing Offline')
-        
+
         const blobUrl = await getTrackBlobUrl(currentTrack!.id!); // e.g. 'track.mp3' -> blob URL
         if (blobUrl) {
           audio.src = blobUrl;
@@ -65,12 +66,17 @@ export function useAudioPlayer() {
         }
       } else {
         console.log('Not Offline')
-        
+
         audio.src = getPreferredStreamingQualityUrl(currentTrack!.url!, streamingQuality);
       }
 
       // Autoplay if needed
-      if (isPlaying) audio.play();
+      if (isPlaying) {
+        audio.play().catch((e) => {
+          console.warn('Playback failed:', e);
+          dispatch(setPlaying(!isPlaying));
+        });
+      }
 
       // Events
       audio.onloadedmetadata = () => setDuration(audio.duration);

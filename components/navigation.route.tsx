@@ -17,12 +17,14 @@ import OfflinePage from './Offline/OfflinePage';
 import { useNetworkListener } from '@/utils/useNetworkListener';
 import SignInPage from './Login/LoginPage';
 import { modals } from '@mantine/modals';
+import { useSleepTimer } from '@/utils/useSleepTimer';
 export interface NavigationProps {
   children: ReactNode;
 };
 
 export default function Navigation({ children }: NavigationProps) {
   useNetworkListener();
+  useSleepTimer();
   const pathname = usePathname();
   const [isSticky, setIsSticky] = useState(false);
   const theme = useMantineTheme();

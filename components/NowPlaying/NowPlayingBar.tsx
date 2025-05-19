@@ -7,7 +7,7 @@ import { useDisclosure } from '@mantine/hooks';
 import musicPlaceholder from '../../assets/images/music_placeholder.png';
 import Marquee from "react-fast-marquee";
 
-import { IconArrowsShuffle, IconChevronDown, IconNotes, IconPlayerPauseFilled, IconPlayerPlayFilled, IconPlayerSkipBackFilled, IconPlayerSkipForwardFilled, IconPointFilled, IconRepeat, IconRepeatOnce, IconWifiOff } from '@tabler/icons-react';
+import { IconArrowsShuffle, IconChevronDown, IconNotes, IconPlayerPauseFilled, IconPlayerPlayFilled, IconPlayerSkipBackFilled, IconPlayerSkipForwardFilled, IconRepeat, IconRepeatOnce } from '@tabler/icons-react';
 import { SkeletonSongBar } from '../SongBar/SongBar';
 import { NowPlayingOverlay } from './NowPlayingOverlay';
 import { DownloadButton } from '../DownloadButton/DownloadButton';
@@ -21,9 +21,8 @@ import { ProgressiveLyrics } from '../Common/ProgressiveLyrics';
 import toast from 'react-hot-toast';
 import '@gfazioli/mantine-flip/styles.layer.css';
 import { LineSyncedLyrics } from './SyncedLyrics';
-import { modals } from '@mantine/modals';
-import { saveOfflineTrack } from '@/store/slices/offlineTracks.slice';
 import SaveOfflineButton from '../SaveOfflineButton/SaveOfflineButton';
+import { SleepTimerButton } from '../SleepTimerButton/SleepTimerButton';
 export function NowPlayingBar() {
   const [opened, { open, close }] = useDisclosure(false);
   const [drawerOpened, { open: openDrawer, close: closeDrawer },] = useDisclosure(false);
@@ -63,7 +62,7 @@ export function NowPlayingBar() {
     }
   }
 
-  
+
 
   async function getLyricsNow() {
     if (currentTrack) {
@@ -111,20 +110,23 @@ export function NowPlayingBar() {
   //Get Now Playing Bar Header..
   const getHeader = <Flex align="center" justify="space-between" mb="sm" style={{ flex: 1, minWidth: 0 }} px={'xs'}>
 
-    <ActionIcon size={'xl'} variant="subtle" color="gray" onClick={() => close()} ml={5}>
-      <IconChevronDown size={20} />
-    </ActionIcon>
-
+    <Tooltip label={'Minimize'} position="right" transitionProps={{ duration: 0 }}>
+      <ActionIcon size={'xl'} variant="subtle" color="gray" onClick={() => close()} ml={5}>
+        <IconChevronDown size={20} />
+      </ActionIcon>
+    </Tooltip>
     <Group gap="xs">
 
-      <ActionIcon variant={flipped ? "filled" : "subtle"} color={flipped ? theme.colors[theme.primaryColor][6] : 'gray'} onClick={(e) => flipOrUnflipLyrics()}>
-        <IconNotes size={20} />
-      </ActionIcon>
-
+      <Tooltip label={'Show syrics'} position="right" transitionProps={{ duration: 0 }}>
+        <ActionIcon variant={flipped ? "filled" : "subtle"} color={flipped ? theme.colors[theme.primaryColor][6] : 'gray'} onClick={(e) => flipOrUnflipLyrics()}>
+          <IconNotes size={20} />
+        </ActionIcon>
+      </Tooltip>
+      <SleepTimerButton />
       <FavoriteButton song={currentTrack} />
       <DownloadButton song={currentTrack} />
       <SaveOfflineButton id={currentTrack?.id!} url={currentTrack?.url!} song={currentTrack} />
-      
+
 
       {currentTrack !== null && currentTrack !== undefined && currentTrack.type === 'song'
         && <Box onClick={(e) => e.stopPropagation()}>

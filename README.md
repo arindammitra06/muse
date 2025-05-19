@@ -1,4 +1,6 @@
 ## About
+![Screenshot](./assets/screenshot.png)
+
 A modern, open-source music player built with React, focused on seamless mobile playback and inspired by the Flutter-based BlackHole app.
 
 Designed for personal use, it offers a responsive, immersive experience across devices. Contributions are welcome!
@@ -7,7 +9,23 @@ We do not support or promote piracy in any form. This project is created strictl
 
 Please respect artists and copyright laws by streaming music only through legal and authorized sources.
 
-I am not sharing the demo link as it might get blacklisted on heavy usage. If you want your copy of music player, follow along.
+## 🚀 Features
+
+- 🎵 **Mark Favorites** – Easily mark and access your favorite tracks anytime.
+- ☁️ **Cloud Sync with Firebase** – Your playlists are automatically synced across devices using Firebase.
+- 📴 **Offline Playback** – Enjoy your music even without an internet connection.
+- ⏲️ **Sleep Timer** – Auto-stop playback after a custom duration, perfect for bedtime listening.
+- 🔍 **Music Search** – Quickly find songs from a vast indexed catalog.
+- 🏠 **Beautiful Homepage** – Discover trending tracks on an eye-catching, mobile-first homepage.
+- 🌙 **Dark Mode** – Built-in dark theme for a soothing experience at night.
+- 🎨 **Custom Primary Colors** – Personalize the UI with your preferred accent colors.
+- 🧠 **Session-Based Playback** – Keeps track of your listening session until manually stopped.
+- 🎚️ **Custom Quality Controls** – Stream or download in your chosen quality (Low / Medium / High).
+- 📱 **Mobile-First Design** – UI optimized for smooth playback on small screens.
+- 📦 **Progressive Web App** – Install and run like a native app on any device.
+- 💻 **Open Source & Self-Hosted** – 100% free and open. Host it on your own server with full control.
+
+Checkout the demo play but restrain from heavy usage as it might get you blacklisted. If you want a copy of your personal music player, follow along...
 
  1. Fork repository.
  2. Setup your firebase account. Add firestore & authentication to be used for saving playlists.
