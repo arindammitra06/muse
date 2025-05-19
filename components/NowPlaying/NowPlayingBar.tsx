@@ -19,7 +19,6 @@ import { useEffect, useState } from 'react';
 import { Lyrics } from '@/utils/lyrics';
 import { ProgressiveLyrics } from '../Common/ProgressiveLyrics';
 import toast from 'react-hot-toast';
-import '@gfazioli/mantine-flip/styles.layer.css';
 import { LineSyncedLyrics } from './SyncedLyrics';
 import SaveOfflineButton from '../SaveOfflineButton/SaveOfflineButton';
 import { SleepTimerButton } from '../SleepTimerButton/SleepTimerButton';
