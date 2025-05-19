@@ -1,5 +1,5 @@
 ## About
-![Screenshot](./assets/screenshot.png)
+<img src="https://raw.githubusercontent.com/arindammitra06/muse/refs/heads/main/assets/images/screenshot.png" alt="Screenshot" width="600"/>
 
 A modern, open-source music player built with React, focused on seamless mobile playback and inspired by the Flutter-based BlackHole app.
 
@@ -11,16 +11,16 @@ Please respect artists and copyright laws by streaming music only through legal 
 
 ## 🚀 Features
 
+- 🏠 **Beautiful Homepage** – Discover trending tracks on an eye-catching, mobile-first homepage.
+- 🧠 **Session-Based Playback** – Keeps track of your listening session until manually stopped.
+- 🎚️ **Custom Quality Controls** – Stream or download in your chosen quality (Low / Medium / High).
 - 🎵 **Mark Favorites** – Easily mark and access your favorite tracks anytime.
 - ☁️ **Cloud Sync with Firebase** – Your playlists are automatically synced across devices using Firebase.
 - 📴 **Offline Playback** – Enjoy your music even without an internet connection.
 - ⏲️ **Sleep Timer** – Auto-stop playback after a custom duration, perfect for bedtime listening.
 - 🔍 **Music Search** – Quickly find songs from a vast indexed catalog.
-- 🏠 **Beautiful Homepage** – Discover trending tracks on an eye-catching, mobile-first homepage.
 - 🌙 **Dark Mode** – Built-in dark theme for a soothing experience at night.
 - 🎨 **Custom Primary Colors** – Personalize the UI with your preferred accent colors.
-- 🧠 **Session-Based Playback** – Keeps track of your listening session until manually stopped.
-- 🎚️ **Custom Quality Controls** – Stream or download in your chosen quality (Low / Medium / High).
 - 📱 **Mobile-First Design** – UI optimized for smooth playback on small screens.
 - 📦 **Progressive Web App** – Install and run like a native app on any device.
 - 💻 **Open Source & Self-Hosted** – 100% free and open. Host it on your own server with full control.
